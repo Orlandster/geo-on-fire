@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/utils.js | firebase-nearby</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/db.js~FirebaseNearbyDb.html">FirebaseNearbyDb</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/firebase-nearby.js~FirebaseNearby.html">FirebaseNearby</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/utils.js~FirebaseNearbyUtils.html">FirebaseNearbyUtils</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/utils.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">const ngeohash = require(&apos;ngeohash&apos;);
+
+export class FirebaseNearbyUtils {
+
+  constructor() {}
+
+   /**
+   * Gets the default Firebase nearby config
+   *
+   * @return {Object} The configs object
+   */
+  getDefaultConfig() {
+    return {
+      paths: {
+        locations: &apos;/locations&apos;,
+        entries: &apos;/entries&apos;,
+      },
+      minPrecision: 5,
+      maxPrecision: 7,
+      zoomLevel: 15,
+    }
+  }
+
+  /**
+   * Gets the Geohash box based on the locations lat and lng
+   *
+   * @param {Object} location holds the locations lat and lng
+   * @param {string} precision holds percision for the geohash e.g. 6 characters long
+   * @return {string} The Geohash string
+   */
+  getGeohashByLocation(location, precision) {
+    return ngeohash.encode(location.lat, location.lng, precision);
+  }
+
+   /**
+   * Gets the Geohash based on the locations coordinates
+   *
+   * @param {string} geohash holds geohash string
+   * @param {number} minPercision holds minimal percision for the geohash
+   * @param {number} maxPercision holds maximum percision for the geohash
+   * @return {Array.&lt;string&gt;} Geohash strings
+   */
+  getGeohashPrecisions(geohash, minPrecision, maxPrecision) {
+    const geohashes = [];
+
+    for (let i = 0; maxPrecision - minPrecision &gt;= i; i++) {
+      geohashes.push(geohash.substring(0, geohash.length - i));
+    }
+
+    return geohashes;
+  }
+
+  /**
+   * Gets all the visible Geohashes within the given Boundaries (also overlapping geohashes)
+   * the geohash length will be calculated from the given precision
+   *
+   * @param {Object} boundaries holds coordinates of the boundaries
+   * @param {number} precision holds minimal percision for the geohash
+   * @return {Array.&lt;string&gt;} Holds all the Geohashes within the boundaries
+   */
+  getGeohashesInBoundaries(boundaries, precision) {
+    return ngeohash.bboxes(boundaries.sw.lat, boundaries.sw.lng, boundaries.ne.lat, boundaries.ne.lng, precision);
+  }
+
+  /**
+   * Returns all the keys of locations inside the given boundaries
+   *
+   * @param {Object} boundaries holds coordinates of the boundaries
+   * @param {number} precision holds minimal percision for the geohash
+   * @return {Array.&lt;string&gt;} Holds all the Geohashes within the boundaries
+   */
+  getLocationsInBoundaries(geohashNode, boundaries) {
+    const promises = [];
+
+    geohashNode.map(locations =&gt; {
+
+      // check if locations node exists
+      if (locations.val()) {
+        locations.forEach(location =&gt; {
+
+          // check if single location is within boundaries
+          if (this.isInBoundaries(location.val(), boundaries)) {
+            promises.push(new Promise((resolve, reject) =&gt; {
+              resolve(location.key);
+            }));
+          }
+        });
+      }
+    });
+
+    return Promise.all(promises);
+  }
+
+  /**
+   * Checks if the given location is within the boundaries
+   * This needs to be done, since getGeohashesInBoundaries() returns also overalpping locations, which our outside of the boundaries.
+   * The getGeohashesInBoundaries() will be used to reduce the number of possible locations, which provides us a huge performance gain.
+   * 
+   * @param {Object} location holds the current location
+   * @param {Object} boundaries holds coordinates of the boundaries
+   * @return {boolean} Says if location is in or outside of boundaries
+   */
+  isInBoundaries(location, boundaries) {
+    let isInBoundaries = false;
+    
+    if (boundaries.sw.lat &lt;= location.lat &amp;&amp; boundaries.sw.lng &lt;= location.lng 
+        &amp;&amp; boundaries.ne.lat &gt;= location.lat &amp;&amp; boundaries.ne.lng &gt;= location.lng) {
+          isInBoundaries = true;
+    }
+
+    return isInBoundaries;
+  }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/db.js | firebase-nearby</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/db.js~FirebaseNearbyDb.html">FirebaseNearbyDb</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/firebase-nearby.js~FirebaseNearby.html">FirebaseNearby</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/utils.js~FirebaseNearbyUtils.html">FirebaseNearbyUtils</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/db.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { firebase } from &quot;firebase&quot;;
+import { FirebaseNearbyUtils } from &quot;./utils&quot;;
+
+export class FirebaseNearbyDb {
+    constructor(db, config) {
+        this._db = db;
+        this._config = config;
+
+        // new instance for utils
+        this._utils = new FirebaseNearbyUtils();
+    }
+
+    /**
+     * Gets the Geohash based on the locations coordinates
+     *
+     * @param {Object} entry holds the custom entry object
+     * @return {Promise} The created entry
+     */
+    pushEntry(entry) {
+        return this._db.ref(this._config.paths.entries).push(entry);
+    }
+
+    /**
+     * Gets the Geohash based on the locations coordinates
+     *
+     * @param {string} pushKey holds the Firebase push key
+     * @param {Object} entry holds the custom entry object
+     * @param {Array.&lt;string&gt;} geohashes holds all the geohashes
+     * @return {string} The Geohash string
+     */
+    setGeohashLocations(pushKey, entry, geohashes) {
+        for (let i = 0; geohashes.length &gt; i; i++) {
+            this._db.ref(`${this._config.paths.locations}/${geohashes[i]}/${pushKey}`).set(entry);
+        };
+    }
+    
+    /**
+     * Fetchs all the entries based on the provided location keys and the start and stop at functionality
+     *
+     * @param {Array.&lt;string&gt;} pushKeys holds the pushkeys of all the provided locations
+     * @param {number} startAt holds the number of entries to start at e.g. for pagination
+     * @param {number} endAt holds the number of entries to stop at e.g. for pagination
+     * @return {Array.&lt;Promise&gt;} Holds all the locations
+     */
+    fetchLocations(pushKeys, startAt, endAt) {
+        let fetchedDataPromises = [];
+
+        for (let i = startAt - 1; endAt &gt; i; i++) {
+            console.log(i);
+            fetchedDataPromises.push(this._db.ref(`${this._config.paths.entries}/${pushKeys[i]}`).once(&apos;value&apos;));
+        }
+
+        return Promise.all(fetchedDataPromises);
+    }
+
+    /**
+     * Gets all the locations from thee given geohashes
+     *
+     * @param {Array.&lt;string&gt;} geohashes holds geohashes
+     * @return {Array.&lt;Promise&gt;} Holds all the locations
+     */
+    getLocationsFromGeohashes(geohashes) {
+        let locations = [];
+
+        for (let i = 0; i &lt; geohashes.length; i++) {
+            locations.push(this._db.ref(`${this._config.paths.locations}/${geohashes[i]}`).once(&apos;value&apos;));
+        }
+
+        return Promise.all(locations);
+    }
+
+    /**
+     * Gets the Geohash based on the locations coordinates
+     *
+     * @param {string} pushKey holds the Firebase push key
+     * @return {string} The Geohash string
+     */
+    deleteEntry(pushKey) {
+        const ref = this._db.ref(`${this._config.paths.entries}/${pushKey}`);
+
+        ref.once(&quot;value&quot;).then(entry =&gt; {
+            return this.getNodesToDelete(this._db, entry);
+        }).then(data =&gt; {
+            // ToDo: Error handling
+        })
+    }
+
+   /**
+   * Gets all the nodes to delete for based on an entry (e.g. the entry itself and all the geohashes in the loactions node)
+   *
+   * @param {Firebase} ref holds the reference for the entry to delete
+   * @param {Object} entry holds the entry to delete
+   * @return {Promise.&lt;Firebase&gt;} Firebase remove() references
+   */
+  getNodesToDelete(entry) {
+    let deleteQueue = [];
+    const geohash = this._utils.getGeohashByLocation(entry.location, entry.maxPercision);
+    const geohashPrecisions = this._utils.getGeohashPrecisions(geohash, entry.minPercision, entry.maxPercision);
+
+    // adding all the existing locations to the delete queue
+    for (let i = 0; geohashPrecisions.length &gt; i; i++) {
+        deleteQueue.push(this._db.ref(`${this._config.paths.locations}/${geohashPrecisions[i]}/${entry.$key}`).remove());
+    };
+
+    // adds the entry itself to the delete queue
+    deleteQueue.push(this._db.ref(`${this._config.paths.entries}/${entry.$key}`).remove());
+
+    return Promise.all(deleteQueue);
+  }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

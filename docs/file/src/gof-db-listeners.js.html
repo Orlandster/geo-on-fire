@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/gof-db-listeners.js | firebase-nearby</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-db-listeners.js~GofDbListeners.html">GofDbListeners</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-db.js~GofDb.html">GofDb</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-utils.js~GofUtils.html">GofUtils</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof.js~Gof.html">Gof</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation">validation</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validation.js~GofValidation.html">GofValidation</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation-parameters">validation/parameters</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateBoundariesParameter">validateBoundariesParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateCenterParameter">validateCenterParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateDbParameter">validateDbParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEntryLimitationParameters">validateEntryLimitationParameters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEntryParameter">validateEntryParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEventTypeParameter">validateEventTypeParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateMaxPrecisionParameter">validateMaxPrecisionParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateNameParameter">validateNameParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateNewValueParameter">validateNewValueParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validatePriorityParameter">validatePriorityParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validatePushKeyParameter">validatePushKeyParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateRadiusParameter">validateRadiusParameter</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation-validators">validation/validators</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validators/basic.validation.js~GofBasicValidation.html">GofBasicValidation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validators/coordinates.validation.js~GofCoordinatesValidation.html">GofCoordinatesValidation</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/gof-db-listeners.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/** 
+ * geo on fire database listeners class
+ */
+export class GofDbListeners {
+
+  constructor() { }
+
+  /**
+   * Attaches the database listeners based on the event type.
+   * The firebase event &quot;child_moved&quot; gets not supported.
+   *
+   * @param {string} type The event type: &quot;value&quot;, &quot;child_added&quot;, &quot;child_changed&quot;, &quot;child_removed&quot;.
+   * @param {Object} dbRef The dbRef object containing the entries and locations path.
+   * @param {Array.&lt;string&gt;} geohashes The geohashes based on the active query.
+   * @param {Object} event The query event object.
+   * @return {Array.&lt;Object&gt;} An array containing the listeners reference.
+   */
+  static attachDbListeners(type, dbRef, geohashes, event) {
+    let listeners = [];
+
+    if (type === &quot;value&quot;) {
+      listeners = this.onValue(dbRef, geohashes, event);
+    } else if (type === &quot;child_added&quot;) {
+      listeners = this.onChildAdded(dbRef, geohashes, event);
+    } else if (type === &quot;child_changed&quot;) {
+      listeners = this.onChildChanged(dbRef, geohashes, event);
+    } else if (type === &quot;child_removed&quot;) {
+      listeners = this.onChildRemoved(dbRef, geohashes, event);
+    }
+
+    return listeners;
+  }
+
+  /**
+   * Fires the geo query event based on firebase&apos;s &quot;value&quot; event.
+   * Returns an array with all the listeners. (needed to use .off() later on)
+   *
+   * @param {Object} dbRef The dbRef object containing the entries and locations path.
+   * @param {Array.&lt;string&gt;} geohashes The geohashes based on the active query.
+   * @param {Object} event The query event object.
+   * @return {Array.&lt;Object&gt;} An array containing the reference of all &quot;value&quot; listeners.
+   */
+  static onValue(dbRef, geohashes, event) {
+    const listeners = [];
+
+    geohashes.forEach(geohash =&gt; {
+      dbRef.geohashes.child(geohash).on(&quot;value&quot;, (data) =&gt; {
+        window.dispatchEvent(event);
+      });
+
+      const ref = dbRef.geohashes.child(geohash);
+      listeners.push(ref);
+    });
+
+    return listeners;
+  }
+
+  /**
+   * Fires the geo query event based on firebase&apos;s &quot;child_added&quot; event.
+   * Returns an array with all the listeners. (needed to use .off() later on)
+   *
+   * @param {Object} dbRef The dbRef object containing the entries and locations path.
+   * @param {Array.&lt;string&gt;} geohashes The geohashes based on the active query.
+   * @param {Object} event The query event object.
+   * @return {Array.&lt;Object&gt;} An array containing the reference of all &quot;value&quot; listeners.
+   */
+  static onChildAdded(dbRef, geohashes, event) {
+    const listeners = [];
+      
+    geohashes.forEach(geohash =&gt; {
+      dbRef.geohashes.child(geohash).on(&quot;child_added&quot;, (data) =&gt; {
+        window.dispatchEvent(event);
+      })
+
+      const ref = dbRef.geohashes.child(geohash);
+      listeners.push(ref);
+    });
+
+    return listeners;
+  }
+
+  /**
+   * Fires the geo query event based on firebase&apos;s &quot;child_changed&quot; event.
+   * Returns an array with all the listeners. (needed to use .off() later on)
+   *
+   * @param {Object} dbRef The dbRef object containing the entries and locations path.
+   * @param {Array.&lt;string&gt;} geohashes The geohashes based on the active query.
+   * @param {Object} event The query event object.
+   * @return {Array.&lt;Object&gt;} An array containing the reference of all &quot;value&quot; listeners.
+   */
+  static onChildChanged(dbRef, geohashes, event) {
+    const listeners = []; 
+
+    geohashes.forEach(geohash =&gt; {
+      dbRef.geohashes.child(geohash).on(&quot;child_changed&quot;, (data) =&gt; {
+        window.dispatchEvent(event);
+      });
+
+      const ref = dbRef.geohashes.child(geohash);
+      listeners.push(ref);
+    });
+      
+    return listeners;
+  }
+
+  /**
+   * Fires the geo query event based on firebase&apos;s &quot;child_removed&quot; event.
+   * Returns an array with all the listeners. (needed to use .off() later on)
+   *
+   * @param {Object} dbRef The dbRef object containing the entries and locations path.
+   * @param {Array.&lt;string&gt;} geohashes The geohashes based on the active query.
+   * @param {Object} event The query event object.
+   * @return {Array.&lt;Object&gt;} An array containing the reference of all &quot;value&quot; listeners.
+   */
+  static onChildRemoved(dbRef, geohashes, event) {
+    const listeners = []; 
+      
+    geohashes.forEach(geohash =&gt; {
+      dbRef.geohashes.child(geohash).on(&quot;child_removed&quot;, (data) =&gt; {
+        window.dispatchEvent(event);
+      });
+
+      const ref = dbRef.geohashes.child(geohash);
+      listeners.push(ref);
+    });
+      
+    return listeners;  
+  }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

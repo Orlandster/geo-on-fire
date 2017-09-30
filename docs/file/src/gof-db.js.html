@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/gof-db.js | firebase-nearby</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-db-listeners.js~GofDbListeners.html">GofDbListeners</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-db.js~GofDb.html">GofDb</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-utils.js~GofUtils.html">GofUtils</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof.js~Gof.html">Gof</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation">validation</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validation.js~GofValidation.html">GofValidation</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation-parameters">validation/parameters</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateBoundariesParameter">validateBoundariesParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateCenterParameter">validateCenterParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateDbParameter">validateDbParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEntryLimitationParameters">validateEntryLimitationParameters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEntryParameter">validateEntryParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEventTypeParameter">validateEventTypeParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateMaxPrecisionParameter">validateMaxPrecisionParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateNameParameter">validateNameParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateNewValueParameter">validateNewValueParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validatePriorityParameter">validatePriorityParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validatePushKeyParameter">validatePushKeyParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateRadiusParameter">validateRadiusParameter</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation-validators">validation/validators</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validators/basic.validation.js~GofBasicValidation.html">GofBasicValidation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validators/coordinates.validation.js~GofCoordinatesValidation.html">GofCoordinatesValidation</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/gof-db.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { GofUtils } from &quot;./gof-utils&quot;;
+
+/** 
+ * geo on fire database class
+ */
+export class GofDb {
+  /**
+   * 
+   * @param {string} name Name for the Gof query.
+   * @param {Firebase} db The Firebase database reference - database().ref().
+   */
+  constructor(name, db) {
+    const validName = name.replace(&quot; &quot;, &quot;-&quot;).toLowerCase();
+
+    this._refs = {
+      entries: db.child(`${validName}`),
+      geohashes: db.child(`${validName}-geo`),
+    }
+
+    // pass reference for the utils
+    this._utils = GofUtils;
+  }
+
+  /**
+   * Pushes a new entry to the database.
+   *
+   * @param {Object} entry The new entry object.
+   * @return {Promise.&lt;Object&gt;} A promise which is fulfilled once the entry was created.
+   */
+  pushEntry(entry) {
+    return this._refs.entries.push(entry);
+  }
+
+  /**
+   * Gets the Geohash based on the locations coordinates.
+   *
+   * @param {string} pushKey The firebase push-key of the entry.
+   * @param {Object} entry The entry to create.
+   * @param {Array.&lt;string&gt;} geohashes The geohashes which the entry belongs to.
+   * @return {Promise} A promise which is fulfilled once all the locations are set.
+   */
+  setGeohashLocations(pushKey, entry, geohashes) {        
+    return Promise.all(this.getLocationNodesToAdd(pushKey, entry, geohashes));
+  }
+    
+  /**
+   * Fetchs all the entries based on the provided entry push keys
+   *
+   * @param {Array.&lt;string&gt;} pushKeys The push-keys of all the provided locations.
+   * @param {number} startAt The entry to start at.
+   * @param {number} endAt The etnry to end at.
+   * @return {Promise.&lt;Object&gt;} A promise which is fulfilled once the locations are fetched.
+   */
+  fetchLocations(pushKeys, startAt, endAt) {
+    const fetchedDataPromises = [];
+
+    for (let i = startAt - 1; endAt &gt; i; i++) {
+      fetchedDataPromises.push(
+        this._refs.entries.child(`${pushKeys[i]}`).once(&quot;value&quot;)
+      );
+    }
+
+    return Promise.all(fetchedDataPromises);
+  }
+
+  /**
+   * Returns all the locations based on the given geohashes.
+   *
+   * @param {Array.&lt;string&gt;} geohashes The given geohashes.
+   * @return {Promise.&lt;Object&gt;} A promise which is fulfilled once the locations return.
+   */
+  getLocationsFromGeohashes(geohashes) {
+    const locations = [];
+
+    for (let i = 0; i &lt; geohashes.length; i++) {
+      locations.push(
+        this._refs.geohashes.child(`${geohashes[i]}`).once(&quot;value&quot;)
+      );
+    }
+
+    return Promise.all(locations)
+      .catch(() =&gt; {
+        throw new Error(&quot;Unable to get the entries.&quot;);
+      });
+  }
+
+  /**
+   * Updates all the entry and the accroding locations based on the new value.
+   * It also removes old and adds new locations, 
+   * based on the difference between the old and new geohashes.
+   * This guarantees that the right event listeners will be triggered.
+   * 
+   *
+   * @param {string} pushKey The firebase push-key of the entry
+   * @param {Object} newValue The value of the new entry
+   * @param {number} priority The priority of the entry.
+   * @return {Promise} A promise which is fulfilled once the entry and the locations are updated.
+   */
+  updateEntry(pushKey, newValue, priority) {
+    const newValueWithPrecisions = this._utils.setPrecisionsForEntry(priority, newValue);
+    const newGeohash = this._utils.getGeohashByLocation(newValue.location, 
+      newValueWithPrecisions.maxPrecision);
+    const newGeohashPrecisions = this._utils.getGeohashPrecisions(newGeohash, 
+      newValueWithPrecisions.minPrecision, newValueWithPrecisions.maxPrecision);
+
+    return this._refs.entries.child(`${pushKey}`).once(&quot;value&quot;)
+      .then(entry =&gt; {
+        const entryValue = entry.val();
+        const currentGeohash = this._utils.getGeohashByLocation(entryValue.location, 
+          entryValue.maxPrecision);
+        const currentGeohashPrecisions = this._utils.getGeohashPrecisions(currentGeohash, 
+          entryValue.minPrecision, entryValue.maxPrecision);
+
+        // if location changed update also the location nodes
+        const promiseQueue = [];
+        const geohashesByAction = this._utils.getGeohashActions(currentGeohashPrecisions, newGeohashPrecisions);
+
+        // add nodes to add in queue
+        promiseQueue.concat(this.getLocationNodesToAdd(pushKey, newValue.location, geohashesByAction.add));
+          
+        // add nodes to update in queue - gets executed even if location is the same as bevor (just to trigger the event)
+        promiseQueue.concat(this.getLocationNodesToUpdate(pushKey, newValue.location, geohashesByAction.update));
+
+        // add nodes to delete in queue
+        promiseQueue.concat(this.getLocationNodesToDelete(pushKey, geohashesByAction.delete));
+
+        // finally also update the entry itslef
+        promiseQueue.push(this._refs.entries.child(`${pushKey}`).update(newValue));
+
+        return Promise.all(promiseQueue);
+      })
+      .catch(() =&gt; {
+        throw new Error(`
+          Unable to update the entry, Make sure the entry with &quot;${pushKey}&quot; exists
+        `);
+      });
+  }
+
+  /**
+   * Deletes an existing entry and all the according locations.
+   *
+   * @param {string} pushKey The firebase push-key of the entry.
+   * @return {Promise} A promise which is fulfilled once the entry and the locations are deleted.
+   */
+  deleteEntry(pushKey) {
+    return this._refs.entries.child(`${pushKey}`).once(&quot;value&quot;)
+      .then(entry =&gt; {
+        const entryValue = entry.val();
+        const geohash = this._utils.getGeohashByLocation(entryValue.location, 
+          entryValue.maxPrecision);
+        const geohashPrecisions = this._utils.getGeohashPrecisions(geohash, 
+          entryValue.minPrecision, entryValue.maxPrecision);
+        const deleteQueue = this.getLocationNodesToDelete(entry.key, geohashPrecisions);
+            
+        // adds the entry itself to the delete queue
+
+        deleteQueue.push(this._refs.entries.child(`${entry.key}`).remove());
+
+        return Promise.all(deleteQueue);
+      })
+      .catch(() =&gt; {
+        throw new Error(`
+          Unable to delete the entry, Make sure the entry with &quot;${pushKey}&quot; exists
+        `);
+      });
+  }
+
+
+  /**
+   * Returns all the nodes to add based on the entries geohashes.
+   *
+   * @param {string} pushKey The firebase push-key of the entry.
+   * @param {Object} value The value of the location.
+   * @param {Array.&lt;string&gt;} geohashes The geohash precisions which the entry belongs to.
+   * @return {Array.&lt;Promise&gt;} An array of promises which get fullifilled once the location gets added.
+   */
+  getLocationNodesToAdd(pushKey, value, geohashes) {
+    const addQueue = [];
+
+    // adding all the existing locations to the add queue
+    for (let i = 0; geohashes.length &gt; i; i++) {
+      addQueue.push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).set(value));
+    }
+
+    return addQueue;
+  }
+
+  /**
+   * Returns all the nodes to update based on the entries geohashes.
+   *
+   * @param {string} pushKey The firebase push-key of the entry.
+   * @param {Object} newValue The new value of the location.
+   * @param {Array.&lt;string&gt;} geohashes The geohash precisions which the entry belongs to.
+   * @return {Array.&lt;Promise&gt;} An array of promises which get fullifilled once the location gets updated.
+   */
+  getLocationNodesToUpdate(pushKey, newValue, geohashes) {
+    const updateQueue = [];
+
+    // adding all the existing locations to the update queue
+    for (let i = 0; geohashes.length &gt; i; i++) {
+      updateQueue
+        .push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).update(newValue));
+    }
+
+    return updateQueue;
+  }
+  
+  /**
+   * Returns all the nodes to delete based on the entries geohashes.
+   *
+   * @param {string} pushKey The firebase push-key of the entry.
+   * @param {Array.&lt;string&gt;} geohashes The geohash precisions which the entry belongs to.
+   * @return {Array.&lt;Promise&gt;} An array of promises which gets fullifilled once the location was deleted.
+   */
+  getLocationNodesToDelete(pushKey, geohashes) {
+    const deleteQueue = [];
+
+    // adding all the existing locations to the delete queue
+    for (let i = 0; geohashes.length &gt; i; i++) {
+      deleteQueue
+        .push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).remove());
+    }
+
+    return deleteQueue;
+  }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

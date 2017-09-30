@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/gof-utils.js | firebase-nearby</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-db-listeners.js~GofDbListeners.html">GofDbListeners</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-db.js~GofDb.html">GofDb</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-utils.js~GofUtils.html">GofUtils</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof.js~Gof.html">Gof</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation">validation</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validation.js~GofValidation.html">GofValidation</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation-parameters">validation/parameters</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateBoundariesParameter">validateBoundariesParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateCenterParameter">validateCenterParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateDbParameter">validateDbParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEntryLimitationParameters">validateEntryLimitationParameters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEntryParameter">validateEntryParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEventTypeParameter">validateEventTypeParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateMaxPrecisionParameter">validateMaxPrecisionParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateNameParameter">validateNameParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateNewValueParameter">validateNewValueParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validatePriorityParameter">validatePriorityParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validatePushKeyParameter">validatePushKeyParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateRadiusParameter">validateRadiusParameter</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation-validators">validation/validators</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validators/basic.validation.js~GofBasicValidation.html">GofBasicValidation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validators/coordinates.validation.js~GofCoordinatesValidation.html">GofCoordinatesValidation</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/gof-utils.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import ngeohash from &apos;ngeohash&apos;;
+
+/** 
+ * geo on fire utils
+ */
+export class GofUtils {
+
+  constructor() {}
+
+  /**
+   * Returns a geohash based on the provided location and the precision.
+   * e.g. &quot;abcdef&quot; would be a precision of 6 (number of characters)
+   *
+   * @param {Object} location The location object with the coordinates. (lat/lng)
+   * @param {string} precision The precision for the returning geohash.
+   * @return {string} The calculated geohash string.
+   */
+  static getGeohashByLocation(location, precision) {
+    return ngeohash.encode(location.lat, location.lng, precision);
+  }
+
+  /**
+   * Returns the Geohash precisions based on the min and max precision.
+   * e.g. min = 5 and max = 7 would return [&quot;abcdefg&quot;, &quot;abcdef&quot;, &quot;abcde&quot;]
+   *
+   * @param {string} geohash The geohash string with the maximum length.
+   * @param {number} minPrecision The minimal precision for the geohash.
+   * @param {number} maxPrecision The maximum precision for the geohash.
+   * @return {Array.&lt;string&gt;} The geohash precisions.
+   */
+  static getGeohashPrecisions(geohash, minPrecision, maxPrecision) {
+    const geohashes = [];
+
+    for (let i = 0; maxPrecision - minPrecision &gt;= i; i++) {
+      geohashes.push(geohash.substring(0, geohash.length - i));
+    }
+
+    return geohashes;
+  }
+
+  /**
+   * Sets the geohash precisions of an entry.
+   *
+   * @param {number} priority The priority of the new entry.
+   * @param {Object} entry The entry object to set the precisions for.
+   * @return {Object} The entry with the precisions set.
+   */
+  static setPrecisionsForEntry(priority, entry) {
+    const entryWithPrecisions = entry;
+
+    entryWithPrecisions.minPrecision = priority;
+    entryWithPrecisions.maxPrecision = 9; // default precision should not be changed
+
+    return entryWithPrecisions;
+  }
+
+  /**
+   * Returns the geohash add, update and delete actions based on existing and new geohashes.
+   * This function guarantes that the event listeners get triggered correctly.
+   * 
+   * e.g. currentGeohashes = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;] and newGeohashes = [&quot;b&quot;, &quot;c&quot;, &quot;d&quot;] would return
+   * add: [&quot;d&quot;], update: [&quot;b&quot;, &quot;c&quot;], delete: [&quot;a&quot;]
+   * 
+   * @param {Array.&lt;string&gt;} currentGeohashes The geohashes based on the current location.
+   * @param {Array.&lt;string&gt;} newGeohashes The geohashes based on the new location.
+   * @return {Object} An object containing the geohashes for the add, update and delete action.
+   */
+  static getGeohashActions(currentGeohashes, newGeohashes) {
+    const geohashesByAction = {};
+
+    geohashesByAction.add = newGeohashes.filter(x =&gt; currentGeohashes.indexOf(x) &lt; 0);
+    geohashesByAction.delete = currentGeohashes.filter(x =&gt; newGeohashes.indexOf(x) &lt; 0);
+    geohashesByAction.update = currentGeohashes.filter(x =&gt; geohashesByAction.add.concat(geohashesByAction.delete).indexOf(x) &lt; 0);
+
+    return geohashesByAction;
+  }
+
+  /**
+   * Returns all the visible Geohashes within the given Boundaries (also overlapping geohashes)
+   * The geohash length will be calculated from the given precision.
+   * 
+   * This function works as a preselection for the entries 
+   * and protects tons of them from running through an unnecessary query.
+   *
+   * @param {Object} boundaries The boundaries object which builds the rectangle query borders.
+   * @param {number} precision The precision of the geohashes to return.
+   * @return {Array.&lt;string&gt;} An array containing all the geohashes within the prvided boundaries.
+   */
+  static getGeohashesInBoundaries(boundaries, precision) {
+    return ngeohash.bboxes(boundaries.sw.lat, boundaries.sw.lng, 
+      boundaries.ne.lat, boundaries.ne.lng, precision);
+  }
+
+  /**
+   * Returns all the keys of locations which are inside the provided boundaries
+   * This is the one and onliest query which will be executed for the boundary search.
+   *
+   * @param {Array.&lt;Promise&gt;} geohashNode The database nodes based on the geohashes within the boundaries.
+   * @param {Object} boundaries The boundaries object which builds the rectangle query borders.
+   * @return {Promise} A promise which gets fullifilled when all the locations are returned.
+   */
+  static getLocationsInBoundaries(geohashNode, boundaries) {
+    const promises = [];
+
+    geohashNode.map(locations =&gt; {
+      // check if locations node exists
+      if (locations.val()) {
+        locations.forEach(location =&gt; {
+          // check if single location is within boundaries
+          if (this.isInBoundaries(location.val(), boundaries)) {
+            promises.push(new Promise((resolve, reject) =&gt; {
+              resolve(location.key);
+            }));
+          }
+        });
+      }
+    });
+
+    return Promise.all(promises);
+  }
+
+  /**
+   * Checks if the given location is within the boundaries.
+   * This needs to be done, since there are also overalpping locations, 
+   * which are outside of the boundaries.
+   * 
+   * @param {Object} location The the location to check.
+   * @param {Object} boundaries The boundaries to compare with.
+   * @return {boolean} Says if the location is in or outside of the provided boundaries
+   */
+  static isInBoundaries(location, boundaries) {
+    let isInBoundaries = false;
+    
+    if (boundaries.sw.lat &lt;= location.lat &amp;&amp; boundaries.sw.lng &lt;= location.lng 
+        &amp;&amp; boundaries.ne.lat &gt;= location.lat &amp;&amp; boundaries.ne.lng &gt;= location.lng) {  
+      isInBoundaries = true;
+    }
+
+    return isInBoundaries;
+  }
+
+  /**
+   * Returns the boundaries from the provided radius based on the center&apos;s location.
+   * Basically the function converts the circle(from radius)into a rectangle.
+   * This brings a huge performance gain, since the values can get preselected.
+   * 
+   * @param {Object} center Location object which represents the center of the given radius.
+   * @param {number} radius The query radius in kilometers.
+   * @return {Object} The boundaries based on the given radius circle.
+   */
+  static getBoundariesFromRadius(center, radius) {
+    // one degree in kilometers for latitude - without Earth&apos;s polar flattening
+    const LatOneDeg = 110.54;
+    
+    // kilometeres
+    const LngOneDeg = 111.320;
+    const boundaries = { sw: {}, ne: {} };
+
+    boundaries.sw.lat = center.lat - (1 / LatOneDeg) * radius;
+    boundaries.sw.lng = 
+      center.lng - (1 / (LngOneDeg * Math.cos(this.degreesToRadians(center.lat)))) * radius;
+    boundaries.ne.lat = center.lat + (1 / LatOneDeg) * radius;
+    boundaries.ne.lng = 
+      center.lng + (1 / (LngOneDeg * Math.cos(this.degreesToRadians(center.lat)))) * radius;
+    
+    return boundaries;
+  }
+
+  /**
+   * Returns all the keys of locations which are inside the provided radius
+   * This is the one and onliest query which will be executed for the boundary search.
+   *
+   * @param {Array.&lt;Promise&gt;} geohashNode The db nodes based on the geohashes within the radius.
+   * @param {Object} center Location object which represents the center of the given radius.
+   * @param {number} radius The query radius in kilometers.
+   * @return {Promise} A promise which gets fullifilled when all the locations are returned.
+   */
+  static getLocationsInRadius(geohashNode, center, radius) {
+    const promises = [];
+
+    geohashNode.map(locations =&gt; {
+      // check if locations node exists
+      if (locations.val()) {
+        locations.forEach(location =&gt; {
+          // check if single location is within radius
+          if (this.isInRadius(location.val(), center, radius)) {
+            promises.push(new Promise((resolve, reject) =&gt; {
+              resolve(location.key);
+            }));
+          }
+        });
+      }
+    });
+
+    return Promise.all(promises);
+  }
+
+  /**
+   * Checks if the given location is within the provided radius.
+   * This needs to be done, since there are also overalpping locations,
+   * which our outside of the radius.
+   * 
+   * @param {Object} location The the location to check.
+   * @param {Object} center Location object which represents the center of the given radius.
+   * @param {number} radius The query radius in kilometers.
+   * @return {boolean} Says if location is in or outside of the radius.
+   */
+  static isInRadius(location, center, radius) {
+    let isInRadius = false;
+    
+    if (this.distBtwLocations(location, center) &lt;= radius) {
+      isInRadius = true;
+    }
+
+    return isInRadius;
+  }
+
+  /**
+   * Calculates the distance between the provided location the given center.
+   * 
+   * @param {Object} location The the location to get the ditstance from.
+   * @param {Object} center Location object which represents the center of the given radius.
+   * @return {number} Says if location is in or outside of boundaries
+   */
+  static distBtwLocations(location, center) {
+    const radlatCenter = Math.PI * center.lat / 180;
+    const radlatLocation = Math.PI * location.lat / 180;
+    const theta = center.lng - location.lng;
+    const radtheta = Math.PI * theta / 180;
+    let distance = Math.sin(radlatCenter) * Math.sin(radlatLocation) + 
+      Math.cos(radlatCenter) * Math.cos(radlatLocation) * Math.cos(radtheta);
+
+    distance = Math.acos(distance);
+    distance = distance * 180 / Math.PI;
+    distance = distance * 60 * 1.1515;
+    distance = distance * 1.609344;
+
+    return distance;
+  }
+
+  /**
+   * Calculates the geohash precisions based on the distance between the boundaries.
+   * to be optimized...
+   * 
+   * @param {Object} boundaries The boundaries to calculate the precisions from.
+   * @return {number} The calculated precison to work with.
+   */
+  static caluclatePrecisionFromBoundaries(boundaries) {
+    let precision;
+    const distBtwBoundaries = this.distBtwLocations(
+      { 
+        lat: boundaries.sw.lat, 
+        lng: boundaries.sw.lng,
+      }, 
+      { 
+        lat: boundaries.ne.lat, 
+        lng: boundaries.ne.lng,
+      }
+    );
+    
+    if (distBtwBoundaries &lt; 0.02) {
+      precision = 9;
+    } else if (distBtwBoundaries &lt; 0.1) {
+      precision = 8;
+    }  else if (distBtwBoundaries &lt; 0.7) {
+      precision = 7;
+    }  else if (distBtwBoundaries &lt; 4) {
+      precision = 6;
+    } else if (distBtwBoundaries &lt; 25) {
+      precision = 5;
+    } else if (distBtwBoundaries &lt; 150) {
+      precision = 4;
+    } else if (distBtwBoundaries &lt; 800) {
+      precision = 3;
+    } else if (distBtwBoundaries &lt;  4000) {
+      precision = 2;
+    } else {
+      precision = 1;
+    }
+
+    return precision;
+  }
+
+  /**
+   * Converts degrees to radians.
+   * 
+   * @param {number} degrees The string with the number of degrees to convert.
+   * @return {number} The converted radians.
+   */
+  static degreesToRadians(degrees) {
+    return degrees * Math.PI / 180;
+  }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

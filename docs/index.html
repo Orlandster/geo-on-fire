@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">Home | firebase-nearby</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-db-listeners.js~GofDbListeners.html">GofDbListeners</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-db.js~GofDb.html">GofDb</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-utils.js~GofUtils.html">GofUtils</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof.js~Gof.html">Gof</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation">validation</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validation.js~GofValidation.html">GofValidation</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation-parameters">validation/parameters</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateBoundariesParameter">validateBoundariesParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateCenterParameter">validateCenterParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateDbParameter">validateDbParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEntryLimitationParameters">validateEntryLimitationParameters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEntryParameter">validateEntryParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEventTypeParameter">validateEventTypeParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateMaxPrecisionParameter">validateMaxPrecisionParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateNameParameter">validateNameParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateNewValueParameter">validateNewValueParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validatePriorityParameter">validatePriorityParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validatePushKeyParameter">validatePushKeyParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateRadiusParameter">validateRadiusParameter</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation-validators">validation/validators</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validators/basic.validation.js~GofBasicValidation.html">GofBasicValidation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validators/coordinates.validation.js~GofCoordinatesValidation.html">GofCoordinatesValidation</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="es6-library-starter">ES6 library starter</h1><p><a href="https://www.npmjs.org/package/es6-library-minimal"><img src="http://img.shields.io/npm/v/es6-library-minimal.svg" alt="Version"></a>
+<a href="https://travis-ci.org/liady/es6-library-minimal"><img src="https://travis-ci.org/liady/es6-library-minimal.svg?branch=master" alt="Build Status"></a>
+<a href="https://github.com/airbnb/javascript"><img src="https://img.shields.io/badge/code%20style-airbnb-blue.svg?style=flat" alt="Code style: airbnb"></a></p>
+<blockquote>
+<p>A boilerplate for a universal (Node, web, UMD) ES6 library.</p>
+</blockquote>
+<h2 id="quick-usage">Quick usage</h2><ol>
+<li>Clone this repo.</li>
+<li>Change all relevant entries in <code>package.json</code> and <code>README.md</code>, so they match your new shiny library.</li>
+<li>Run <code>npm install</code> to install dev dependencies.</li>
+<li>Write your ES6 code in <code>src</code> folder.</li>
+<li>Write your ES6 tests in <code>test</code> folder.</li>
+<li>Run <code>npm run build</code> to build for node. This will compile to ES5, minify, and output the result to <code>lib</code> folder.</li>
+<li>Run <code>npm run build-web</code> to build and pack the files for the web. This will output the result to <code>dist</code> folder.</li>
+<li>Run <code>npm publish</code> to pulish to the world.</li>
+</ol>
+<p>(Or, if you don&apos;t need Webpack bundling, you can use the <a href="https://github.com/liady/es6-lib-starter-light">even lighter ES6 starter</a>).</p>
+<h2 id="detailed-overview">Detailed overview</h2><h3 id="installation">Installation</h3><p>After cloning this repository, make sure to change all the relevant entries in <code>package.json</code> so they match your library.</p>
+<pre><code class="lang-sh"><code class="source-code prettyprint">npm install</code>
+</code></pre>
+<h3 id="build-for-npm">Build for npm</h3><pre><code class="lang-sh"><code class="source-code prettyprint">npm run build</code>
+</code></pre>
+<p>This will:</p>
+<ol>
+<li>Run Webpack starting from the entry point file (<code>src/library.js</code>, can be configured)</li>
+<li>Convert all files in <code>src</code> folder from ES6 to ES5</li>
+<li>According to the <code>bundle-node</code> flag in <code>package.json</code>, it will either:<ol>
+<li>Leave them as separate files, or -</li>
+<li>Minify and bundle them using Webpack, <strong>without their</strong> <code>node_modules</code> <strong>dependencies</strong></li>
+</ol>
+</li>
+<li>Output the result to the <code>lib</code> folder</li>
+</ol>
+<h3 id="build-for-web">Build for web</h3><pre><code class="lang-sh"><code class="source-code prettyprint">npm run build-web</code>
+</code></pre>
+<p>This will:</p>
+<ol>
+<li>Run Webpack starting from the entry point file (<code>src/library.js</code>, can be configured)</li>
+<li>Convert all files from ES6 to ES5</li>
+<li>Minify them, <strong>including all of their module dependencies</strong>, as a UMD module (so the file will be self-contained)</li>
+<li>Output the file to the <code>dist</code> folder</li>
+</ol>
+<h3 id="test">Test</h3><pre><code class="lang-sh"><code class="source-code prettyprint">npm run test</code>
+</code></pre>
+<h3 id="configuration">Configuration</h3><p>In <code>package.json</code>, change all the relevant entries so they match your library.<br>
+Under the section <code>library</code>, you can configure:</p>
+<ol>
+<li>Library name (defaults to <code>&quot;Library&quot;</code>)</li>
+<li>Webpack entry point (defaults to <code>library.js</code>)</li>
+<li>Dist folder for Node (defaults to <code>lib</code>)</li>
+<li>Dist folder for Web (defaults to <code>dist</code>)</li>
+<li>Choose whether to bundle for Node (defaults to <code>true</code>)</li>
+</ol>
+<h2 id="license">License</h2><p>MIT</p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/validation/validation.js | firebase-nearby</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-db-listeners.js~GofDbListeners.html">GofDbListeners</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-db.js~GofDb.html">GofDb</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof-utils.js~GofUtils.html">GofUtils</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/gof.js~Gof.html">Gof</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation">validation</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validation.js~GofValidation.html">GofValidation</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation-parameters">validation/parameters</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateBoundariesParameter">validateBoundariesParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateCenterParameter">validateCenterParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateDbParameter">validateDbParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEntryLimitationParameters">validateEntryLimitationParameters</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEntryParameter">validateEntryParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateEventTypeParameter">validateEventTypeParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateMaxPrecisionParameter">validateMaxPrecisionParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateNameParameter">validateNameParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateNewValueParameter">validateNewValueParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validatePriorityParameter">validatePriorityParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validatePushKeyParameter">validatePushKeyParameter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateRadiusParameter">validateRadiusParameter</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#validation-validators">validation/validators</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validators/basic.validation.js~GofBasicValidation.html">GofBasicValidation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/validation/validators/coordinates.validation.js~GofCoordinatesValidation.html">GofCoordinatesValidation</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/validation/validation.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { validateDbParameter } from &quot;./parameters/db.parameter&quot;;
+import { validateCenterParameter } from &quot;./parameters/center.parameter&quot;;
+import { validateRadiusParameter } from &quot;./parameters/radius.parameter&quot;;
+import { validateEntryLimitationParameters } from &quot;./parameters/entry-limitation.parameters&quot;;
+import { validateBoundariesParameter } from &quot;./parameters/boundaries.parameter&quot;;
+import { validateEntryParameter } from &quot;./parameters/entry.parameter&quot;;
+import { validatePriorityParameter } from &quot;./parameters/priority.parameter&quot;;
+import { validateMaxPrecisionParameter } from &quot;./parameters/max-precision.parameter&quot;;
+import { validateNameParameter } from &quot;./parameters/name.parameter&quot;;
+import { validatePushKeyParameter } from &quot;./parameters/push-key.parameter&quot;;
+import { validateNewValueParameter } from &quot;./parameters/new-value.parameter&quot;;
+import { validateEventTypeParameter } from &quot;./parameters/event-type.parameter&quot;;
+
+/** 
+ * geo on fire validation
+ */
+export class GofValidation {
+
+  constructor() {}
+
+  /**
+   * Validates the parameters of the Gof class constructor.
+   *
+   * @param {string} name - name for the Gof query
+   * @param {Firebase} db - The Firebase database reference - database().ref()
+   * @param {string} fName The name of the executed function.
+   */
+  static validateConstructor(name, db, fName) {
+    validateNameParameter(name, fName);
+    validateDbParameter(db, fName);
+  }
+
+  /**
+   * Validates the parameters of the getLocationsByRadius Gof class member function.
+   *
+   * @param {Object} center Location object which represents the center of the given radius.
+   * @param {number} radius The query radius in kilometers.
+   * @param {number} startAt The entry to start at.
+   * @param {number} endAt The etnry to end at.
+   * @param {string} fName The name of the executed function.
+   */
+  static validateLocationsByRadius(center, radius, startAt, endAt, fName) {
+    validateCenterParameter(center, fName);
+    validateRadiusParameter(radius, fName);
+    validateEntryLimitationParameters(startAt, endAt, fName);
+  }
+
+  /**
+   * Validates the parameters of the getLocationsByBoundaries Gof class member function.
+   *
+   * @param {Object} boundaries Boundaries object which builds the rectangle query borders.
+   * @param {number} startAt The entry to start at.
+   * @param {number} endAt The etnry to end at.
+   * @param {string} fName The name of the executed function.
+   */
+  static validateLocationsByBoundaries(boundaries, startAt, endAt, fName) {
+    validateBoundariesParameter(boundaries, fName, &quot;boundaries&quot;);
+    validateEntryLimitationParameters(startAt, endAt, fName);
+  }
+
+  /**
+   * Validates the parameters of the createEntry Gof class member function.
+   *
+   * @param {Object} entry The new entry to create.
+   * @param {number} priority The priority of the new entry.
+   * @param {number} maxPrecision The maximum geohash precision.
+   * @param {string} fName The name of the executed function.
+   */
+  static validateCreateEntry(entry, priority, maxPrecision, fName) {
+    validateEntryParameter(entry, fName, &quot;entry.location&quot;);
+    validatePriorityParameter(priority, fName);
+    validateMaxPrecisionParameter(maxPrecision, fName);
+  }
+
+  /**
+   * Validates the parameters of the updateEntryLocation Gof class member function.
+   *
+   * @param {string} pushKey The firebase push-key of the entry to update.
+   * @param {Object} newValue The new value of the entry to update.
+   * @param {number} priority The priority of the entry to update.
+   * @param {string} fName The name of the executed function.
+   */
+  static validateUpdateEntryLocation(pushKey, newValue, priority, fName) {
+    validatePushKeyParameter(pushKey, fName);
+    validateNewValueParameter(newValue, fName, &quot;newValue.location&quot;);
+    validatePriorityParameter(priority, fName);
+  }
+
+  /**
+   * Validates the parameters of the deleteEntryLocation Gof class member function.
+   *
+   * @param {string} pushKey The firebase push-key of the entry to delete.
+   * @param {string} fName The name of the executed function.
+   */
+  static validateDeleteEntry(pushKey, fName) {
+    validatePushKeyParameter(pushKey, fName);
+  }
+
+  /**
+   * Validates the parameters of the .on() event listener.
+   *
+   * @param {string} type The event type: &quot;value&quot;, &quot;child_added&quot;, &quot;child_changed&quot;, &quot;child_removed&quot;.
+   * @param {string} fName The name of the executed function.
+   */
+  static validateOn(type, fName) {
+    validateEventTypeParameter(type, fName);
+  }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
