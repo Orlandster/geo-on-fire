@@ -3,7 +3,9 @@ jobs:
   build:
     working_directory: ~/tmp
     docker: 
-      - image: circleci/node:7
+      - image: circleci/node:7-browsers
+        environment:
+          CHROME_BIN: "/usr/bin/google-chrome"
     steps:
       - checkout
       - run: npm install
