@@ -35,10 +35,8 @@ module.exports = function getConfig(options) {
         umdNamedDefine: true
       }
     });
-  }
-
-  // for the backend
-  else if (isTest) {
+  } else if (isTest) {
+    // test build - needed to run test bundle in a headless browser
     config = {
       entry: ['babel-polyfill', path.join(__dirname, './test/main.spec.js')],
       module: {
@@ -57,7 +55,7 @@ module.exports = function getConfig(options) {
       },
     };
   }
-
+  // for the backend
   else {
     config = assign(getBaseConfig(isProd), {
       output: {
