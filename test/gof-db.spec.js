@@ -146,6 +146,36 @@ describe("Tests for class GofDb", () => {
         done();
       })
     });
+
+    it("just one entry should be returned", (done) => {
+      db.fetchLocations(
+        ["-KulmMZDIECtqeuuhWFi", "-Kulrx9UUYvhT5iSbVPE"], 1, 1
+      )
+      .then(entries => {
+        expect(entries.length).to.be.equal(1);
+        done();
+      });
+    });
+
+    it("all the entries should be returned", (done) => {
+      db.fetchLocations(
+        ["-KulmMZDIECtqeuuhWFi", "-Kulrx9UUYvhT5iSbVPE"], 1
+      )
+      .then(entries => {
+        expect(entries.length).to.be.equal(2);
+        done();
+      });
+    });
+
+    it("all the entries should be returned, but no undefined values", (done) => {
+      db.fetchLocations(
+        ["-KulmMZDIECtqeuuhWFi", "-Kulrx9UUYvhT5iSbVPE"], 1, 10
+      )
+      .then(entries => {
+        expect(entries.length).to.be.equal(2);
+        done();
+      });
+    });
   });
 
   describe("getLocationsFromGeohashes()", () => {
