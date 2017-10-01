@@ -7,8 +7,11 @@ import { GofBasicValidation } from "../validators/basic.validation"
  * @param {string} fName The name of the executed function.
  */
 export function validateEntryLimitationParameters(startAt, endAt, fName) {
-  // validate endAt first to make sure it contains a number
-  validateEndAt(endAt, fName, "endAt");
+  // undefined is a possible value
+  if (endAt) {
+    // validate endAt first to make sure it contains a number
+    validateEndAt(endAt, fName, "endAt");
+  }
   validateStartAt(startAt, endAt, fName, "startAt");
 }
 

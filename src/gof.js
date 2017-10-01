@@ -36,10 +36,10 @@ export default class Gof {
    * @param {Object} center Location object which represents the center of the given radius.
    * @param {number} radius The query radius in kilometers.
    * @param {number} [startAt=1] The entry to start at - e.g. start for pagination.
-   * @param {number} [endAt=50] The etnry to end at - e.g. end for pagination.
+   * @param {number} [endAt=undefined] The etnry to end at. Default returns all.
    * @return {function} The function itself to make .on() and .once() chains possible.
    */
-  getLocationsByRadius(center, radius, startAt = 1, endAt = 50) {
+  getLocationsByRadius(center, radius, startAt = 1, endAt = undefined) {
     GofValidation.validateLocationsByRadius(
       center, radius, startAt, endAt, "getLocationsByRadius()"
     );
@@ -65,10 +65,10 @@ export default class Gof {
    * 
    * @param {Object} boundaries Boundaries object which builds the rectangle query borders.
    * @param {number} [startAt=1] The entry to start at - e.g. start for pagination.
-   * @param {number} [endAt=50] The etnry to end at - e.g. end for pagination.
+   * @param {number} [endAt=undefined] The etnry to end at. Default returns all.
    * @return {function} The function itself to make .on() and .once() chains possible.
    */
-  getLocationsByBoundaries(boundaries, startAt = 1, endAt = 50) {
+  getLocationsByBoundaries(boundaries, startAt = 1, endAt = undefined) {
     GofValidation.validateLocationsByBoundaries(
       boundaries, startAt, endAt, "getLocationsByBoundaries()"
     );

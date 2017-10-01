@@ -54,10 +54,21 @@ export class GofDb {
   fetchLocations(pushKeys, startAt, endAt) {
     const fetchedDataPromises = [];
 
-    for (let i = startAt - 1; endAt > i; i++) {
-      fetchedDataPromises.push(
-        this._refs.entries.child(`${pushKeys[i]}`).once("value")
-      );
+    if (endAt) {
+      // if endat is bigger than the number of entries limitate it to the last entry,
+      const endAtLimitation = endAt > pushKeys.length ? pushKeys.length : endAt;
+
+      for (let i = startAt - 1; i < endAtLimitation; i++) {
+        fetchedDataPromises.push(
+          this._refs.entries.child(`${pushKeys[i]}`).once("value")
+        );
+      }
+    } else {
+      for (let i = startAt - 1; i < (pushKeys.length - (startAt - 1)); i++) {
+        fetchedDataPromises.push(
+          this._refs.entries.child(`${pushKeys[i]}`).once("value")
+        );
+      }
     }
 
     return Promise.all(fetchedDataPromises);
