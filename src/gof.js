@@ -143,7 +143,13 @@ export default class Gof {
      * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. 
      * Be aware the promise was modified and is able to stream data, similair to a callback.
      */
-    this.getLocationsByBoundaries.on = (type) => this.attachBoundsEvent(type);
+    this.getLocationsByBoundaries.on = (type) => this.attachQueryEvent(type, "bounds", () => {
+      this.getLocationsByBoundaries(
+        this._activeQuery.parameters.boundaries, 
+        this._activeQuery.parameters.startAt, 
+        this._activeQuery.parameters.endAt
+      );
+    });
 
 
     /**
@@ -153,7 +159,14 @@ export default class Gof {
      * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. 
      * Be aware the promise was modified and is able to stream data, similair to a callback.
      */
-    this.getLocationsByRadius.on = (type) => this.attachRadiusEvent(type);
+    this.getLocationsByRadius.on = (type) => this.attachQueryEvent(type, "radius", () => {
+      this.getLocationsByRadius(
+        this._activeQuery.parameters.center, 
+        this._activeQuery.parameters.radius,
+        this._activeQuery.parameters.startAt, 
+        this._activeQuery.parameters.endAt
+      );
+    });
 
     /**
      * Returns the query result for getLocationsByBoundaries once.
@@ -174,73 +187,33 @@ export default class Gof {
    * Attaches the event listener and returns the streamable promise.
    *
    * @param {string} type The event type: "value", "child_added", "child_changed", "child_removed".
-   * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. 
+   * @param {string} eventNmae The name of the event to create.
+   * @param {function} queryCb The callback to execute once an event fires.
+   * @return {Promise.<Object>} A promise which is fulfilled each time the event fires.
    * Be aware the promise was modified and is able to stream data, similair to a callback.
    */
-  attachBoundsEvent(type) {
+  attachQueryEvent(type, eventNmae, queryCb) {
     GofValidation.validateOn(type, "on()");
-    const event = new Event("bounds");
-    const callbackList = [];
+    const event = new Event(eventNmae);
+    let cb;
     const streamingPromise = {
       then: (fn) => {
-        callbackList.push(fn);
+        cb = fn;
         window.dispatchEvent(event);
       },
     };
     
     // attach the firebase db listeners to the event listener
     this._activeQuery.dbListeners = GofDbListeners.attachDbListeners(
-        type, this._db._refs, this._activeQuery.geohashes, event
-      );
-
-    // add the event listener
-    window.addEventListener("bounds", () => {
-      for (const cb of callbackList) {
-        this.getLocationsByBoundaries(this._activeQuery.parameters.boundaries, 
-          this._activeQuery.parameters.startAt, this._activeQuery.parameters.endAt);
-
-        // unwrap the values to make return value similair to .once()
-        this._activeQuery.entries.then(entries => cb(entries));
-      }
-    });
-
-    return streamingPromise;
-  }
-
-  /**
-   * Attaches the event listener and returns the streamable promise.
-   *
-   * @param {string} type The event type: "value", "child_added", "child_changed", "child_removed"
-   * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. 
-   * Be aware the promise was modified and is able to stream data, similair to a callback.
-   */
-  attachRadiusEvent(type) {
-    GofValidation.validateOn(type, "on()");
-    const event = new Event("radius");
-    const callbackList = [];
-    const streamingPromise = {
-      then: (fn) => {
-        callbackList.push(fn);
-        window.dispatchEvent(event);
-      },
-    };
-    
-    // attach the firebase db listeners to the event listener
-    this._activeQuery.dbListeners = GofDbListeners.attachDbListeners(
-      type, this._db._refs, this._activeQuery.geohashes, event
+      type, 
+      this._db._refs, 
+      this._activeQuery.geohashes, event
     );
 
     // add the event listener
-    window.addEventListener("radius", () => {
-      for (const cb of callbackList) {
-        this.getLocationsByRadius(
-          this._activeQuery.parameters.center, this._activeQuery.parameters.radius,
-          this._activeQuery.parameters.startAt, this._activeQuery.parameters.endAt
-        );
-
-        // unwrap the values to make return value similair to .once()
-        this._activeQuery.entries.then(entries => cb(entries));
-      }
+    window.addEventListener(eventNmae, () => {
+      queryCb();
+      this._activeQuery.entries.then(entries => cb(entries));
     });
 
     return streamingPromise;

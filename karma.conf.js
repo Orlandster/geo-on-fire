@@ -3,7 +3,7 @@ const fbServerMiddleware = require('./test/middleware/firebase-server.middleware
 module.exports = function (config) {
   config.set({
     frameworks: ['mocha', 'chai'],
-    files: ['./test/test.js'],
+    files: ['./test_dist/test.bundle.js'],
     reporters: ['progress'],
     port: 9876,
     colors: true,
