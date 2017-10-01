@@ -8,7 +8,13 @@ jobs:
           CHROME_BIN: "/usr/bin/google-chrome"
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
       - run: npm run test
       - run: npm run build-web
       
