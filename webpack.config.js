@@ -49,8 +49,8 @@ module.exports = function getConfig(options) {
         extensions: ['', '.js'],
       },
       output: {
-        path: path.join(__dirname, 'test'),
-        filename: 'test.js',
+        path: path.join(__dirname, 'test_dist'),
+        filename: 'test.bundle.js',
         libraryTarget: 'umd',
       },
     };
