@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/plugins/CSSPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/easing/EasePack.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenLite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/utils/Draggable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/range-slider.css" />
+
+    <script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+    <script src="../../dist/gof.min.js"></script>
+    <script src="js/script.js"></script>
+    
+    <link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+    <div class="content-wrapper">
+      <div class="phone-settings-wrapper">
+        <div class="phone">
+        	<div class="app">
+        			<div class="header">
+        				<span class="settings"></span>
+        				<img src="http://web.arjentienkamp.com/codepen/tinder/logo.jpg"/>
+        				<span class="chat"></span>
+        			</div>
+        			<div class="loader">
+        			   <div class="pulse"></div>
+        			  <div class="pulse-center">
+        			    <img src="https://vetstreet.brightspotcdn.com/dims4/default/cc1c07c/2147483647/crop/0x0%2B0%2B0/resize/180x180/quality/90/?url=https%3A%2F%2Fvetstreet-brightspot.s3.amazonaws.com%2F45%2Fa06040b3ac11e092fe0050568d634f%2Ffile%2Fhub-dogs-adult.jpg" alt="Beautiful Face">
+        			  </div>
+        			</div>
+        			<div class="content"></div>	
+        			<div class="footer">
+        				<div id="swipe_dislike" class="rate"></div>
+        				<div class="info"></div>
+        				<div id="swipe_like" class="rate"></div>
+        			</div>
+        	</div>	
+        </div>
+        <form oninput="output.value = Math.round(range.valueAsNumber / 1000)">
+          <h2>
+            Radius in kilometers
+          </h2>
+          <div class="range">
+            <input name="range" type="range" min="0" max="20000">
+            <div class="range-output">
+              <output class="output" name="output" for="range">
+                0
+              </output>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="js/range-slider.js"></script>
+  </body>
+</html>
