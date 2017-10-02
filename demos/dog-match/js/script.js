@@ -118,8 +118,7 @@ $(document).ready(function(event) {
 		$("div.content").prepend('<div class="photo" id="photo" style="background-image:url('+ queriedDogs[currentDog].image  +')">'
     	+ '<span class="meta">' 
     	+ '<p>'+ queriedDogs[currentDog].name +', '+ queriedDogs[currentDog].age +'</p>' 
-    	+ '<span class="moments">0</span>' 
-    	+ '<span class="users">0</span>' 
+    	+ '<p>'+ queriedDogs[currentDog].description +'</p>' 
     	+ '</span>' 
     	+ '</div>');
     	
