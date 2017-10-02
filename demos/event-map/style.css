@@ -1,0 +1,77 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.content {
+  width: 100%;
+}
+
+.content .filter {
+  width: calc(100% - 20px);
+  padding: 40px 10px;
+  float: left;
+}
+
+.content .filter #category, .content .filter #searchTextField {
+  height: 30px;
+}
+
+.content .filter #searchTextField {
+  font-size 17px;
+  padding-left: 10px;
+  width: 46%;
+  margin-right: 6%;
+  float: left;
+}
+
+.content .filter #category {
+  width: 46%;
+  float: left;
+}
+
+.content #events {
+  width: 100%;
+  float: left;
+}
+
+.content .events-wrapper {
+  width: 60%;
+  float: left;
+}
+
+.content #events div {
+  padding: 20px;
+  width: calc(50% - 40px);
+  float: left;
+}
+
+.content #events div li {
+  height: 300px;
+  width: 100%px;
+  overflow: hidden;
+  list-style-type: none;
+}
+
+.content #events div li img {
+  height: auto;
+  width: 100%px;
+}
+
+.content #events div h2 {
+  font-family: helvetica;
+  font-weight: 400;
+}
+
+.content .map-wrapper {
+  width: 40%;
+  position: fixed;
+  height: 100%;
+  right: 0;
+  top: 0;
+}
+
+.content .map-wrapper #map {
+  height: 100%;
+  width: 100%;
+}

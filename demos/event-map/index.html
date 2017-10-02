@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+    <script src="../../dist/gof.min.js"></script>
+    <script src="script.js"></script>
+  </head>
+
+  <body>
+    <div class="content">
+      <div class="events-wrapper">
+        <div class="filter">
+          <input id="searchTextField" type="text" size="50">
+          <select id="category">
+            <option value="all">all</option>
+            <option value="sports">sports</option>
+            <option value="technology">technology</option>
+            <option value="social">social</option>
+            <option value="food">food</option>
+          </select>
+        </div>
+        <div id="events"></div>
+      </div>
+      <div class="map-wrapper">
+        <div id="map"></div>
+      </div>
+    <script
+    src="https://maps.googleapis.com/maps/api/js?libraries=places">
+    </script>
+    </div>
+  </body>
+
+</html>
