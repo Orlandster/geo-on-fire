@@ -89,12 +89,12 @@ Here you can find some advanced concept to make the best out from gof.
 
 ## Documentation
  * [API Reference](https://orlandster1998.github.io/geo-on-fire/)
- * [Gof core principle (coming soon)](https://run.plnkr.co/plunks/xJgstAvXYcp0w7MbOOjm/)
+ * [Gof core principle (coming soon)]()
  
 ## Demo's
 Currently there are the two demo's available. These are just some basic implementations to give you an idea about how powerful gof is. They are far away from perfect.
  * [dog matching app (tinder clone - using radius query)](https://run.plnkr.co/plunks/AYaN8ABEDcMntgbJyLVW/)
- * [event map app (airbnb like map - using boundaries query)]()
+ * [event map app (airbnb like map - using boundaries query)](https://run.plnkr.co/plunks/xJgstAvXYcp0w7MbOOjm/)
 
 Is there any gof using project you want to share with the world? Simply create an issue with the url and I do the rest.
 
