@@ -24,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/Orlandster1998/geo-on-fire"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -109,10 +109,21 @@ export class GofDb {
   fetchLocations(pushKeys, startAt, endAt) {
     const fetchedDataPromises = [];
 
-    for (let i = startAt - 1; endAt &gt; i; i++) {
-      fetchedDataPromises.push(
-        this._refs.entries.child(`${pushKeys[i]}`).once(&quot;value&quot;)
-      );
+    if (endAt) {
+      // if endat is bigger than the number of entries limitate it to the last entry,
+      const endAtLimitation = endAt &gt; pushKeys.length ? pushKeys.length : endAt;
+
+      for (let i = startAt - 1; i &lt; endAtLimitation; i++) {
+        fetchedDataPromises.push(
+          this._refs.entries.child(`${pushKeys[i]}`).once(&quot;value&quot;)
+        );
+      }
+    } else {
+      for (let i = startAt - 1; i &lt; (pushKeys.length - (startAt - 1)); i++) {
+        fetchedDataPromises.push(
+          this._refs.entries.child(`${pushKeys[i]}`).once(&quot;value&quot;)
+        );
+      }
     }
 
     return Promise.all(fetchedDataPromises);
@@ -168,13 +179,19 @@ export class GofDb {
 
         // if location changed update also the location nodes
         const promiseQueue = [];
-        const geohashesByAction = this._utils.getGeohashActions(currentGeohashPrecisions, newGeohashPrecisions);
+        const geohashesByAction = this._utils.getGeohashActions(
+          currentGeohashPrecisions, newGeohashPrecisions
+        );
 
         // add nodes to add in queue
-        promiseQueue.concat(this.getLocationNodesToAdd(pushKey, newValue.location, geohashesByAction.add));
+        promiseQueue.concat(this.getLocationNodesToAdd(
+          pushKey, newValue.location, geohashesByAction.add)
+        );
           
-        // add nodes to update in queue - gets executed even if location is the same as bevor (just to trigger the event)
-        promiseQueue.concat(this.getLocationNodesToUpdate(pushKey, newValue.location, geohashesByAction.update));
+        // add nodes to update in queue - gets executed even if location is the same as bevor
+        promiseQueue.concat(this.getLocationNodesToUpdate(
+          pushKey, newValue.location, geohashesByAction.update)
+        );
 
         // add nodes to delete in queue
         promiseQueue.concat(this.getLocationNodesToDelete(pushKey, geohashesByAction.delete));
@@ -227,7 +244,7 @@ export class GofDb {
    * @param {string} pushKey The firebase push-key of the entry.
    * @param {Object} value The value of the location.
    * @param {Array.&lt;string&gt;} geohashes The geohash precisions which the entry belongs to.
-   * @return {Array.&lt;Promise&gt;} An array of promises which get fullifilled once the location gets added.
+   * @return {Array.&lt;Promise&gt;} An array of promises, gets fullifilled once the location gets added.
    */
   getLocationNodesToAdd(pushKey, value, geohashes) {
     const addQueue = [];
@@ -246,7 +263,7 @@ export class GofDb {
    * @param {string} pushKey The firebase push-key of the entry.
    * @param {Object} newValue The new value of the location.
    * @param {Array.&lt;string&gt;} geohashes The geohash precisions which the entry belongs to.
-   * @return {Array.&lt;Promise&gt;} An array of promises which get fullifilled once the location gets updated.
+   * @return {Array.&lt;Promise&gt;} An array of promises, gets fullifilled once the location gets added.
    */
   getLocationNodesToUpdate(pushKey, newValue, geohashes) {
     const updateQueue = [];
@@ -265,7 +282,7 @@ export class GofDb {
    *
    * @param {string} pushKey The firebase push-key of the entry.
    * @param {Array.&lt;string&gt;} geohashes The geohash precisions which the entry belongs to.
-   * @return {Array.&lt;Promise&gt;} An array of promises which gets fullifilled once the location was deleted.
+   * @return {Array.&lt;Promise&gt;} An array of promises, gets fullifilled once the location gets added.
    */
   getLocationNodesToDelete(pushKey, geohashes) {
     const deleteQueue = [];

@@ -24,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/Orlandster1998/geo-on-fire"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -144,7 +144,9 @@ export class GofBasicValidation {
    */
   static validateReference(value, errorInfos) {
     if (typeof value.child !== &quot;function&quot;) {
-      this.throwError(errorInfos.fName, `${errorInfos.p1} is not a valid firebase database reference!`);
+      this.throwError(
+        errorInfos.fName, `${errorInfos.p1} is not a valid firebase database reference!`
+      );
     }
   }
 
@@ -157,9 +159,20 @@ export class GofBasicValidation {
    */
   static validateEventType(type, errorInfos) {
     if (type === &quot;child_moved&quot;) {
-      this.throwError(errorInfos.fName, `${errorInfos.p1} of child_moved is not supported. You have to use one of the follwoing: &quot;value&quot;, &quot;child_added&quot;, &quot;child_changed&quot;, &quot;child_removed&quot;`);
-    } else if (type !== &quot;value&quot; &amp;&amp; type !== &quot;child_added&quot; &amp;&amp; type !== &quot;child_changed&quot; &amp;&amp; type !== &quot;child_removed&quot;) {
-      this.throwError(errorInfos.fName, `&quot;${type}&quot; is not a valid ${errorInfos.p1}. You have to use one of the follwoing types: &quot;value&quot;, &quot;child_added&quot;, &quot;child_changed&quot;, &quot;child_removed&quot;`);
+      this.throwError(
+        errorInfos.fName, `${errorInfos.p1} of &quot;child_moved&quot; is not supported.`
+        + ` You have to use one of the follwoing types: `
+        +  `&quot;value&quot;, &quot;child_added&quot;, &quot;child_changed&quot;, &quot;child_removed&quot;` // breaks for linting
+      );
+    } else if (type !== &quot;value&quot; 
+               &amp;&amp; type !== &quot;child_added&quot; 
+               &amp;&amp; type !== &quot;child_changed&quot; 
+               &amp;&amp; type !== &quot;child_removed&quot;) { // eslint rule sry
+      this.throwError(
+        errorInfos.fName, `&quot;${type}&quot; is not a valid ${errorInfos.p1}.`
+        + ` You have to use one of the follwoing types: `
+        +  `&quot;value&quot;, &quot;child_added&quot;, &quot;child_changed&quot;, &quot;child_removed&quot;` // breaks for linting
+      );
     }
   }
 
@@ -172,7 +185,9 @@ export class GofBasicValidation {
    */
   static isLowerThan(firstNumber, secondNumber, errorInfos) {
     if (firstNumber &lt; secondNumber) {
-      this.throwError(errorInfos.fName, `${errorInfos.p1} must be higher or same as ${errorInfos.p2}!`);
+      this.throwError(
+        errorInfos.fName, `${errorInfos.p1} must be higher or same as ${errorInfos.p2}!`
+      );
     }
   }
 
@@ -185,7 +200,9 @@ export class GofBasicValidation {
    */
   static isHigherThan(firstNumber, secondNumber, errorInfos) {
     if (firstNumber &gt; secondNumber) {
-      this.throwError(errorInfos.fName, `${errorInfos.p1} must be lower or same as ${errorInfos.p2}!`);
+      this.throwError(
+        errorInfos.fName, `${errorInfos.p1} must be lower or same as ${errorInfos.p2}!`
+      );
     }
   }
 
@@ -196,7 +213,7 @@ export class GofBasicValidation {
    * @param {Object} errorInfos A object containing the important error info&apos;s e.g. function name.
    */
   static hasDecimalPlaces(number, errorInfos) {
-    if (number % 1 != 0) {
+    if (number % 1 !== 0) {
       this.throwError(errorInfos.fName, `${errorInfos.p1} should not contain decimal places!`);
     }
   }

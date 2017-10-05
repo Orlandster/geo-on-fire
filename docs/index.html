@@ -24,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/Orlandster1998/geo-on-fire"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -52,59 +52,74 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="es6-library-starter">ES6 library starter</h1><p><a href="https://www.npmjs.org/package/es6-library-minimal"><img src="http://img.shields.io/npm/v/es6-library-minimal.svg" alt="Version"></a>
-<a href="https://travis-ci.org/liady/es6-library-minimal"><img src="https://travis-ci.org/liady/es6-library-minimal.svg?branch=master" alt="Build Status"></a>
-<a href="https://github.com/airbnb/javascript"><img src="https://img.shields.io/badge/code%20style-airbnb-blue.svg?style=flat" alt="Code style: airbnb"></a></p>
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p>geo on fire (gof) :fire: </p>
+<h1 id="-a-href--https---circleci-com-gh-orlandster1998-geo-on-fire-tree-master---img-src--https---circleci-com-gh-orlandster1998-geo-on-fire-tree-master-svg-style-shield-amp-circle-token-c4bc8569819d11ed6f227e38c9507ddc55a4ddcd--alt--circleci----a-"><a href="https://circleci.com/gh/Orlandster1998/geo-on-fire/tree/master"><img src="https://circleci.com/gh/Orlandster1998/geo-on-fire/tree/master.svg?style=shield&amp;circle-token=c4bc8569819d11ed6f227e38c9507ddc55a4ddcd" alt="CircleCI"></a></h1><p>Geo on fire is an open source library to query location based data in Firebase. It follows a whole new principle of architecture, which makes it extremly fast and highly scaleable. With the right setup you are able to query millions of locations in just fractions of a second. You can learn more about the principle in the advanced usage guide. (not online so far, stay tuned)</p>
+<p>In addition it offers you the possibility to listen to the queries in real time and recieve changes based on the event types you&apos;ve specified. But that&apos;s not all. There&apos;s a feature which gives you the ability to priorize data and make the user expirience even better.</p>
+<p>And by the way, there is not just one query method. You can choose between a radius based query (see dog match demo) and a boundaries based query. (see event map demo) </p>
+<p>And the best, you will automatically recieve the fetched entries. So there is no manual fetching needed.</p>
+<h2 id="quick-links">Quick links</h2><ul>
+<li><a href="#download">Download</a></li>
+<li><a href="#getting-started">Getting started</a></li>
+<li><a href="#guides">Guides</a></li>
+<li><a href="#documentation">Documentation</a></li>
+<li><a href="#demos">Demos</a></li>
+<li><a href="#contributions">Contributions</a></li>
+<li><a href="#license">License</a></li>
+</ul>
+<h2 id="download">Download</h2><p>Currently there are two ways to download the library. But before you download the library make sure Firebase is already installed, since it&apos;s not a dependency of gof itslef.</p>
+<pre><code class="lang-bash"><code class="source-code prettyprint">$ npm install firebase --save</code>
+</code></pre>
+<h3 id="npm">npm</h3><p>Download it from the npm repository the following way:</p>
+<pre><code class="lang-bash"><code class="source-code prettyprint">$ npm install gof --save</code>
+</code></pre>
+<h3 id="bower">bower</h3><p>Or download it from bower the following way:</p>
+<pre><code class="lang-bash"><code class="source-code prettyprint">$ bower install gof --save</code>
+</code></pre>
+<h3 id="cdn">CDN</h3><p>In the future you will also be able to load the library directly from a CDN. Subscribe to the existing issue for updates.</p>
+<h2 id="getting-started">Getting started</h2><p>Now let&apos;s get started. As you will see, the usage is very simple. As a first step you need to include the library in your HTML. (make sure Firebase is also included)</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;{path_to}/gof.min.js&quot;&gt;&lt;/script&gt;</code>
+</code></pre>
 <blockquote>
-<p>A boilerplate for a universal (Node, web, UMD) ES6 library.</p>
+<p>Notice: NodeJS is not supported so far, but it will be added soon. Subscribe <a href="https://github.com/Orlandster1998/geo-on-fire/issues/10">here</a> to get mentioned when the time is ready.</p>
 </blockquote>
-<h2 id="quick-usage">Quick usage</h2><ol>
-<li>Clone this repo.</li>
-<li>Change all relevant entries in <code>package.json</code> and <code>README.md</code>, so they match your new shiny library.</li>
-<li>Run <code>npm install</code> to install dev dependencies.</li>
-<li>Write your ES6 code in <code>src</code> folder.</li>
-<li>Write your ES6 tests in <code>test</code> folder.</li>
-<li>Run <code>npm run build</code> to build for node. This will compile to ES5, minify, and output the result to <code>lib</code> folder.</li>
-<li>Run <code>npm run build-web</code> to build and pack the files for the web. This will output the result to <code>dist</code> folder.</li>
-<li>Run <code>npm publish</code> to pulish to the world.</li>
-</ol>
-<p>(Or, if you don&apos;t need Webpack bundling, you can use the <a href="https://github.com/liady/es6-lib-starter-light">even lighter ES6 starter</a>).</p>
-<h2 id="detailed-overview">Detailed overview</h2><h3 id="installation">Installation</h3><p>After cloning this repository, make sure to change all the relevant entries in <code>package.json</code> so they match your library.</p>
-<pre><code class="lang-sh"><code class="source-code prettyprint">npm install</code>
+<p>Well done! Before you&apos;re able to use gof you need to initialize your firebase project.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var fb = firebase.initializeApp(config); // get &apos;config&apos; from firebase</code>
 </code></pre>
-<h3 id="build-for-npm">Build for npm</h3><pre><code class="lang-sh"><code class="source-code prettyprint">npm run build</code>
+<p>Now you are able to create a gof reference by simply doing the following.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// the name of your database nodes e.g. events, hotels - is totally up to you
+var name = &apos;entries&apos;; 
+
+// the firebase database ref - must be passed with the .ref()
+var ref = fb.database().ref();
+
+// creates a new geoOnFire instance
+var gof = new geoOnFire(name, ref);</code>
 </code></pre>
-<p>This will:</p>
-<ol>
-<li>Run Webpack starting from the entry point file (<code>src/library.js</code>, can be configured)</li>
-<li>Convert all files in <code>src</code> folder from ES6 to ES5</li>
-<li>According to the <code>bundle-node</code> flag in <code>package.json</code>, it will either:<ol>
-<li>Leave them as separate files, or -</li>
-<li>Minify and bundle them using Webpack, <strong>without their</strong> <code>node_modules</code> <strong>dependencies</strong></li>
-</ol>
-</li>
-<li>Output the result to the <code>lib</code> folder</li>
-</ol>
-<h3 id="build-for-web">Build for web</h3><pre><code class="lang-sh"><code class="source-code prettyprint">npm run build-web</code>
-</code></pre>
-<p>This will:</p>
-<ol>
-<li>Run Webpack starting from the entry point file (<code>src/library.js</code>, can be configured)</li>
-<li>Convert all files from ES6 to ES5</li>
-<li>Minify them, <strong>including all of their module dependencies</strong>, as a UMD module (so the file will be self-contained)</li>
-<li>Output the file to the <code>dist</code> folder</li>
-</ol>
-<h3 id="test">Test</h3><pre><code class="lang-sh"><code class="source-code prettyprint">npm run test</code>
-</code></pre>
-<h3 id="configuration">Configuration</h3><p>In <code>package.json</code>, change all the relevant entries so they match your library.<br>
-Under the section <code>library</code>, you can configure:</p>
-<ol>
-<li>Library name (defaults to <code>&quot;Library&quot;</code>)</li>
-<li>Webpack entry point (defaults to <code>library.js</code>)</li>
-<li>Dist folder for Node (defaults to <code>lib</code>)</li>
-<li>Dist folder for Web (defaults to <code>dist</code>)</li>
-<li>Choose whether to bundle for Node (defaults to <code>true</code>)</li>
-</ol>
+<p>That&apos;s it! Now you are able to run gof operations. Go trough the guides to see how it works.</p>
+<h2 id="guides">Guides</h2><h3 id="basic-usage">Basic usage</h3><p>Basically all the user operations proivded by gof can be splitted in two cateogries. There are writing and there are reading operations. Make sure you always use the built-in methods the library provides to modify your geolocations data. Otherwise there&apos;s a chance that you get corrupt and invalid data.</p>
+<h4 id="writing-data">writing data</h4><ul>
+<li><a href="https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#create-entries">create entries</a></li>
+<li><a href="https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#update-entries">update entries</a></li>
+<li><a href="https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#delete-entries">delete entries</a><h4 id="reading-data--geolocation-queries-">reading data (geolocation queries)</h4></li>
+<li><a href="https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#query-by-radius">query by radius</a></li>
+<li><a href="https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#query-by-boundaries">query by boundaries</a><h3 id="advanced-usage">Advanced usage</h3>Here you can find some advanced concept to make the best out from gof.</li>
+<li><a href="https://github.com/Orlandster1998/geo-on-fire/wiki/Security-rules">security rules</a></li>
+<li><a href="">performance optimization</a> (coming soon)</li>
+</ul>
+<h2 id="documentation">Documentation</h2><ul>
+<li><a href="https://orlandster1998.github.io/geo-on-fire/">API Reference</a></li>
+<li><a href="">Gof core principle</a> (coming soon)</li>
+</ul>
+<h2 id="demo--39-s">Demo&apos;s</h2><p>Currently there are the two demo&apos;s available. These are just some basic implementations to give you an idea about how powerful gof is. They are far away from perfect.</p>
+<ul>
+<li><a href="https://run.plnkr.co/plunks/AYaN8ABEDcMntgbJyLVW/">dog matching app</a> (tinder clone - using radius query)</li>
+<li><a href="https://run.plnkr.co/plunks/xJgstAvXYcp0w7MbOOjm/">event map app</a> (airbnb like map - using boundaries query)</li>
+</ul>
+<p>Is there any gof using project you want to share with the world? Simply create an issue with the url and I do the rest.</p>
+<h2 id="contributions">Contributions</h2><p>I would love to see your contributions to the project. Till now I was not able to create some guidelines. If there are already any interests so far, we can communicate trough the issues.</p>
+<h2 id="what--39-s-next">What&apos;s next</h2><p>Check out the <a href="https://github.com/Orlandster1998/geo-on-fire/milestone/3">1.0.0 milestone</a> to see what&apos;s next. Generally I&apos;ve got tons of ideas, but just a very few time to work on them. So if you are interested in contributing you are more than just welcome!</p>
+<p>I&apos;m also looking forward to migrate the library to other db services like mongoDB or pouchDB.</p>
+<h2 id="motivation">Motivation</h2><p>So basically the reason why I&apos;m doing this, is because I&apos;ve seen a lot of people struggling while buildung their json database structure. Espacially when it comes to more complex queries, firebase does not support you well enough. (by the way I&apos;m so happy to see the new cloud firestore) This library should kind of like give you an idea.</p>
 <h2 id="license">License</h2><p>MIT</p>
 </div>
 </div>

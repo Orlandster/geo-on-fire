@@ -1,7 +1,7 @@
 {
-  "coverage": "89.01%",
-  "expectCount": 91,
-  "actualCount": 81,
+  "coverage": "88.88%",
+  "expectCount": 90,
+  "actualCount": 80,
   "files": {
     "src/gof-db-listeners.js": {
       "expectCount": 7,
@@ -26,8 +26,8 @@
       ]
     },
     "src/gof.js": {
-      "expectCount": 14,
-      "actualCount": 11,
+      "expectCount": 13,
+      "actualCount": 10,
       "undocumentLines": [
         17,
         18,

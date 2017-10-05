@@ -630,15 +630,9 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/gof.js~gof#attachboundsevent",
-    "class/src/gof.js~Gof.html#instance-method-attachBoundsEvent",
-    "src/gof.js~Gof#attachBoundsEvent",
-    "method"
-  ],
-  [
-    "src/gof.js~gof#attachradiusevent",
-    "class/src/gof.js~Gof.html#instance-method-attachRadiusEvent",
-    "src/gof.js~Gof#attachRadiusEvent",
+    "src/gof.js~gof#attachqueryevent",
+    "class/src/gof.js~Gof.html#instance-method-attachQueryEvent",
+    "src/gof.js~Gof#attachQueryEvent",
     "method"
   ],
   [

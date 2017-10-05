@@ -24,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/Orlandster1998/geo-on-fire"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -62,8 +62,11 @@
  * @param {string} fName The name of the executed function.
  */
 export function validateEntryLimitationParameters(startAt, endAt, fName) {
-  // validate endAt first to make sure it contains a number
-  validateEndAt(endAt, fName, &quot;endAt&quot;);
+  // undefined is a possible value
+  if (endAt) {
+    // validate endAt first to make sure it contains a number
+    validateEndAt(endAt, fName, &quot;endAt&quot;);
+  }
   validateStartAt(startAt, endAt, fName, &quot;startAt&quot;);
 }
 

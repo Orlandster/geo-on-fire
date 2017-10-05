@@ -569,7 +569,7 @@
     "name": "src/gof-db-listeners.js",
     "content": "/** \n * geo on fire database listeners class\n */\nexport class GofDbListeners {\n\n  constructor() { }\n\n  /**\n   * Attaches the database listeners based on the event type.\n   * The firebase event \"child_moved\" gets not supported.\n   *\n   * @param {string} type The event type: \"value\", \"child_added\", \"child_changed\", \"child_removed\".\n   * @param {Object} dbRef The dbRef object containing the entries and locations path.\n   * @param {Array.<string>} geohashes The geohashes based on the active query.\n   * @param {Object} event The query event object.\n   * @return {Array.<Object>} An array containing the listeners reference.\n   */\n  static attachDbListeners(type, dbRef, geohashes, event) {\n    let listeners = [];\n\n    if (type === \"value\") {\n      listeners = this.onValue(dbRef, geohashes, event);\n    } else if (type === \"child_added\") {\n      listeners = this.onChildAdded(dbRef, geohashes, event);\n    } else if (type === \"child_changed\") {\n      listeners = this.onChildChanged(dbRef, geohashes, event);\n    } else if (type === \"child_removed\") {\n      listeners = this.onChildRemoved(dbRef, geohashes, event);\n    }\n\n    return listeners;\n  }\n\n  /**\n   * Fires the geo query event based on firebase's \"value\" event.\n   * Returns an array with all the listeners. (needed to use .off() later on)\n   *\n   * @param {Object} dbRef The dbRef object containing the entries and locations path.\n   * @param {Array.<string>} geohashes The geohashes based on the active query.\n   * @param {Object} event The query event object.\n   * @return {Array.<Object>} An array containing the reference of all \"value\" listeners.\n   */\n  static onValue(dbRef, geohashes, event) {\n    const listeners = [];\n\n    geohashes.forEach(geohash => {\n      dbRef.geohashes.child(geohash).on(\"value\", (data) => {\n        window.dispatchEvent(event);\n      });\n\n      const ref = dbRef.geohashes.child(geohash);\n      listeners.push(ref);\n    });\n\n    return listeners;\n  }\n\n  /**\n   * Fires the geo query event based on firebase's \"child_added\" event.\n   * Returns an array with all the listeners. (needed to use .off() later on)\n   *\n   * @param {Object} dbRef The dbRef object containing the entries and locations path.\n   * @param {Array.<string>} geohashes The geohashes based on the active query.\n   * @param {Object} event The query event object.\n   * @return {Array.<Object>} An array containing the reference of all \"value\" listeners.\n   */\n  static onChildAdded(dbRef, geohashes, event) {\n    const listeners = [];\n      \n    geohashes.forEach(geohash => {\n      dbRef.geohashes.child(geohash).on(\"child_added\", (data) => {\n        window.dispatchEvent(event);\n      })\n\n      const ref = dbRef.geohashes.child(geohash);\n      listeners.push(ref);\n    });\n\n    return listeners;\n  }\n\n  /**\n   * Fires the geo query event based on firebase's \"child_changed\" event.\n   * Returns an array with all the listeners. (needed to use .off() later on)\n   *\n   * @param {Object} dbRef The dbRef object containing the entries and locations path.\n   * @param {Array.<string>} geohashes The geohashes based on the active query.\n   * @param {Object} event The query event object.\n   * @return {Array.<Object>} An array containing the reference of all \"value\" listeners.\n   */\n  static onChildChanged(dbRef, geohashes, event) {\n    const listeners = []; \n\n    geohashes.forEach(geohash => {\n      dbRef.geohashes.child(geohash).on(\"child_changed\", (data) => {\n        window.dispatchEvent(event);\n      });\n\n      const ref = dbRef.geohashes.child(geohash);\n      listeners.push(ref);\n    });\n      \n    return listeners;\n  }\n\n  /**\n   * Fires the geo query event based on firebase's \"child_removed\" event.\n   * Returns an array with all the listeners. (needed to use .off() later on)\n   *\n   * @param {Object} dbRef The dbRef object containing the entries and locations path.\n   * @param {Array.<string>} geohashes The geohashes based on the active query.\n   * @param {Object} event The query event object.\n   * @return {Array.<Object>} An array containing the reference of all \"value\" listeners.\n   */\n  static onChildRemoved(dbRef, geohashes, event) {\n    const listeners = []; \n      \n    geohashes.forEach(geohash => {\n      dbRef.geohashes.child(geohash).on(\"child_removed\", (data) => {\n        window.dispatchEvent(event);\n      });\n\n      const ref = dbRef.geohashes.child(geohash);\n      listeners.push(ref);\n    });\n      \n    return listeners;  \n  }\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/gof-db-listeners.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/gof-db-listeners.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
@@ -882,9 +882,9 @@
     "__docId__": 56,
     "kind": "file",
     "name": "src/gof-db.js",
-    "content": "import { GofUtils } from \"./gof-utils\";\n\n/** \n * geo on fire database class\n */\nexport class GofDb {\n  /**\n   * \n   * @param {string} name Name for the Gof query.\n   * @param {Firebase} db The Firebase database reference - database().ref().\n   */\n  constructor(name, db) {\n    const validName = name.replace(\" \", \"-\").toLowerCase();\n\n    this._refs = {\n      entries: db.child(`${validName}`),\n      geohashes: db.child(`${validName}-geo`),\n    }\n\n    // pass reference for the utils\n    this._utils = GofUtils;\n  }\n\n  /**\n   * Pushes a new entry to the database.\n   *\n   * @param {Object} entry The new entry object.\n   * @return {Promise.<Object>} A promise which is fulfilled once the entry was created.\n   */\n  pushEntry(entry) {\n    return this._refs.entries.push(entry);\n  }\n\n  /**\n   * Gets the Geohash based on the locations coordinates.\n   *\n   * @param {string} pushKey The firebase push-key of the entry.\n   * @param {Object} entry The entry to create.\n   * @param {Array.<string>} geohashes The geohashes which the entry belongs to.\n   * @return {Promise} A promise which is fulfilled once all the locations are set.\n   */\n  setGeohashLocations(pushKey, entry, geohashes) {        \n    return Promise.all(this.getLocationNodesToAdd(pushKey, entry, geohashes));\n  }\n    \n  /**\n   * Fetchs all the entries based on the provided entry push keys\n   *\n   * @param {Array.<string>} pushKeys The push-keys of all the provided locations.\n   * @param {number} startAt The entry to start at.\n   * @param {number} endAt The etnry to end at.\n   * @return {Promise.<Object>} A promise which is fulfilled once the locations are fetched.\n   */\n  fetchLocations(pushKeys, startAt, endAt) {\n    const fetchedDataPromises = [];\n\n    for (let i = startAt - 1; endAt > i; i++) {\n      fetchedDataPromises.push(\n        this._refs.entries.child(`${pushKeys[i]}`).once(\"value\")\n      );\n    }\n\n    return Promise.all(fetchedDataPromises);\n  }\n\n  /**\n   * Returns all the locations based on the given geohashes.\n   *\n   * @param {Array.<string>} geohashes The given geohashes.\n   * @return {Promise.<Object>} A promise which is fulfilled once the locations return.\n   */\n  getLocationsFromGeohashes(geohashes) {\n    const locations = [];\n\n    for (let i = 0; i < geohashes.length; i++) {\n      locations.push(\n        this._refs.geohashes.child(`${geohashes[i]}`).once(\"value\")\n      );\n    }\n\n    return Promise.all(locations)\n      .catch(() => {\n        throw new Error(\"Unable to get the entries.\");\n      });\n  }\n\n  /**\n   * Updates all the entry and the accroding locations based on the new value.\n   * It also removes old and adds new locations, \n   * based on the difference between the old and new geohashes.\n   * This guarantees that the right event listeners will be triggered.\n   * \n   *\n   * @param {string} pushKey The firebase push-key of the entry\n   * @param {Object} newValue The value of the new entry\n   * @param {number} priority The priority of the entry.\n   * @return {Promise} A promise which is fulfilled once the entry and the locations are updated.\n   */\n  updateEntry(pushKey, newValue, priority) {\n    const newValueWithPrecisions = this._utils.setPrecisionsForEntry(priority, newValue);\n    const newGeohash = this._utils.getGeohashByLocation(newValue.location, \n      newValueWithPrecisions.maxPrecision);\n    const newGeohashPrecisions = this._utils.getGeohashPrecisions(newGeohash, \n      newValueWithPrecisions.minPrecision, newValueWithPrecisions.maxPrecision);\n\n    return this._refs.entries.child(`${pushKey}`).once(\"value\")\n      .then(entry => {\n        const entryValue = entry.val();\n        const currentGeohash = this._utils.getGeohashByLocation(entryValue.location, \n          entryValue.maxPrecision);\n        const currentGeohashPrecisions = this._utils.getGeohashPrecisions(currentGeohash, \n          entryValue.minPrecision, entryValue.maxPrecision);\n\n        // if location changed update also the location nodes\n        const promiseQueue = [];\n        const geohashesByAction = this._utils.getGeohashActions(currentGeohashPrecisions, newGeohashPrecisions);\n\n        // add nodes to add in queue\n        promiseQueue.concat(this.getLocationNodesToAdd(pushKey, newValue.location, geohashesByAction.add));\n          \n        // add nodes to update in queue - gets executed even if location is the same as bevor (just to trigger the event)\n        promiseQueue.concat(this.getLocationNodesToUpdate(pushKey, newValue.location, geohashesByAction.update));\n\n        // add nodes to delete in queue\n        promiseQueue.concat(this.getLocationNodesToDelete(pushKey, geohashesByAction.delete));\n\n        // finally also update the entry itslef\n        promiseQueue.push(this._refs.entries.child(`${pushKey}`).update(newValue));\n\n        return Promise.all(promiseQueue);\n      })\n      .catch(() => {\n        throw new Error(`\n          Unable to update the entry, Make sure the entry with \"${pushKey}\" exists\n        `);\n      });\n  }\n\n  /**\n   * Deletes an existing entry and all the according locations.\n   *\n   * @param {string} pushKey The firebase push-key of the entry.\n   * @return {Promise} A promise which is fulfilled once the entry and the locations are deleted.\n   */\n  deleteEntry(pushKey) {\n    return this._refs.entries.child(`${pushKey}`).once(\"value\")\n      .then(entry => {\n        const entryValue = entry.val();\n        const geohash = this._utils.getGeohashByLocation(entryValue.location, \n          entryValue.maxPrecision);\n        const geohashPrecisions = this._utils.getGeohashPrecisions(geohash, \n          entryValue.minPrecision, entryValue.maxPrecision);\n        const deleteQueue = this.getLocationNodesToDelete(entry.key, geohashPrecisions);\n            \n        // adds the entry itself to the delete queue\n\n        deleteQueue.push(this._refs.entries.child(`${entry.key}`).remove());\n\n        return Promise.all(deleteQueue);\n      })\n      .catch(() => {\n        throw new Error(`\n          Unable to delete the entry, Make sure the entry with \"${pushKey}\" exists\n        `);\n      });\n  }\n\n\n  /**\n   * Returns all the nodes to add based on the entries geohashes.\n   *\n   * @param {string} pushKey The firebase push-key of the entry.\n   * @param {Object} value The value of the location.\n   * @param {Array.<string>} geohashes The geohash precisions which the entry belongs to.\n   * @return {Array.<Promise>} An array of promises which get fullifilled once the location gets added.\n   */\n  getLocationNodesToAdd(pushKey, value, geohashes) {\n    const addQueue = [];\n\n    // adding all the existing locations to the add queue\n    for (let i = 0; geohashes.length > i; i++) {\n      addQueue.push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).set(value));\n    }\n\n    return addQueue;\n  }\n\n  /**\n   * Returns all the nodes to update based on the entries geohashes.\n   *\n   * @param {string} pushKey The firebase push-key of the entry.\n   * @param {Object} newValue The new value of the location.\n   * @param {Array.<string>} geohashes The geohash precisions which the entry belongs to.\n   * @return {Array.<Promise>} An array of promises which get fullifilled once the location gets updated.\n   */\n  getLocationNodesToUpdate(pushKey, newValue, geohashes) {\n    const updateQueue = [];\n\n    // adding all the existing locations to the update queue\n    for (let i = 0; geohashes.length > i; i++) {\n      updateQueue\n        .push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).update(newValue));\n    }\n\n    return updateQueue;\n  }\n  \n  /**\n   * Returns all the nodes to delete based on the entries geohashes.\n   *\n   * @param {string} pushKey The firebase push-key of the entry.\n   * @param {Array.<string>} geohashes The geohash precisions which the entry belongs to.\n   * @return {Array.<Promise>} An array of promises which gets fullifilled once the location was deleted.\n   */\n  getLocationNodesToDelete(pushKey, geohashes) {\n    const deleteQueue = [];\n\n    // adding all the existing locations to the delete queue\n    for (let i = 0; geohashes.length > i; i++) {\n      deleteQueue\n        .push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).remove());\n    }\n\n    return deleteQueue;\n  }\n}",
+    "content": "import { GofUtils } from \"./gof-utils\";\n\n/** \n * geo on fire database class\n */\nexport class GofDb {\n  /**\n   * \n   * @param {string} name Name for the Gof query.\n   * @param {Firebase} db The Firebase database reference - database().ref().\n   */\n  constructor(name, db) {\n    const validName = name.replace(\" \", \"-\").toLowerCase();\n\n    this._refs = {\n      entries: db.child(`${validName}`),\n      geohashes: db.child(`${validName}-geo`),\n    }\n\n    // pass reference for the utils\n    this._utils = GofUtils;\n  }\n\n  /**\n   * Pushes a new entry to the database.\n   *\n   * @param {Object} entry The new entry object.\n   * @return {Promise.<Object>} A promise which is fulfilled once the entry was created.\n   */\n  pushEntry(entry) {\n    return this._refs.entries.push(entry);\n  }\n\n  /**\n   * Gets the Geohash based on the locations coordinates.\n   *\n   * @param {string} pushKey The firebase push-key of the entry.\n   * @param {Object} entry The entry to create.\n   * @param {Array.<string>} geohashes The geohashes which the entry belongs to.\n   * @return {Promise} A promise which is fulfilled once all the locations are set.\n   */\n  setGeohashLocations(pushKey, entry, geohashes) {        \n    return Promise.all(this.getLocationNodesToAdd(pushKey, entry, geohashes));\n  }\n    \n  /**\n   * Fetchs all the entries based on the provided entry push keys\n   *\n   * @param {Array.<string>} pushKeys The push-keys of all the provided locations.\n   * @param {number} startAt The entry to start at.\n   * @param {number} endAt The etnry to end at.\n   * @return {Promise.<Object>} A promise which is fulfilled once the locations are fetched.\n   */\n  fetchLocations(pushKeys, startAt, endAt) {\n    const fetchedDataPromises = [];\n\n    if (endAt) {\n      // if endat is bigger than the number of entries limitate it to the last entry,\n      const endAtLimitation = endAt > pushKeys.length ? pushKeys.length : endAt;\n\n      for (let i = startAt - 1; i < endAtLimitation; i++) {\n        fetchedDataPromises.push(\n          this._refs.entries.child(`${pushKeys[i]}`).once(\"value\")\n        );\n      }\n    } else {\n      for (let i = startAt - 1; i < (pushKeys.length - (startAt - 1)); i++) {\n        fetchedDataPromises.push(\n          this._refs.entries.child(`${pushKeys[i]}`).once(\"value\")\n        );\n      }\n    }\n\n    return Promise.all(fetchedDataPromises);\n  }\n\n  /**\n   * Returns all the locations based on the given geohashes.\n   *\n   * @param {Array.<string>} geohashes The given geohashes.\n   * @return {Promise.<Object>} A promise which is fulfilled once the locations return.\n   */\n  getLocationsFromGeohashes(geohashes) {\n    const locations = [];\n\n    for (let i = 0; i < geohashes.length; i++) {\n      locations.push(\n        this._refs.geohashes.child(`${geohashes[i]}`).once(\"value\")\n      );\n    }\n\n    return Promise.all(locations)\n      .catch(() => {\n        throw new Error(\"Unable to get the entries.\");\n      });\n  }\n\n  /**\n   * Updates all the entry and the accroding locations based on the new value.\n   * It also removes old and adds new locations, \n   * based on the difference between the old and new geohashes.\n   * This guarantees that the right event listeners will be triggered.\n   * \n   *\n   * @param {string} pushKey The firebase push-key of the entry\n   * @param {Object} newValue The value of the new entry\n   * @param {number} priority The priority of the entry.\n   * @return {Promise} A promise which is fulfilled once the entry and the locations are updated.\n   */\n  updateEntry(pushKey, newValue, priority) {\n    const newValueWithPrecisions = this._utils.setPrecisionsForEntry(priority, newValue);\n    const newGeohash = this._utils.getGeohashByLocation(newValue.location, \n      newValueWithPrecisions.maxPrecision);\n    const newGeohashPrecisions = this._utils.getGeohashPrecisions(newGeohash, \n      newValueWithPrecisions.minPrecision, newValueWithPrecisions.maxPrecision);\n\n    return this._refs.entries.child(`${pushKey}`).once(\"value\")\n      .then(entry => {\n        const entryValue = entry.val();\n        const currentGeohash = this._utils.getGeohashByLocation(entryValue.location, \n          entryValue.maxPrecision);\n        const currentGeohashPrecisions = this._utils.getGeohashPrecisions(currentGeohash, \n          entryValue.minPrecision, entryValue.maxPrecision);\n\n        // if location changed update also the location nodes\n        const promiseQueue = [];\n        const geohashesByAction = this._utils.getGeohashActions(\n          currentGeohashPrecisions, newGeohashPrecisions\n        );\n\n        // add nodes to add in queue\n        promiseQueue.concat(this.getLocationNodesToAdd(\n          pushKey, newValue.location, geohashesByAction.add)\n        );\n          \n        // add nodes to update in queue - gets executed even if location is the same as bevor\n        promiseQueue.concat(this.getLocationNodesToUpdate(\n          pushKey, newValue.location, geohashesByAction.update)\n        );\n\n        // add nodes to delete in queue\n        promiseQueue.concat(this.getLocationNodesToDelete(pushKey, geohashesByAction.delete));\n\n        // finally also update the entry itslef\n        promiseQueue.push(this._refs.entries.child(`${pushKey}`).update(newValue));\n\n        return Promise.all(promiseQueue);\n      })\n      .catch(() => {\n        throw new Error(`\n          Unable to update the entry, Make sure the entry with \"${pushKey}\" exists\n        `);\n      });\n  }\n\n  /**\n   * Deletes an existing entry and all the according locations.\n   *\n   * @param {string} pushKey The firebase push-key of the entry.\n   * @return {Promise} A promise which is fulfilled once the entry and the locations are deleted.\n   */\n  deleteEntry(pushKey) {\n    return this._refs.entries.child(`${pushKey}`).once(\"value\")\n      .then(entry => {\n        const entryValue = entry.val();\n        const geohash = this._utils.getGeohashByLocation(entryValue.location, \n          entryValue.maxPrecision);\n        const geohashPrecisions = this._utils.getGeohashPrecisions(geohash, \n          entryValue.minPrecision, entryValue.maxPrecision);\n        const deleteQueue = this.getLocationNodesToDelete(entry.key, geohashPrecisions);\n            \n        // adds the entry itself to the delete queue\n\n        deleteQueue.push(this._refs.entries.child(`${entry.key}`).remove());\n\n        return Promise.all(deleteQueue);\n      })\n      .catch(() => {\n        throw new Error(`\n          Unable to delete the entry, Make sure the entry with \"${pushKey}\" exists\n        `);\n      });\n  }\n\n\n  /**\n   * Returns all the nodes to add based on the entries geohashes.\n   *\n   * @param {string} pushKey The firebase push-key of the entry.\n   * @param {Object} value The value of the location.\n   * @param {Array.<string>} geohashes The geohash precisions which the entry belongs to.\n   * @return {Array.<Promise>} An array of promises, gets fullifilled once the location gets added.\n   */\n  getLocationNodesToAdd(pushKey, value, geohashes) {\n    const addQueue = [];\n\n    // adding all the existing locations to the add queue\n    for (let i = 0; geohashes.length > i; i++) {\n      addQueue.push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).set(value));\n    }\n\n    return addQueue;\n  }\n\n  /**\n   * Returns all the nodes to update based on the entries geohashes.\n   *\n   * @param {string} pushKey The firebase push-key of the entry.\n   * @param {Object} newValue The new value of the location.\n   * @param {Array.<string>} geohashes The geohash precisions which the entry belongs to.\n   * @return {Array.<Promise>} An array of promises, gets fullifilled once the location gets added.\n   */\n  getLocationNodesToUpdate(pushKey, newValue, geohashes) {\n    const updateQueue = [];\n\n    // adding all the existing locations to the update queue\n    for (let i = 0; geohashes.length > i; i++) {\n      updateQueue\n        .push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).update(newValue));\n    }\n\n    return updateQueue;\n  }\n  \n  /**\n   * Returns all the nodes to delete based on the entries geohashes.\n   *\n   * @param {string} pushKey The firebase push-key of the entry.\n   * @param {Array.<string>} geohashes The geohash precisions which the entry belongs to.\n   * @return {Array.<Promise>} An array of promises, gets fullifilled once the location gets added.\n   */\n  getLocationNodesToDelete(pushKey, geohashes) {\n    const deleteQueue = [];\n\n    // adding all the existing locations to the delete queue\n    for (let i = 0; geohashes.length > i; i++) {\n      deleteQueue\n        .push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).remove());\n    }\n\n    return deleteQueue;\n  }\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/gof-db.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/gof-db.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
@@ -1123,7 +1123,7 @@
     "longname": "src/gof-db.js~GofDb#getLocationsFromGeohashes",
     "access": "public",
     "description": "Returns all the locations based on the given geohashes.",
-    "lineNumber": 72,
+    "lineNumber": 83,
     "params": [
       {
         "nullable": null,
@@ -1156,7 +1156,7 @@
     "longname": "src/gof-db.js~GofDb#updateEntry",
     "access": "public",
     "description": "Updates all the entry and the accroding locations based on the new value.\nIt also removes old and adds new locations, \nbased on the difference between the old and new geohashes.\nThis guarantees that the right event listeners will be triggered.",
-    "lineNumber": 99,
+    "lineNumber": 110,
     "params": [
       {
         "nullable": null,
@@ -1209,7 +1209,7 @@
     "longname": "src/gof-db.js~GofDb#deleteEntry",
     "access": "public",
     "description": "Deletes an existing entry and all the according locations.",
-    "lineNumber": 145,
+    "lineNumber": 162,
     "params": [
       {
         "nullable": null,
@@ -1242,7 +1242,7 @@
     "longname": "src/gof-db.js~GofDb#getLocationNodesToAdd",
     "access": "public",
     "description": "Returns all the nodes to add based on the entries geohashes.",
-    "lineNumber": 177,
+    "lineNumber": 194,
     "params": [
       {
         "nullable": null,
@@ -1281,7 +1281,7 @@
         "Array.<Promise>"
       ],
       "spread": false,
-      "description": "An array of promises which get fullifilled once the location gets added."
+      "description": "An array of promises, gets fullifilled once the location gets added."
     }
   },
   {
@@ -1295,7 +1295,7 @@
     "longname": "src/gof-db.js~GofDb#getLocationNodesToUpdate",
     "access": "public",
     "description": "Returns all the nodes to update based on the entries geohashes.",
-    "lineNumber": 196,
+    "lineNumber": 213,
     "params": [
       {
         "nullable": null,
@@ -1334,7 +1334,7 @@
         "Array.<Promise>"
       ],
       "spread": false,
-      "description": "An array of promises which get fullifilled once the location gets updated."
+      "description": "An array of promises, gets fullifilled once the location gets added."
     }
   },
   {
@@ -1348,7 +1348,7 @@
     "longname": "src/gof-db.js~GofDb#getLocationNodesToDelete",
     "access": "public",
     "description": "Returns all the nodes to delete based on the entries geohashes.",
-    "lineNumber": 215,
+    "lineNumber": 232,
     "params": [
       {
         "nullable": null,
@@ -1377,16 +1377,16 @@
         "Array.<Promise>"
       ],
       "spread": false,
-      "description": "An array of promises which gets fullifilled once the location was deleted."
+      "description": "An array of promises, gets fullifilled once the location gets added."
     }
   },
   {
     "__docId__": 70,
     "kind": "file",
     "name": "src/gof-utils.js",
-    "content": "import ngeohash from 'ngeohash';\n\n/** \n * geo on fire utils\n */\nexport class GofUtils {\n\n  constructor() {}\n\n  /**\n   * Returns a geohash based on the provided location and the precision.\n   * e.g. \"abcdef\" would be a precision of 6 (number of characters)\n   *\n   * @param {Object} location The location object with the coordinates. (lat/lng)\n   * @param {string} precision The precision for the returning geohash.\n   * @return {string} The calculated geohash string.\n   */\n  static getGeohashByLocation(location, precision) {\n    return ngeohash.encode(location.lat, location.lng, precision);\n  }\n\n  /**\n   * Returns the Geohash precisions based on the min and max precision.\n   * e.g. min = 5 and max = 7 would return [\"abcdefg\", \"abcdef\", \"abcde\"]\n   *\n   * @param {string} geohash The geohash string with the maximum length.\n   * @param {number} minPrecision The minimal precision for the geohash.\n   * @param {number} maxPrecision The maximum precision for the geohash.\n   * @return {Array.<string>} The geohash precisions.\n   */\n  static getGeohashPrecisions(geohash, minPrecision, maxPrecision) {\n    const geohashes = [];\n\n    for (let i = 0; maxPrecision - minPrecision >= i; i++) {\n      geohashes.push(geohash.substring(0, geohash.length - i));\n    }\n\n    return geohashes;\n  }\n\n  /**\n   * Sets the geohash precisions of an entry.\n   *\n   * @param {number} priority The priority of the new entry.\n   * @param {Object} entry The entry object to set the precisions for.\n   * @return {Object} The entry with the precisions set.\n   */\n  static setPrecisionsForEntry(priority, entry) {\n    const entryWithPrecisions = entry;\n\n    entryWithPrecisions.minPrecision = priority;\n    entryWithPrecisions.maxPrecision = 9; // default precision should not be changed\n\n    return entryWithPrecisions;\n  }\n\n  /**\n   * Returns the geohash add, update and delete actions based on existing and new geohashes.\n   * This function guarantes that the event listeners get triggered correctly.\n   * \n   * e.g. currentGeohashes = [\"a\", \"b\", \"c\"] and newGeohashes = [\"b\", \"c\", \"d\"] would return\n   * add: [\"d\"], update: [\"b\", \"c\"], delete: [\"a\"]\n   * \n   * @param {Array.<string>} currentGeohashes The geohashes based on the current location.\n   * @param {Array.<string>} newGeohashes The geohashes based on the new location.\n   * @return {Object} An object containing the geohashes for the add, update and delete action.\n   */\n  static getGeohashActions(currentGeohashes, newGeohashes) {\n    const geohashesByAction = {};\n\n    geohashesByAction.add = newGeohashes.filter(x => currentGeohashes.indexOf(x) < 0);\n    geohashesByAction.delete = currentGeohashes.filter(x => newGeohashes.indexOf(x) < 0);\n    geohashesByAction.update = currentGeohashes.filter(x => geohashesByAction.add.concat(geohashesByAction.delete).indexOf(x) < 0);\n\n    return geohashesByAction;\n  }\n\n  /**\n   * Returns all the visible Geohashes within the given Boundaries (also overlapping geohashes)\n   * The geohash length will be calculated from the given precision.\n   * \n   * This function works as a preselection for the entries \n   * and protects tons of them from running through an unnecessary query.\n   *\n   * @param {Object} boundaries The boundaries object which builds the rectangle query borders.\n   * @param {number} precision The precision of the geohashes to return.\n   * @return {Array.<string>} An array containing all the geohashes within the prvided boundaries.\n   */\n  static getGeohashesInBoundaries(boundaries, precision) {\n    return ngeohash.bboxes(boundaries.sw.lat, boundaries.sw.lng, \n      boundaries.ne.lat, boundaries.ne.lng, precision);\n  }\n\n  /**\n   * Returns all the keys of locations which are inside the provided boundaries\n   * This is the one and onliest query which will be executed for the boundary search.\n   *\n   * @param {Array.<Promise>} geohashNode The database nodes based on the geohashes within the boundaries.\n   * @param {Object} boundaries The boundaries object which builds the rectangle query borders.\n   * @return {Promise} A promise which gets fullifilled when all the locations are returned.\n   */\n  static getLocationsInBoundaries(geohashNode, boundaries) {\n    const promises = [];\n\n    geohashNode.map(locations => {\n      // check if locations node exists\n      if (locations.val()) {\n        locations.forEach(location => {\n          // check if single location is within boundaries\n          if (this.isInBoundaries(location.val(), boundaries)) {\n            promises.push(new Promise((resolve, reject) => {\n              resolve(location.key);\n            }));\n          }\n        });\n      }\n    });\n\n    return Promise.all(promises);\n  }\n\n  /**\n   * Checks if the given location is within the boundaries.\n   * This needs to be done, since there are also overalpping locations, \n   * which are outside of the boundaries.\n   * \n   * @param {Object} location The the location to check.\n   * @param {Object} boundaries The boundaries to compare with.\n   * @return {boolean} Says if the location is in or outside of the provided boundaries\n   */\n  static isInBoundaries(location, boundaries) {\n    let isInBoundaries = false;\n    \n    if (boundaries.sw.lat <= location.lat && boundaries.sw.lng <= location.lng \n        && boundaries.ne.lat >= location.lat && boundaries.ne.lng >= location.lng) {  \n      isInBoundaries = true;\n    }\n\n    return isInBoundaries;\n  }\n\n  /**\n   * Returns the boundaries from the provided radius based on the center's location.\n   * Basically the function converts the circle(from radius)into a rectangle.\n   * This brings a huge performance gain, since the values can get preselected.\n   * \n   * @param {Object} center Location object which represents the center of the given radius.\n   * @param {number} radius The query radius in kilometers.\n   * @return {Object} The boundaries based on the given radius circle.\n   */\n  static getBoundariesFromRadius(center, radius) {\n    // one degree in kilometers for latitude - without Earth's polar flattening\n    const LatOneDeg = 110.54;\n    \n    // kilometeres\n    const LngOneDeg = 111.320;\n    const boundaries = { sw: {}, ne: {} };\n\n    boundaries.sw.lat = center.lat - (1 / LatOneDeg) * radius;\n    boundaries.sw.lng = \n      center.lng - (1 / (LngOneDeg * Math.cos(this.degreesToRadians(center.lat)))) * radius;\n    boundaries.ne.lat = center.lat + (1 / LatOneDeg) * radius;\n    boundaries.ne.lng = \n      center.lng + (1 / (LngOneDeg * Math.cos(this.degreesToRadians(center.lat)))) * radius;\n    \n    return boundaries;\n  }\n\n  /**\n   * Returns all the keys of locations which are inside the provided radius\n   * This is the one and onliest query which will be executed for the boundary search.\n   *\n   * @param {Array.<Promise>} geohashNode The db nodes based on the geohashes within the radius.\n   * @param {Object} center Location object which represents the center of the given radius.\n   * @param {number} radius The query radius in kilometers.\n   * @return {Promise} A promise which gets fullifilled when all the locations are returned.\n   */\n  static getLocationsInRadius(geohashNode, center, radius) {\n    const promises = [];\n\n    geohashNode.map(locations => {\n      // check if locations node exists\n      if (locations.val()) {\n        locations.forEach(location => {\n          // check if single location is within radius\n          if (this.isInRadius(location.val(), center, radius)) {\n            promises.push(new Promise((resolve, reject) => {\n              resolve(location.key);\n            }));\n          }\n        });\n      }\n    });\n\n    return Promise.all(promises);\n  }\n\n  /**\n   * Checks if the given location is within the provided radius.\n   * This needs to be done, since there are also overalpping locations,\n   * which our outside of the radius.\n   * \n   * @param {Object} location The the location to check.\n   * @param {Object} center Location object which represents the center of the given radius.\n   * @param {number} radius The query radius in kilometers.\n   * @return {boolean} Says if location is in or outside of the radius.\n   */\n  static isInRadius(location, center, radius) {\n    let isInRadius = false;\n    \n    if (this.distBtwLocations(location, center) <= radius) {\n      isInRadius = true;\n    }\n\n    return isInRadius;\n  }\n\n  /**\n   * Calculates the distance between the provided location the given center.\n   * \n   * @param {Object} location The the location to get the ditstance from.\n   * @param {Object} center Location object which represents the center of the given radius.\n   * @return {number} Says if location is in or outside of boundaries\n   */\n  static distBtwLocations(location, center) {\n    const radlatCenter = Math.PI * center.lat / 180;\n    const radlatLocation = Math.PI * location.lat / 180;\n    const theta = center.lng - location.lng;\n    const radtheta = Math.PI * theta / 180;\n    let distance = Math.sin(radlatCenter) * Math.sin(radlatLocation) + \n      Math.cos(radlatCenter) * Math.cos(radlatLocation) * Math.cos(radtheta);\n\n    distance = Math.acos(distance);\n    distance = distance * 180 / Math.PI;\n    distance = distance * 60 * 1.1515;\n    distance = distance * 1.609344;\n\n    return distance;\n  }\n\n  /**\n   * Calculates the geohash precisions based on the distance between the boundaries.\n   * to be optimized...\n   * \n   * @param {Object} boundaries The boundaries to calculate the precisions from.\n   * @return {number} The calculated precison to work with.\n   */\n  static caluclatePrecisionFromBoundaries(boundaries) {\n    let precision;\n    const distBtwBoundaries = this.distBtwLocations(\n      { \n        lat: boundaries.sw.lat, \n        lng: boundaries.sw.lng,\n      }, \n      { \n        lat: boundaries.ne.lat, \n        lng: boundaries.ne.lng,\n      }\n    );\n    \n    if (distBtwBoundaries < 0.02) {\n      precision = 9;\n    } else if (distBtwBoundaries < 0.1) {\n      precision = 8;\n    }  else if (distBtwBoundaries < 0.7) {\n      precision = 7;\n    }  else if (distBtwBoundaries < 4) {\n      precision = 6;\n    } else if (distBtwBoundaries < 25) {\n      precision = 5;\n    } else if (distBtwBoundaries < 150) {\n      precision = 4;\n    } else if (distBtwBoundaries < 800) {\n      precision = 3;\n    } else if (distBtwBoundaries <  4000) {\n      precision = 2;\n    } else {\n      precision = 1;\n    }\n\n    return precision;\n  }\n\n  /**\n   * Converts degrees to radians.\n   * \n   * @param {number} degrees The string with the number of degrees to convert.\n   * @return {number} The converted radians.\n   */\n  static degreesToRadians(degrees) {\n    return degrees * Math.PI / 180;\n  }\n}",
+    "content": "import ngeohash from \"ngeohash\";\n\n/** \n * geo on fire utils\n */\nexport class GofUtils {\n\n  constructor() {}\n\n  /**\n   * Returns a geohash based on the provided location and the precision.\n   * e.g. \"abcdef\" would be a precision of 6 (number of characters)\n   *\n   * @param {Object} location The location object with the coordinates. (lat/lng)\n   * @param {string} precision The precision for the returning geohash.\n   * @return {string} The calculated geohash string.\n   */\n  static getGeohashByLocation(location, precision) {\n    return ngeohash.encode(location.lat, location.lng, precision);\n  }\n\n  /**\n   * Returns the Geohash precisions based on the min and max precision.\n   * e.g. min = 5 and max = 7 would return [\"abcdefg\", \"abcdef\", \"abcde\"]\n   *\n   * @param {string} geohash The geohash string with the maximum length.\n   * @param {number} minPrecision The minimal precision for the geohash.\n   * @param {number} maxPrecision The maximum precision for the geohash.\n   * @return {Array.<string>} The geohash precisions.\n   */\n  static getGeohashPrecisions(geohash, minPrecision, maxPrecision) {\n    const geohashes = [];\n\n    for (let i = 0; maxPrecision - minPrecision >= i; i++) {\n      geohashes.push(geohash.substring(0, geohash.length - i));\n    }\n\n    return geohashes;\n  }\n\n  /**\n   * Sets the geohash precisions of an entry.\n   *\n   * @param {number} priority The priority of the new entry.\n   * @param {Object} entry The entry object to set the precisions for.\n   * @return {Object} The entry with the precisions set.\n   */\n  static setPrecisionsForEntry(priority, entry) {\n    const entryWithPrecisions = entry;\n\n    entryWithPrecisions.minPrecision = priority;\n    entryWithPrecisions.maxPrecision = 9; // default precision should not be changed\n\n    return entryWithPrecisions;\n  }\n\n  /**\n   * Returns the geohash add, update and delete actions based on existing and new geohashes.\n   * This function guarantes that the event listeners get triggered correctly.\n   * \n   * e.g. currentGeohashes = [\"a\", \"b\", \"c\"] and newGeohashes = [\"b\", \"c\", \"d\"] would return\n   * add: [\"d\"], update: [\"b\", \"c\"], delete: [\"a\"]\n   * \n   * @param {Array.<string>} currentGeohashes The geohashes based on the current location.\n   * @param {Array.<string>} newGeohashes The geohashes based on the new location.\n   * @return {Object} An object containing the geohashes for the add, update and delete action.\n   */\n  static getGeohashActions(currentGeohashes, newGeohashes) {\n    const geohashesByAction = {};\n\n    geohashesByAction.add = newGeohashes.filter(x => currentGeohashes.indexOf(x) < 0);\n    geohashesByAction.delete = currentGeohashes.filter(x => newGeohashes.indexOf(x) < 0);\n    geohashesByAction.update = currentGeohashes.filter(\n      x => geohashesByAction.add.concat(geohashesByAction.delete).indexOf(x) < 0\n    );\n\n    return geohashesByAction;\n  }\n\n  /**\n   * Returns all the visible Geohashes within the given Boundaries (also overlapping geohashes)\n   * The geohash length will be calculated from the given precision.\n   * \n   * This function works as a preselection for the entries \n   * and protects tons of them from running through an unnecessary query.\n   *\n   * @param {Object} boundaries The boundaries object which builds the rectangle query borders.\n   * @param {number} precision The precision of the geohashes to return.\n   * @return {Array.<string>} An array containing all the geohashes within the prvided boundaries.\n   */\n  static getGeohashesInBoundaries(boundaries, precision) {\n    return ngeohash.bboxes(boundaries.sw.lat, boundaries.sw.lng, \n      boundaries.ne.lat, boundaries.ne.lng, precision);\n  }\n\n  /**\n   * Returns all the keys of locations which are inside the provided boundaries\n   * This is the one and onliest query which will be executed for the boundary search.\n   *\n   * @param {Array.<Promise>} geohashNode The db nodes based on the geohashes within the boundaries.\n   * @param {Object} boundaries The boundaries object which builds the rectangle query borders.\n   * @return {Promise} A promise which gets fullifilled when all the locations are returned.\n   */\n  static getLocationsInBoundaries(geohashNode, boundaries) {\n    const promises = [];\n\n    geohashNode.map(locations => {\n      // check if locations node exists\n      if (locations.val()) {\n        locations.forEach(location => {\n          // check if single location is within boundaries\n          if (this.isInBoundaries(location.val(), boundaries)) {\n            promises.push(new Promise((resolve, reject) => {\n              resolve(location.key);\n            }));\n          }\n        });\n      }\n    });\n\n    return Promise.all(promises);\n  }\n\n  /**\n   * Checks if the given location is within the boundaries.\n   * This needs to be done, since there are also overalpping locations, \n   * which are outside of the boundaries.\n   * \n   * @param {Object} location The the location to check.\n   * @param {Object} boundaries The boundaries to compare with.\n   * @return {boolean} Says if the location is in or outside of the provided boundaries\n   */\n  static isInBoundaries(location, boundaries) {\n    let isInBoundaries = false;\n    \n    if (boundaries.sw.lat <= location.lat && boundaries.sw.lng <= location.lng \n        && boundaries.ne.lat >= location.lat && boundaries.ne.lng >= location.lng) {  \n      isInBoundaries = true;\n    }\n\n    return isInBoundaries;\n  }\n\n  /**\n   * Returns the boundaries from the provided radius based on the center's location.\n   * Basically the function converts the circle(from radius)into a rectangle.\n   * This brings a huge performance gain, since the values can get preselected.\n   * \n   * @param {Object} center Location object which represents the center of the given radius.\n   * @param {number} radius The query radius in kilometers.\n   * @return {Object} The boundaries based on the given radius circle.\n   */\n  static getBoundariesFromRadius(center, radius) {\n    // one degree in kilometers for latitude - without Earth's polar flattening\n    const LatOneDeg = 110.54;\n    \n    // kilometeres\n    const LngOneDeg = 111.320;\n    const boundaries = { sw: {}, ne: {} };\n\n    boundaries.sw.lat = center.lat - (1 / LatOneDeg) * radius;\n    boundaries.sw.lng = \n      center.lng - (1 / (LngOneDeg * Math.cos(this.degreesToRadians(center.lat)))) * radius;\n    boundaries.ne.lat = center.lat + (1 / LatOneDeg) * radius;\n    boundaries.ne.lng = \n      center.lng + (1 / (LngOneDeg * Math.cos(this.degreesToRadians(center.lat)))) * radius;\n    \n    return boundaries;\n  }\n\n  /**\n   * Returns all the keys of locations which are inside the provided radius\n   * This is the one and onliest query which will be executed for the boundary search.\n   *\n   * @param {Array.<Promise>} geohashNode The db nodes based on the geohashes within the radius.\n   * @param {Object} center Location object which represents the center of the given radius.\n   * @param {number} radius The query radius in kilometers.\n   * @return {Promise} A promise which gets fullifilled when all the locations are returned.\n   */\n  static getLocationsInRadius(geohashNode, center, radius) {\n    const promises = [];\n\n    geohashNode.map(locations => {\n      // check if locations node exists\n      if (locations.val()) {\n        locations.forEach(location => {\n          // check if single location is within radius\n          if (this.isInRadius(location.val(), center, radius)) {\n            promises.push(new Promise((resolve, reject) => {\n              resolve(location.key);\n            }));\n          }\n        });\n      }\n    });\n\n    return Promise.all(promises);\n  }\n\n  /**\n   * Checks if the given location is within the provided radius.\n   * This needs to be done, since there are also overalpping locations,\n   * which our outside of the radius.\n   * \n   * @param {Object} location The the location to check.\n   * @param {Object} center Location object which represents the center of the given radius.\n   * @param {number} radius The query radius in kilometers.\n   * @return {boolean} Says if location is in or outside of the radius.\n   */\n  static isInRadius(location, center, radius) {\n    let isInRadius = false;\n    \n    if (this.distBtwLocations(location, center) <= radius) {\n      isInRadius = true;\n    }\n\n    return isInRadius;\n  }\n\n  /**\n   * Calculates the distance between the provided location the given center.\n   * \n   * @param {Object} location The the location to get the ditstance from.\n   * @param {Object} center Location object which represents the center of the given radius.\n   * @return {number} Says if location is in or outside of boundaries\n   */\n  static distBtwLocations(location, center) {\n    const radlatCenter = Math.PI * center.lat / 180;\n    const radlatLocation = Math.PI * location.lat / 180;\n    const theta = center.lng - location.lng;\n    const radtheta = Math.PI * theta / 180;\n    let distance = Math.sin(radlatCenter) * Math.sin(radlatLocation) + \n      Math.cos(radlatCenter) * Math.cos(radlatLocation) * Math.cos(radtheta);\n\n    distance = Math.acos(distance);\n    distance = distance * 180 / Math.PI;\n    distance = distance * 60 * 1.1515;\n    distance = distance * 1.609344;\n\n    return distance;\n  }\n\n  /**\n   * Calculates the geohash precisions based on the distance between the boundaries.\n   * to be optimized...\n   * \n   * @param {Object} boundaries The boundaries to calculate the precisions from.\n   * @return {number} The calculated precison to work with.\n   */\n  static caluclatePrecisionFromBoundaries(boundaries) {\n    let precision;\n    const distBtwBoundaries = this.distBtwLocations(\n      { \n        lat: boundaries.sw.lat, \n        lng: boundaries.sw.lng,\n      }, \n      { \n        lat: boundaries.ne.lat, \n        lng: boundaries.ne.lng,\n      }\n    );\n    \n    if (distBtwBoundaries < 0.02) {\n      precision = 9;\n    } else if (distBtwBoundaries < 0.1) {\n      precision = 8;\n    }  else if (distBtwBoundaries < 0.7) {\n      precision = 7;\n    }  else if (distBtwBoundaries < 4) {\n      precision = 6;\n    } else if (distBtwBoundaries < 25) {\n      precision = 5;\n    } else if (distBtwBoundaries < 150) {\n      precision = 4;\n    } else if (distBtwBoundaries < 800) {\n      precision = 3;\n    } else if (distBtwBoundaries <  4000) {\n      precision = 2;\n    } else {\n      precision = 1;\n    }\n\n    return precision;\n  }\n\n  /**\n   * Converts degrees to radians.\n   * \n   * @param {number} degrees The string with the number of degrees to convert.\n   * @return {number} The converted radians.\n   */\n  static degreesToRadians(degrees) {\n    return degrees * Math.PI / 180;\n  }\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/gof-utils.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/gof-utils.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
@@ -1613,7 +1613,7 @@
     "longname": "src/gof-utils.js~GofUtils.getGeohashesInBoundaries",
     "access": "public",
     "description": "Returns all the visible Geohashes within the given Boundaries (also overlapping geohashes)\nThe geohash length will be calculated from the given precision.\n\nThis function works as a preselection for the entries \nand protects tons of them from running through an unnecessary query.",
-    "lineNumber": 89,
+    "lineNumber": 91,
     "params": [
       {
         "nullable": null,
@@ -1656,7 +1656,7 @@
     "longname": "src/gof-utils.js~GofUtils.getLocationsInBoundaries",
     "access": "public",
     "description": "Returns all the keys of locations which are inside the provided boundaries\nThis is the one and onliest query which will be executed for the boundary search.",
-    "lineNumber": 102,
+    "lineNumber": 104,
     "params": [
       {
         "nullable": null,
@@ -1666,7 +1666,7 @@
         "spread": false,
         "optional": false,
         "name": "geohashNode",
-        "description": "The database nodes based on the geohashes within the boundaries."
+        "description": "The db nodes based on the geohashes within the boundaries."
       },
       {
         "nullable": null,
@@ -1699,7 +1699,7 @@
     "longname": "src/gof-utils.js~GofUtils.isInBoundaries",
     "access": "public",
     "description": "Checks if the given location is within the boundaries.\nThis needs to be done, since there are also overalpping locations, \nwhich are outside of the boundaries.",
-    "lineNumber": 131,
+    "lineNumber": 133,
     "params": [
       {
         "nullable": null,
@@ -1742,7 +1742,7 @@
     "longname": "src/gof-utils.js~GofUtils.getBoundariesFromRadius",
     "access": "public",
     "description": "Returns the boundaries from the provided radius based on the center's location.\nBasically the function converts the circle(from radius)into a rectangle.\nThis brings a huge performance gain, since the values can get preselected.",
-    "lineNumber": 151,
+    "lineNumber": 153,
     "params": [
       {
         "nullable": null,
@@ -1785,7 +1785,7 @@
     "longname": "src/gof-utils.js~GofUtils.getLocationsInRadius",
     "access": "public",
     "description": "Returns all the keys of locations which are inside the provided radius\nThis is the one and onliest query which will be executed for the boundary search.",
-    "lineNumber": 178,
+    "lineNumber": 180,
     "params": [
       {
         "nullable": null,
@@ -1838,7 +1838,7 @@
     "longname": "src/gof-utils.js~GofUtils.isInRadius",
     "access": "public",
     "description": "Checks if the given location is within the provided radius.\nThis needs to be done, since there are also overalpping locations,\nwhich our outside of the radius.",
-    "lineNumber": 208,
+    "lineNumber": 210,
     "params": [
       {
         "nullable": null,
@@ -1891,7 +1891,7 @@
     "longname": "src/gof-utils.js~GofUtils.distBtwLocations",
     "access": "public",
     "description": "Calculates the distance between the provided location the given center.",
-    "lineNumber": 225,
+    "lineNumber": 227,
     "params": [
       {
         "nullable": null,
@@ -1934,7 +1934,7 @@
     "longname": "src/gof-utils.js~GofUtils.caluclatePrecisionFromBoundaries",
     "access": "public",
     "description": "Calculates the geohash precisions based on the distance between the boundaries.\nto be optimized...",
-    "lineNumber": 248,
+    "lineNumber": 250,
     "params": [
       {
         "nullable": null,
@@ -1967,7 +1967,7 @@
     "longname": "src/gof-utils.js~GofUtils.degreesToRadians",
     "access": "public",
     "description": "Converts degrees to radians.",
-    "lineNumber": 290,
+    "lineNumber": 292,
     "params": [
       {
         "nullable": null,
@@ -1993,9 +1993,9 @@
     "__docId__": 86,
     "kind": "file",
     "name": "src/gof.js",
-    "content": "import { GofUtils } from \"./gof-utils\";\nimport { GofDb } from \"./gof-db\";\nimport { GofValidation } from \"./validation/validation\";\nimport { GofDbListeners } from \"./gof-db-listeners\";\n\n/** \n * geo on fire entry point \n */\nexport default class Gof {\n  /**\n   * \n   * @param {string} name - Name for the Gof query.\n   * @param {Firebase} db - The Firebase database reference - database().ref()\n   */\n  constructor(name, db) {\n    GofValidation.validateConstructor(name, db, \"geoOnFire()\");\n    this._utils = GofUtils;\n    this._db = new GofDb(name, db);\n    this.registerEvents();\n\n    // holds the current query infos\n    this._activeQuery = {\n      geohashes: [],\n      entries: [],\n      parameters: [],\n      dbListeners: [],\n    }\n  }\n\n  /**\n   * Sets the active query object with all locations from a given radius(km).\n   * The reulst can be limited with startAt and endAt. e.g. 1 - 50\n   * \n   * Needs to be called in a function chain with .on() or .once()\n   *\n   * @param {Object} center Location object which represents the center of the given radius.\n   * @param {number} radius The query radius in kilometers.\n   * @param {number} [startAt=1] The entry to start at - e.g. start for pagination.\n   * @param {number} [endAt=50] The etnry to end at - e.g. end for pagination.\n   * @return {function} The function itself to make .on() and .once() chains possible.\n   */\n  getLocationsByRadius(center, radius, startAt = 1, endAt = 50) {\n    GofValidation.validateLocationsByRadius(center, radius, startAt, endAt, \"getLocationsByRadius()\");\n    this._activeQuery.parameters = { center, radius, startAt, endAt }\n\n    const boundaries = this._utils.getBoundariesFromRadius(center, radius);\n    const precision = this._utils.caluclatePrecisionFromBoundaries(boundaries);\n    this._activeQuery.geohashes = this._utils.getGeohashesInBoundaries(boundaries, precision);\n\n    this._activeQuery.entries = this._db.getLocationsFromGeohashes(this._activeQuery.geohashes)\n      .then(geohashNode => this._utils.getLocationsInRadius(geohashNode, center, radius))\n      .then(pushKeys => this._db.fetchLocations(pushKeys, startAt,  endAt));\n\n    return this.getLocationsByRadius;\n  } \n\n  /**\n   * Sets the active query object with all locations from given boundaries(south-west / north-east).\n   * The reulst can be limited with startAt and endAt. e.g. 1 - 50\n   * \n   * Needs to be called in a function chain with .on() or .once()\n   * \n   * @param {Object} boundaries Boundaries object which builds the rectangle query borders.\n   * @param {number} [startAt=1] The entry to start at - e.g. start for pagination.\n   * @param {number} [endAt=50] The etnry to end at - e.g. end for pagination.\n   * @return {function} The function itself to make .on() and .once() chains possible.\n   */\n  getLocationsByBoundaries(boundaries, startAt = 1, endAt = 50) {\n    GofValidation.validateLocationsByBoundaries(boundaries, startAt, endAt, \"getLocationsByBoundaries()\");\n    this._activeQuery.parameters = { boundaries, startAt, endAt }\n\n    const precision = this._utils.caluclatePrecisionFromBoundaries(boundaries);\n    this._activeQuery.geohashes = this._utils.getGeohashesInBoundaries(boundaries, precision);\n\n    this._activeQuery.entries = this._db.getLocationsFromGeohashes(this._activeQuery.geohashes)\n      .then(geohashNodes => this._utils.getLocationsInBoundaries(geohashNodes, boundaries))\n      .then(pushKeys => this._db.fetchLocations(pushKeys, startAt,  endAt));\n\n    return this.getLocationsByBoundaries;\n  }\n\n  /**\n   * Creates a new entry in the database and sets all the according locations. (geohashes)\n   * priority and maxPrecison are the geohash lengths. e.g. (prio of 4 == abcd).\n   * \n   * Low priority (1-4) can slow up the speed on apps with massive scaling.\n   *\n   * @param {Object} entry The new entry to create.\n   * @param {number} [priority=5] The priority of the new entry. (1 = high prio, 5 = low prio)\n   * @param {number} [maxPrecision=9] The maximum geohash precision. (7 - 9)\n   * @return {Promise.<Object>} A promise which is fulfilled once the entry was created.\n   */\n  createEntry(entry, priority = 5, maxPrecision = 9) {\n    GofValidation.validateCreateEntry(entry, priority, maxPrecision, \"createEntry()\");\n    const geohash = this._utils.getGeohashByLocation(entry.location, maxPrecision);\n    const geohashPrecisions = this._utils.getGeohashPrecisions(geohash, priority, maxPrecision);\n    const entryWithPrecisions = this._utils.setPrecisionsForEntry(priority, entry);\n\n    return this._db.pushEntry(entryWithPrecisions)\n      .then(data => this._db.setGeohashLocations(data.key, entry.location, geohashPrecisions));\n  }\n\n  /**\n   * Updates an existing entry in the database and all the according locations. (geohashes)\n   * The priority represents the geohash length. e.g. (prio of 4 == abcd).\n   * \n   * Low priority (1-4) can slow up the speed on apps with massive scaling.\n   *\n   * @param {string} pushKey The firebase push-key of the entry to update.\n   * @param {Object} newValue The new value of the entry to update.\n   * @param {number} [priority=5] The priority of the entry to update. (1 = high prio, 5 = low prio)\n   * @return {Promise.<Object>} A promise which is fulfilled once the entry was updated.\n   */\n  updateEntryLocation(pushKey, newValue, priority = 5) {\n    GofValidation.validateUpdateEntryLocation(pushKey, newValue, priority, \"updateEntryLocation()\");\n    return this._db.updateEntry(pushKey, newValue, priority);\n  }\n\n  /**\n   * Deletes an existing entry in the database and all the according locations. (geohashes)\n   *\n   * @param {string} pushKey The firebase push-key of the entry to delete.\n   * @return {Promise.<Object>} A promise which is fulfilled once the entry was deleted.\n   */\n  deleteEntry(pushKey) {\n    GofValidation.validateDeleteEntry(pushKey, \"deleteEntry()\");\n    return this._db.deleteEntry(pushKey);\n  }\n\n  /**\n   * Registers the on() and once() listeners on the query functions\n   */\n  registerEvents() {\n    /**\n     * Event listeners for getLocationsByBoundaries. Returns the query result based on events.\n     *\n     * @param {string} type The event type: \"value\", \"child_added\", \"child_changed\", \"child_removed\".\n     * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. \n     * Be aware the promise was modified and is able to stream data, similair to a callback.\n     */\n    this.getLocationsByBoundaries.on = (type) => this.attachBoundsEvent(type);\n\n\n    /**\n     * Event listeners for getLocationsByRadius. Returns the query result based on events.\n     *\n     * @param {string} type The event type: \"value\", \"child_added\", \"child_changed\", \"child_removed\".\n     * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. \n     * Be aware the promise was modified and is able to stream data, similair to a callback.\n     */\n    this.getLocationsByRadius.on = (type) => this.attachRadiusEvent(type);\n\n    /**\n     * Returns the query result for getLocationsByBoundaries once.\n     *\n     * @return {Promise.<Object>} A promise which is fulfilled once the query completed. \n     */\n    this.getLocationsByBoundaries.once = () => this._activeQuery.entries;\n\n    /**\n     * Returns the query result for getLocationsByRadius once.\n     *\n     * @return {Promise.<Object>} A promise which is fulfilled once the query completed. \n     */\n    this.getLocationsByRadius.once = () => this._activeQuery.entries;\n  }\n\n  /**\n   * Attaches the event listener and returns the streamable promise.\n   *\n   * @param {string} type The event type: \"value\", \"child_added\", \"child_changed\", \"child_removed\".\n   * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. \n   * Be aware the promise was modified and is able to stream data, similair to a callback.\n   */\n  attachBoundsEvent(type) {\n    GofValidation.validateOn(type, 'on()');\n    const event = new Event(\"bounds\");\n    const callbackList = [];\n    const streamingPromise = {\n      then: (fn) => {\n        callbackList.push(fn);\n        window.dispatchEvent(event);\n      },\n    };\n    \n    // attach the firebase db listeners to the event listener\n    this._activeQuery.dbListeners = GofDbListeners.attachDbListeners(type, this._db._refs, this._activeQuery.geohashes, event);\n\n    // add the event listener\n    window.addEventListener(\"bounds\", () => {\n      for (const cb of callbackList) {\n        this.getLocationsByBoundaries(this._activeQuery.parameters.boundaries, \n          this._activeQuery.parameters.startAt, this._activeQuery.parameters.endAt);\n\n        // unwrap the values to make return value similair to .once()\n        this._activeQuery.entries.then(entries => cb(entries));\n      }\n    });\n\n    return streamingPromise;\n  }\n\n  /**\n   * Attaches the event listener and returns the streamable promise.\n   *\n   * @param {string} type The event type: \"value\", \"child_added\", \"child_changed\", \"child_removed\"\n   * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. \n   * Be aware the promise was modified and is able to stream data, similair to a callback.\n   */\n  attachRadiusEvent(type) {\n    GofValidation.validateOn(type, 'on()');\n    const event = new Event(\"radius\");\n    const callbackList = [];\n    const streamingPromise = {\n      then: (fn) => {\n        callbackList.push(fn);\n        window.dispatchEvent(event);\n      },\n    };\n    \n    // attach the firebase db listeners to the event listener\n    this._activeQuery.dbListeners = GofDbListeners.attachDbListeners(type, this._db._refs, this._activeQuery.geohashes, event);\n\n    // add the event listener\n    window.addEventListener(\"radius\", () => {\n      for (const cb of callbackList) {\n        this.getLocationsByRadius(this._activeQuery.parameters.center, this._activeQuery.parameters.radius,\n          this._activeQuery.parameters.startAt, this._activeQuery.parameters.endAt);\n\n        // unwrap the values to make return value similair to .once()\n        this._activeQuery.entries.then(entries => cb(entries));\n      }\n    });\n\n    return streamingPromise;\n  }\n\n  /**\n   * Destroys the existing query and all of its event listeners.\n   */\n  destroy() {\n    if (this._activeQuery.dbListeners.length) {\n      this._activeQuery.dbListeners.forEach(listener => {\n        listener.off();\n      });\n      this._activeQuery.dbListeners = [];\n    }\n  }\n}",
+    "content": "import { GofUtils } from \"./gof-utils\";\nimport { GofDb } from \"./gof-db\";\nimport { GofValidation } from \"./validation/validation\";\nimport { GofDbListeners } from \"./gof-db-listeners\";\n\n/** \n * geo on fire entry point \n */\nexport default class Gof {\n  /**\n   * \n   * @param {string} name - Name for the Gof query.\n   * @param {Firebase} db - The Firebase database reference - database().ref()\n   */\n  constructor(name, db) {\n    GofValidation.validateConstructor(name, db, \"geoOnFire()\");\n    this._utils = GofUtils;\n    this._db = new GofDb(name, db);\n    this.registerEvents();\n\n    // holds the current query infos\n    this._activeQuery = {\n      geohashes: [],\n      entries: [],\n      parameters: [],\n      dbListeners: [],\n    }\n  }\n\n  /**\n   * Sets the active query object with all locations from a given radius(km).\n   * The reulst can be limited with startAt and endAt. e.g. 1 - 50\n   * \n   * Needs to be called in a function chain with .on() or .once()\n   *\n   * @param {Object} center Location object which represents the center of the given radius.\n   * @param {number} radius The query radius in kilometers.\n   * @param {number} [startAt=1] The entry to start at - e.g. start for pagination.\n   * @param {number} [endAt=undefined] The etnry to end at. Default returns all.\n   * @return {function} The function itself to make .on() and .once() chains possible.\n   */\n  getLocationsByRadius(center, radius, startAt = 1, endAt = undefined) {\n    GofValidation.validateLocationsByRadius(\n      center, radius, startAt, endAt, \"getLocationsByRadius()\"\n    );\n\n    this._activeQuery.parameters = { center, radius, startAt, endAt }\n\n    const boundaries = this._utils.getBoundariesFromRadius(center, radius);\n    const precision = this._utils.caluclatePrecisionFromBoundaries(boundaries);\n    this._activeQuery.geohashes = this._utils.getGeohashesInBoundaries(boundaries, precision);\n\n    this._activeQuery.entries = this._db.getLocationsFromGeohashes(this._activeQuery.geohashes)\n      .then(geohashNode => this._utils.getLocationsInRadius(geohashNode, center, radius))\n      .then(pushKeys => this._db.fetchLocations(pushKeys, startAt,  endAt));\n\n    return this.getLocationsByRadius;\n  } \n\n  /**\n   * Sets the active query object with all locations from given boundaries(south-west / north-east).\n   * The reulst can be limited with startAt and endAt. e.g. 1 - 50\n   * \n   * Needs to be called in a function chain with .on() or .once()\n   * \n   * @param {Object} boundaries Boundaries object which builds the rectangle query borders.\n   * @param {number} [startAt=1] The entry to start at - e.g. start for pagination.\n   * @param {number} [endAt=undefined] The etnry to end at. Default returns all.\n   * @return {function} The function itself to make .on() and .once() chains possible.\n   */\n  getLocationsByBoundaries(boundaries, startAt = 1, endAt = undefined) {\n    GofValidation.validateLocationsByBoundaries(\n      boundaries, startAt, endAt, \"getLocationsByBoundaries()\"\n    );\n\n    this._activeQuery.parameters = { boundaries, startAt, endAt }\n    const precision = this._utils.caluclatePrecisionFromBoundaries(boundaries);\n    this._activeQuery.geohashes = this._utils.getGeohashesInBoundaries(boundaries, precision);\n\n    this._activeQuery.entries = this._db.getLocationsFromGeohashes(this._activeQuery.geohashes)\n      .then(geohashNodes => this._utils.getLocationsInBoundaries(geohashNodes, boundaries))\n      .then(pushKeys => this._db.fetchLocations(pushKeys, startAt,  endAt));\n\n    return this.getLocationsByBoundaries;\n  }\n\n  /**\n   * Creates a new entry in the database and sets all the according locations. (geohashes)\n   * priority and maxPrecison are the geohash lengths. e.g. (prio of 4 == abcd).\n   * \n   * Low priority (1-4) can slow up the speed on apps with massive scaling.\n   *\n   * @param {Object} entry The new entry to create.\n   * @param {number} [priority=5] The priority of the new entry. (1 = high prio, 5 = low prio)\n   * @param {number} [maxPrecision=9] The maximum geohash precision. (7 - 9)\n   * @return {Promise.<Object>} A promise which is fulfilled once the entry was created.\n   */\n  createEntry(entry, priority = 5, maxPrecision = 9) {\n    GofValidation.validateCreateEntry(entry, priority, maxPrecision, \"createEntry()\");\n    const geohash = this._utils.getGeohashByLocation(entry.location, maxPrecision);\n    const geohashPrecisions = this._utils.getGeohashPrecisions(geohash, priority, maxPrecision);\n    const entryWithPrecisions = this._utils.setPrecisionsForEntry(priority, entry);\n\n    return this._db.pushEntry(entryWithPrecisions)\n      .then(data => this._db.setGeohashLocations(data.key, entry.location, geohashPrecisions));\n  }\n\n  /**\n   * Updates an existing entry in the database and all the according locations. (geohashes)\n   * The priority represents the geohash length. e.g. (prio of 4 == abcd).\n   * \n   * Low priority (1-4) can slow up the speed on apps with massive scaling.\n   *\n   * @param {string} pushKey The firebase push-key of the entry to update.\n   * @param {Object} newValue The new value of the entry to update.\n   * @param {number} [priority=5] The priority of the entry to update. (1 = high prio, 5 = low prio)\n   * @return {Promise.<Object>} A promise which is fulfilled once the entry was updated.\n   */\n  updateEntryLocation(pushKey, newValue, priority = 5) {\n    GofValidation.validateUpdateEntryLocation(pushKey, newValue, priority, \"updateEntryLocation()\");\n    return this._db.updateEntry(pushKey, newValue, priority);\n  }\n\n  /**\n   * Deletes an existing entry in the database and all the according locations. (geohashes)\n   *\n   * @param {string} pushKey The firebase push-key of the entry to delete.\n   * @return {Promise.<Object>} A promise which is fulfilled once the entry was deleted.\n   */\n  deleteEntry(pushKey) {\n    GofValidation.validateDeleteEntry(pushKey, \"deleteEntry()\");\n    return this._db.deleteEntry(pushKey);\n  }\n\n  /**\n   * Registers the on() and once() listeners on the query functions\n   */\n  registerEvents() {\n    /**\n     * Event listeners for getLocationsByBoundaries. Returns the query result based on events.\n     *\n     * @param {string} type The event type.\n     * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. \n     * Be aware the promise was modified and is able to stream data, similair to a callback.\n     */\n    this.getLocationsByBoundaries.on = (type) => this.attachQueryEvent(type, \"bounds\", () => {\n      this.getLocationsByBoundaries(\n        this._activeQuery.parameters.boundaries, \n        this._activeQuery.parameters.startAt, \n        this._activeQuery.parameters.endAt\n      );\n    });\n\n\n    /**\n     * Event listeners for getLocationsByRadius. Returns the query result based on events.\n     *\n     * @param {string} type The event type.\n     * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. \n     * Be aware the promise was modified and is able to stream data, similair to a callback.\n     */\n    this.getLocationsByRadius.on = (type) => this.attachQueryEvent(type, \"radius\", () => {\n      this.getLocationsByRadius(\n        this._activeQuery.parameters.center, \n        this._activeQuery.parameters.radius,\n        this._activeQuery.parameters.startAt, \n        this._activeQuery.parameters.endAt\n      );\n    });\n\n    /**\n     * Returns the query result for getLocationsByBoundaries once.\n     *\n     * @return {Promise.<Object>} A promise which is fulfilled once the query completed. \n     */\n    this.getLocationsByBoundaries.once = () => this._activeQuery.entries;\n\n    /**\n     * Returns the query result for getLocationsByRadius once.\n     *\n     * @return {Promise.<Object>} A promise which is fulfilled once the query completed. \n     */\n    this.getLocationsByRadius.once = () => this._activeQuery.entries;\n  }\n\n  /**\n   * Attaches the event listener and returns the streamable promise.\n   *\n   * @param {string} type The event type: \"value\", \"child_added\", \"child_changed\", \"child_removed\".\n   * @param {string} eventNmae The name of the event to create.\n   * @param {function} queryCb The callback to execute once an event fires.\n   * @return {Promise.<Object>} A promise which is fulfilled each time the event fires.\n   * Be aware the promise was modified and is able to stream data, similair to a callback.\n   */\n  attachQueryEvent(type, eventNmae, queryCb) {\n    GofValidation.validateOn(type, \"on()\");\n    const event = new Event(eventNmae);\n    let cb;\n    const streamingPromise = {\n      then: (fn) => {\n        cb = fn;\n        window.dispatchEvent(event);\n      },\n    };\n    \n    // attach the firebase db listeners to the event listener\n    this._activeQuery.dbListeners = GofDbListeners.attachDbListeners(\n      type, \n      this._db._refs, \n      this._activeQuery.geohashes, event\n    );\n\n    // add the event listener\n    window.addEventListener(eventNmae, () => {\n      queryCb();\n      this._activeQuery.entries.then(entries => cb(entries));\n    });\n\n    return streamingPromise;\n  }\n\n  /**\n   * Destroys the existing query and all of its event listeners.\n   */\n  destroy() {\n    if (this._activeQuery.dbListeners.length) {\n      this._activeQuery.dbListeners.forEach(listener => {\n        listener.off();\n      });\n      this._activeQuery.dbListeners = [];\n    }\n  }\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/gof.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/gof.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
@@ -2153,10 +2153,10 @@
         ],
         "spread": false,
         "optional": true,
-        "defaultValue": "50",
-        "defaultRaw": 50,
+        "defaultValue": "undefined",
+        "defaultRaw": "undefined",
         "name": "endAt",
-        "description": "The etnry to end at - e.g. end for pagination."
+        "description": "The etnry to end at. Default returns all."
       }
     ],
     "return": {
@@ -2179,7 +2179,7 @@
     "longname": "src/gof.js~Gof#getLocationsByBoundaries",
     "access": "public",
     "description": "Sets the active query object with all locations from given boundaries(south-west / north-east).\nThe reulst can be limited with startAt and endAt. e.g. 1 - 50\n\nNeeds to be called in a function chain with .on() or .once()",
-    "lineNumber": 68,
+    "lineNumber": 71,
     "params": [
       {
         "nullable": null,
@@ -2210,10 +2210,10 @@
         ],
         "spread": false,
         "optional": true,
-        "defaultValue": "50",
-        "defaultRaw": 50,
+        "defaultValue": "undefined",
+        "defaultRaw": "undefined",
         "name": "endAt",
-        "description": "The etnry to end at - e.g. end for pagination."
+        "description": "The etnry to end at. Default returns all."
       }
     ],
     "return": {
@@ -2236,7 +2236,7 @@
     "longname": "src/gof.js~Gof#createEntry",
     "access": "public",
     "description": "Creates a new entry in the database and sets all the according locations. (geohashes)\npriority and maxPrecison are the geohash lengths. e.g. (prio of 4 == abcd).\n\nLow priority (1-4) can slow up the speed on apps with massive scaling.",
-    "lineNumber": 93,
+    "lineNumber": 98,
     "params": [
       {
         "nullable": null,
@@ -2293,7 +2293,7 @@
     "longname": "src/gof.js~Gof#updateEntryLocation",
     "access": "public",
     "description": "Updates an existing entry in the database and all the according locations. (geohashes)\nThe priority represents the geohash length. e.g. (prio of 4 == abcd).\n\nLow priority (1-4) can slow up the speed on apps with massive scaling.",
-    "lineNumber": 114,
+    "lineNumber": 119,
     "params": [
       {
         "nullable": null,
@@ -2348,7 +2348,7 @@
     "longname": "src/gof.js~Gof#deleteEntry",
     "access": "public",
     "description": "Deletes an existing entry in the database and all the according locations. (geohashes)",
-    "lineNumber": 125,
+    "lineNumber": 130,
     "params": [
       {
         "nullable": null,
@@ -2381,22 +2381,22 @@
     "longname": "src/gof.js~Gof#registerEvents",
     "access": "public",
     "description": "Registers the on() and once() listeners on the query functions",
-    "lineNumber": 133,
+    "lineNumber": 138,
     "params": [],
     "return": null
   },
   {
     "__docId__": 98,
     "kind": "method",
-    "name": "attachBoundsEvent",
+    "name": "attachQueryEvent",
     "memberof": "src/gof.js~Gof",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/gof.js~Gof#attachBoundsEvent",
+    "longname": "src/gof.js~Gof#attachQueryEvent",
     "access": "public",
     "description": "Attaches the event listener and returns the streamable promise.",
-    "lineNumber": 175,
+    "lineNumber": 195,
     "params": [
       {
         "nullable": null,
@@ -2407,30 +2407,7 @@
         "optional": false,
         "name": "type",
         "description": "The event type: \"value\", \"child_added\", \"child_changed\", \"child_removed\"."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "Promise.<Object>"
-      ],
-      "spread": false,
-      "description": "A promise which is fulfilled each time the event fires. \nBe aware the promise was modified and is able to stream data, similair to a callback."
-    }
-  },
-  {
-    "__docId__": 99,
-    "kind": "method",
-    "name": "attachRadiusEvent",
-    "memberof": "src/gof.js~Gof",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/gof.js~Gof#attachRadiusEvent",
-    "access": "public",
-    "description": "Attaches the event listener and returns the streamable promise.",
-    "lineNumber": 210,
-    "params": [
+      },
       {
         "nullable": null,
         "types": [
@@ -2438,8 +2415,18 @@
         ],
         "spread": false,
         "optional": false,
-        "name": "type",
-        "description": "The event type: \"value\", \"child_added\", \"child_changed\", \"child_removed\""
+        "name": "eventNmae",
+        "description": "The name of the event to create."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "function"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "queryCb",
+        "description": "The callback to execute once an event fires."
       }
     ],
     "return": {
@@ -2448,11 +2435,11 @@
         "Promise.<Object>"
       ],
       "spread": false,
-      "description": "A promise which is fulfilled each time the event fires. \nBe aware the promise was modified and is able to stream data, similair to a callback."
+      "description": "A promise which is fulfilled each time the event fires.\nBe aware the promise was modified and is able to stream data, similair to a callback."
     }
   },
   {
-    "__docId__": 100,
+    "__docId__": 99,
     "kind": "method",
     "name": "destroy",
     "memberof": "src/gof.js~Gof",
@@ -2462,23 +2449,23 @@
     "longname": "src/gof.js~Gof#destroy",
     "access": "public",
     "description": "Destroys the existing query and all of its event listeners.",
-    "lineNumber": 241,
+    "lineNumber": 225,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 101,
+    "__docId__": 100,
     "kind": "file",
     "name": "src/validation/parameters/boundaries.parameter.js",
-    "content": "import { GofCoordinatesValidation } from \"../validators/coordinates.validation\";\nimport { GofBasicValidation } from \"../validators/basic.validation\";\n\n/**\n * \n * @param {Object} boundaries Boundaries object whichgets validated.\n * @param {string} fName The name of the executed function.\n * @param {string} parameter The name of the boundaries parameter.\n */\nexport function validateBoundariesParameter(boundaries, fName, parameter) {\n  GofCoordinatesValidation.validateCoordinates(boundaries.sw, fName, `${parameter}.sw`);\n  GofCoordinatesValidation.validateCoordinates(boundaries.ne, fName, `${parameter}.ne`);\n  GofBasicValidation.isHigherThan(boundaries.sw.lat, boundaries.ne.lat, { fName, p1: \"boundaries.sw.lat\", p2: \"boundaries.ne.lat\" });  GofBasicValidation.isHigherThan(boundaries.sw.lng, boundaries.ne.lng, { fName, p1: \"boundaries.sw.lng\", p2: \"boundaries.ne.lng\" });\n}",
+    "content": "import { GofCoordinatesValidation } from \"../validators/coordinates.validation\";\nimport { GofBasicValidation } from \"../validators/basic.validation\";\n\n/**\n * \n * @param {Object} boundaries Boundaries object whichgets validated.\n * @param {string} fName The name of the executed function.\n * @param {string} parameter The name of the boundaries parameter.\n */\nexport function validateBoundariesParameter(boundaries, fName, parameter) {\n  GofCoordinatesValidation.validateCoordinates(boundaries.sw, fName, `${parameter}.sw`);\n  GofCoordinatesValidation.validateCoordinates(boundaries.ne, fName, `${parameter}.ne`);\n\n  GofBasicValidation.isHigherThan(\n    boundaries.sw.lat, \n    boundaries.ne.lat, \n    { fName, p1: \"boundaries.sw.lat\", p2: \"boundaries.ne.lat\" }\n  );  \n  \n  GofBasicValidation.isHigherThan(\n    boundaries.sw.lng, \n    boundaries.ne.lng, \n    { fName, p1: \"boundaries.sw.lng\", p2: \"boundaries.ne.lng\" }\n  );\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/boundaries.parameter.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/boundaries.parameter.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 102,
+    "__docId__": 101,
     "kind": "function",
     "name": "validateBoundariesParameter",
     "memberof": "src/validation/parameters/boundaries.parameter.js",
@@ -2527,18 +2514,18 @@
     "return": null
   },
   {
-    "__docId__": 103,
+    "__docId__": 102,
     "kind": "file",
     "name": "src/validation/parameters/center.parameter.js",
     "content": "import { GofCoordinatesValidation } from \"../validators/coordinates.validation\";\n\n/**\n * \n * @param {Object} center Location object which gets validated.\n * @param {string} fName The name of the executed function.\n */\nexport function validateCenterParameter(center, fName) {\n  GofCoordinatesValidation.validateCoordinates(center, fName, \"center\");\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/center.parameter.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/center.parameter.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 104,
+    "__docId__": 103,
     "kind": "function",
     "name": "validateCenterParameter",
     "memberof": "src/validation/parameters/center.parameter.js",
@@ -2577,18 +2564,18 @@
     "return": null
   },
   {
-    "__docId__": 105,
+    "__docId__": 104,
     "kind": "file",
     "name": "src/validation/parameters/db.parameter.js",
     "content": "import { GofBasicValidation } from \"../validators/basic.validation\";\n\n/**\n * \n * @param {Firebase} db - The Firebase database reference which gets validated.\n * @param {string} fName The name of the executed function.\n */\nexport function validateDbParameter(db, fName) {\n  GofBasicValidation.validateObject(db, { fName, p1: \"firebase.database()\" });\n  GofBasicValidation.validateReference(db, { fName, p1: \"firebase.database()\" });\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/db.parameter.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/db.parameter.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 106,
+    "__docId__": 105,
     "kind": "function",
     "name": "validateDbParameter",
     "memberof": "src/validation/parameters/db.parameter.js",
@@ -2627,18 +2614,18 @@
     "return": null
   },
   {
-    "__docId__": 107,
+    "__docId__": 106,
     "kind": "file",
     "name": "src/validation/parameters/entry-limitation.parameters.js",
-    "content": "import { GofBasicValidation } from \"../validators/basic.validation\"\n\n/**\n * \n * @param {number} startAt The entry to start at.\n * @param {number} endAt The etnry to end at.\n * @param {string} fName The name of the executed function.\n */\nexport function validateEntryLimitationParameters(startAt, endAt, fName) {\n  // validate endAt first to make sure it contains a number\n  validateEndAt(endAt, fName, \"endAt\");\n  validateStartAt(startAt, endAt, fName, \"startAt\");\n}\n\n/**\n * \n * @param {number} startAt The number of the entry to start at.\n * @param {number} endAt The number of the entry to end at.\n * @param {string} fName The name of the executed function.\n * @param {string} p1 The name of the passed parameter. (shortterm for first parameter)\n */\nfunction validateStartAt(startAt, endAt, fName, p1) {    \n  GofBasicValidation.validateNumber(startAt, { fName, p1 });\n  GofBasicValidation.isLowerThan(startAt, 1, { fName, p1, p2: \"1\" });\n  GofBasicValidation.hasDecimalPlaces(startAt, { fName, p1 });\n  GofBasicValidation.isHigherThan(startAt, endAt, { fName, p1, p2: \"endAt\" });\n}\n\n/**\n * \n * @param {number} endAt The number of the entry to end at.\n * @param {string} fName The name of the executed function.\n * @param {string} p1 The name of the passed parameter. (shortterm for first parameter)\n */\nfunction validateEndAt(endAt, fName, p1) {\n  GofBasicValidation.validateNumber(endAt, { fName, p1 });\n  GofBasicValidation.hasDecimalPlaces(endAt, { fName, p1 });\n}",
+    "content": "import { GofBasicValidation } from \"../validators/basic.validation\"\n\n/**\n * \n * @param {number} startAt The entry to start at.\n * @param {number} endAt The etnry to end at.\n * @param {string} fName The name of the executed function.\n */\nexport function validateEntryLimitationParameters(startAt, endAt, fName) {\n  // undefined is a possible value\n  if (endAt) {\n    // validate endAt first to make sure it contains a number\n    validateEndAt(endAt, fName, \"endAt\");\n  }\n  validateStartAt(startAt, endAt, fName, \"startAt\");\n}\n\n/**\n * \n * @param {number} startAt The number of the entry to start at.\n * @param {number} endAt The number of the entry to end at.\n * @param {string} fName The name of the executed function.\n * @param {string} p1 The name of the passed parameter. (shortterm for first parameter)\n */\nfunction validateStartAt(startAt, endAt, fName, p1) {    \n  GofBasicValidation.validateNumber(startAt, { fName, p1 });\n  GofBasicValidation.isLowerThan(startAt, 1, { fName, p1, p2: \"1\" });\n  GofBasicValidation.hasDecimalPlaces(startAt, { fName, p1 });\n  GofBasicValidation.isHigherThan(startAt, endAt, { fName, p1, p2: \"endAt\" });\n}\n\n/**\n * \n * @param {number} endAt The number of the entry to end at.\n * @param {string} fName The name of the executed function.\n * @param {string} p1 The name of the passed parameter. (shortterm for first parameter)\n */\nfunction validateEndAt(endAt, fName, p1) {\n  GofBasicValidation.validateNumber(endAt, { fName, p1 });\n  GofBasicValidation.hasDecimalPlaces(endAt, { fName, p1 });\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/entry-limitation.parameters.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/entry-limitation.parameters.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 108,
+    "__docId__": 107,
     "kind": "function",
     "name": "validateEntryLimitationParameters",
     "memberof": "src/validation/parameters/entry-limitation.parameters.js",
@@ -2687,7 +2674,7 @@
     "return": null
   },
   {
-    "__docId__": 109,
+    "__docId__": 108,
     "kind": "function",
     "name": "validateStartAt",
     "memberof": "src/validation/parameters/entry-limitation.parameters.js",
@@ -2700,7 +2687,7 @@
     "importPath": "firebase-nearby/src/validation/parameters/entry-limitation.parameters.js",
     "importStyle": null,
     "description": "",
-    "lineNumber": 22,
+    "lineNumber": 25,
     "params": [
       {
         "nullable": null,
@@ -2747,7 +2734,7 @@
     "ignore": true
   },
   {
-    "__docId__": 110,
+    "__docId__": 109,
     "kind": "function",
     "name": "validateEndAt",
     "memberof": "src/validation/parameters/entry-limitation.parameters.js",
@@ -2760,7 +2747,7 @@
     "importPath": "firebase-nearby/src/validation/parameters/entry-limitation.parameters.js",
     "importStyle": null,
     "description": "",
-    "lineNumber": 35,
+    "lineNumber": 38,
     "params": [
       {
         "nullable": null,
@@ -2797,18 +2784,18 @@
     "ignore": true
   },
   {
-    "__docId__": 111,
+    "__docId__": 110,
     "kind": "file",
     "name": "src/validation/parameters/entry.parameter.js",
     "content": "import { GofCoordinatesValidation } from \"../validators/coordinates.validation\";\n\n/**\n * \n * @param {Object} entry The entry to validate.\n * @param {string} fName The name of the executed function.\n * @param {string} parameter The name of the entry parameter.\n */\nexport function validateEntryParameter(entry, fName, parameter) {\n  GofCoordinatesValidation.validateCoordinates(entry.location, fName, parameter);\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/entry.parameter.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/entry.parameter.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 112,
+    "__docId__": 111,
     "kind": "function",
     "name": "validateEntryParameter",
     "memberof": "src/validation/parameters/entry.parameter.js",
@@ -2857,18 +2844,18 @@
     "return": null
   },
   {
-    "__docId__": 113,
+    "__docId__": 112,
     "kind": "file",
     "name": "src/validation/parameters/event-type.parameter.js",
-    "content": "import { GofBasicValidation } from \"../validators/basic.validation\";\n\n/**\n * \n * @param {string} type The event type to validate.\n * @param {string} fName The name of the executed function.\n */\nexport function validateEventTypeParameter(type, fName) {\n  GofBasicValidation.validateString(type, { fName, p1: 'type' });\n  GofBasicValidation.validateEventType(type, { fName, p1: 'type' });\n}",
+    "content": "import { GofBasicValidation } from \"../validators/basic.validation\";\n\n/**\n * \n * @param {string} type The event type to validate.\n * @param {string} fName The name of the executed function.\n */\nexport function validateEventTypeParameter(type, fName) {\n  GofBasicValidation.validateString(type, { fName, p1: \"type\" });\n  GofBasicValidation.validateEventType(type, { fName, p1: \"type\" });\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/event-type.parameter.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/event-type.parameter.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 114,
+    "__docId__": 113,
     "kind": "function",
     "name": "validateEventTypeParameter",
     "memberof": "src/validation/parameters/event-type.parameter.js",
@@ -2907,18 +2894,18 @@
     "return": null
   },
   {
-    "__docId__": 115,
+    "__docId__": 114,
     "kind": "file",
     "name": "src/validation/parameters/max-precision.parameter.js",
     "content": "import { GofBasicValidation } from \"../validators/basic.validation\";\n\n/**\n * \n * @param {number} maxPrecision The maximum geohash precision to validate.\n * @param {string} fName The name of the executed function.\n */\nexport function validateMaxPrecisionParameter(maxPrecision, fName) {\n  GofBasicValidation.validateNumber(maxPrecision, { fName, p1: \"maxPrecision\" });\n  GofBasicValidation.hasDecimalPlaces(maxPrecision, { fName, p1: \"maxPrecision\" });\n  GofBasicValidation.isLowerThan(maxPrecision, 7, { fName, p1: \"maxPrecision\", p2: \"7\" });\n  GofBasicValidation.isHigherThan(maxPrecision, 9, { fName, p1: \"maxPrecision\", p2: \"9\" });\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/max-precision.parameter.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/max-precision.parameter.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 116,
+    "__docId__": 115,
     "kind": "function",
     "name": "validateMaxPrecisionParameter",
     "memberof": "src/validation/parameters/max-precision.parameter.js",
@@ -2957,18 +2944,18 @@
     "return": null
   },
   {
-    "__docId__": 117,
+    "__docId__": 116,
     "kind": "file",
     "name": "src/validation/parameters/name.parameter.js",
     "content": "import { GofBasicValidation } from \"../validators/basic.validation\";\n\n/**\n * \n * @param {string} name - Name to validate.\n * @param {string} fName The name of the executed function.\n */\nexport function validateNameParameter(name, fName) {\n  GofBasicValidation.validateString(name, { fName, p1: \"name\" });\n  GofBasicValidation.containsSpecialChars(name, { fName, p1: \"name\" });\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/name.parameter.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/name.parameter.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 118,
+    "__docId__": 117,
     "kind": "function",
     "name": "validateNameParameter",
     "memberof": "src/validation/parameters/name.parameter.js",
@@ -3007,18 +2994,18 @@
     "return": null
   },
   {
-    "__docId__": 119,
+    "__docId__": 118,
     "kind": "file",
     "name": "src/validation/parameters/new-value.parameter.js",
     "content": "import { validateEntryParameter } from \"./entry.parameter\";\nimport { validatePriorityParameter } from \"./priority.parameter\";\nimport { validateMaxPrecisionParameter } from \"./max-precision.parameter\";\n\n/**\n * \n * @param {Object} newValue The new entry value to validate.\n * @param {string} fName The name of the executed function.\n * @param {string} parameter The name of the new value parameter.\n */\nexport function validateNewValueParameter(newValue, fName, parameter) {\n  validateEntryParameter(newValue, fName, \"newValue.location\");\n  validatePriorityParameter(newValue.minPrecision, fName);\n  validateMaxPrecisionParameter(newValue.maxPrecision, fName);\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/new-value.parameter.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/new-value.parameter.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 120,
+    "__docId__": 119,
     "kind": "function",
     "name": "validateNewValueParameter",
     "memberof": "src/validation/parameters/new-value.parameter.js",
@@ -3067,18 +3054,18 @@
     "return": null
   },
   {
-    "__docId__": 121,
+    "__docId__": 120,
     "kind": "file",
     "name": "src/validation/parameters/priority.parameter.js",
     "content": "import { GofBasicValidation } from \"../validators/basic.validation\"\n\n/**\n * \n * @param {number} priority The priority to validate.\n * @param {string} fName The name of the executed function.\n */\nexport function validatePriorityParameter(priority, fName) {\n  GofBasicValidation.validateNumber(priority, { fName, p1: \"priority\" });\n  GofBasicValidation.hasDecimalPlaces(priority, { fName, p1: \"priority\" });\n  GofBasicValidation.isLowerThan(priority, 1, { fName, p1: \"priority\", p2: \"1\" });\n  GofBasicValidation.isHigherThan(priority, 5, { fName, p1: \"priority\", p2: \"5\" });\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/priority.parameter.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/priority.parameter.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 122,
+    "__docId__": 121,
     "kind": "function",
     "name": "validatePriorityParameter",
     "memberof": "src/validation/parameters/priority.parameter.js",
@@ -3117,18 +3104,18 @@
     "return": null
   },
   {
-    "__docId__": 123,
+    "__docId__": 122,
     "kind": "file",
     "name": "src/validation/parameters/push-key.parameter.js",
     "content": "import { GofBasicValidation } from \"../validators/basic.validation\";\n\n/**\n * \n * @param {string} pushKey The firebase push-key to validate.\n * @param {string} fName The name of the executed function.\n */\nexport function validatePushKeyParameter(pushKey, fName) {\n  GofBasicValidation.validateString(pushKey, { fName, p1: \"pushKey\" });\n  GofBasicValidation.containsSpecialChars(pushKey, { fName, p1: \"pushKey\" });\n  GofBasicValidation.containsSpaces(pushKey, { fName, p1: \"pushKey\" });\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/push-key.parameter.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/push-key.parameter.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 124,
+    "__docId__": 123,
     "kind": "function",
     "name": "validatePushKeyParameter",
     "memberof": "src/validation/parameters/push-key.parameter.js",
@@ -3167,18 +3154,18 @@
     "return": null
   },
   {
-    "__docId__": 125,
+    "__docId__": 124,
     "kind": "file",
     "name": "src/validation/parameters/radius.parameter.js",
     "content": "import { GofBasicValidation } from \"../validators/basic.validation\";\n\n/**\n * \n * @param {number} radius The query radius to validate.\n * @param {string} fName The name of the executed function.\n */\nexport function validateRadiusParameter(radius, fName) {\n  GofBasicValidation.validateNumber(radius, { fName, p1: \"radius\" });\n  GofBasicValidation.isLowerThan(radius, 0, { fName, p1: \"radius\", p2: \"0\" });\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/parameters/radius.parameter.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/parameters/radius.parameter.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 126,
+    "__docId__": 125,
     "kind": "function",
     "name": "validateRadiusParameter",
     "memberof": "src/validation/parameters/radius.parameter.js",
@@ -3217,18 +3204,18 @@
     "return": null
   },
   {
-    "__docId__": 127,
+    "__docId__": 126,
     "kind": "file",
     "name": "src/validation/validation.js",
     "content": "import { validateDbParameter } from \"./parameters/db.parameter\";\nimport { validateCenterParameter } from \"./parameters/center.parameter\";\nimport { validateRadiusParameter } from \"./parameters/radius.parameter\";\nimport { validateEntryLimitationParameters } from \"./parameters/entry-limitation.parameters\";\nimport { validateBoundariesParameter } from \"./parameters/boundaries.parameter\";\nimport { validateEntryParameter } from \"./parameters/entry.parameter\";\nimport { validatePriorityParameter } from \"./parameters/priority.parameter\";\nimport { validateMaxPrecisionParameter } from \"./parameters/max-precision.parameter\";\nimport { validateNameParameter } from \"./parameters/name.parameter\";\nimport { validatePushKeyParameter } from \"./parameters/push-key.parameter\";\nimport { validateNewValueParameter } from \"./parameters/new-value.parameter\";\nimport { validateEventTypeParameter } from \"./parameters/event-type.parameter\";\n\n/** \n * geo on fire validation\n */\nexport class GofValidation {\n\n  constructor() {}\n\n  /**\n   * Validates the parameters of the Gof class constructor.\n   *\n   * @param {string} name - name for the Gof query\n   * @param {Firebase} db - The Firebase database reference - database().ref()\n   * @param {string} fName The name of the executed function.\n   */\n  static validateConstructor(name, db, fName) {\n    validateNameParameter(name, fName);\n    validateDbParameter(db, fName);\n  }\n\n  /**\n   * Validates the parameters of the getLocationsByRadius Gof class member function.\n   *\n   * @param {Object} center Location object which represents the center of the given radius.\n   * @param {number} radius The query radius in kilometers.\n   * @param {number} startAt The entry to start at.\n   * @param {number} endAt The etnry to end at.\n   * @param {string} fName The name of the executed function.\n   */\n  static validateLocationsByRadius(center, radius, startAt, endAt, fName) {\n    validateCenterParameter(center, fName);\n    validateRadiusParameter(radius, fName);\n    validateEntryLimitationParameters(startAt, endAt, fName);\n  }\n\n  /**\n   * Validates the parameters of the getLocationsByBoundaries Gof class member function.\n   *\n   * @param {Object} boundaries Boundaries object which builds the rectangle query borders.\n   * @param {number} startAt The entry to start at.\n   * @param {number} endAt The etnry to end at.\n   * @param {string} fName The name of the executed function.\n   */\n  static validateLocationsByBoundaries(boundaries, startAt, endAt, fName) {\n    validateBoundariesParameter(boundaries, fName, \"boundaries\");\n    validateEntryLimitationParameters(startAt, endAt, fName);\n  }\n\n  /**\n   * Validates the parameters of the createEntry Gof class member function.\n   *\n   * @param {Object} entry The new entry to create.\n   * @param {number} priority The priority of the new entry.\n   * @param {number} maxPrecision The maximum geohash precision.\n   * @param {string} fName The name of the executed function.\n   */\n  static validateCreateEntry(entry, priority, maxPrecision, fName) {\n    validateEntryParameter(entry, fName, \"entry.location\");\n    validatePriorityParameter(priority, fName);\n    validateMaxPrecisionParameter(maxPrecision, fName);\n  }\n\n  /**\n   * Validates the parameters of the updateEntryLocation Gof class member function.\n   *\n   * @param {string} pushKey The firebase push-key of the entry to update.\n   * @param {Object} newValue The new value of the entry to update.\n   * @param {number} priority The priority of the entry to update.\n   * @param {string} fName The name of the executed function.\n   */\n  static validateUpdateEntryLocation(pushKey, newValue, priority, fName) {\n    validatePushKeyParameter(pushKey, fName);\n    validateNewValueParameter(newValue, fName, \"newValue.location\");\n    validatePriorityParameter(priority, fName);\n  }\n\n  /**\n   * Validates the parameters of the deleteEntryLocation Gof class member function.\n   *\n   * @param {string} pushKey The firebase push-key of the entry to delete.\n   * @param {string} fName The name of the executed function.\n   */\n  static validateDeleteEntry(pushKey, fName) {\n    validatePushKeyParameter(pushKey, fName);\n  }\n\n  /**\n   * Validates the parameters of the .on() event listener.\n   *\n   * @param {string} type The event type: \"value\", \"child_added\", \"child_changed\", \"child_removed\".\n   * @param {string} fName The name of the executed function.\n   */\n  static validateOn(type, fName) {\n    validateEventTypeParameter(type, fName);\n  }\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/validation.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/validation.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 128,
+    "__docId__": 127,
     "kind": "class",
     "name": "GofValidation",
     "memberof": "src/validation/validation.js",
@@ -3243,7 +3230,7 @@
     "interface": false
   },
   {
-    "__docId__": 129,
+    "__docId__": 128,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/validation/validation.js~GofValidation",
@@ -3257,7 +3244,7 @@
     "undocument": true
   },
   {
-    "__docId__": 130,
+    "__docId__": 129,
     "kind": "method",
     "name": "validateConstructor",
     "memberof": "src/validation/validation.js~GofValidation",
@@ -3303,7 +3290,7 @@
     "return": null
   },
   {
-    "__docId__": 131,
+    "__docId__": 130,
     "kind": "method",
     "name": "validateLocationsByRadius",
     "memberof": "src/validation/validation.js~GofValidation",
@@ -3369,7 +3356,7 @@
     "return": null
   },
   {
-    "__docId__": 132,
+    "__docId__": 131,
     "kind": "method",
     "name": "validateLocationsByBoundaries",
     "memberof": "src/validation/validation.js~GofValidation",
@@ -3425,7 +3412,7 @@
     "return": null
   },
   {
-    "__docId__": 133,
+    "__docId__": 132,
     "kind": "method",
     "name": "validateCreateEntry",
     "memberof": "src/validation/validation.js~GofValidation",
@@ -3481,7 +3468,7 @@
     "return": null
   },
   {
-    "__docId__": 134,
+    "__docId__": 133,
     "kind": "method",
     "name": "validateUpdateEntryLocation",
     "memberof": "src/validation/validation.js~GofValidation",
@@ -3537,7 +3524,7 @@
     "return": null
   },
   {
-    "__docId__": 135,
+    "__docId__": 134,
     "kind": "method",
     "name": "validateDeleteEntry",
     "memberof": "src/validation/validation.js~GofValidation",
@@ -3573,7 +3560,7 @@
     "return": null
   },
   {
-    "__docId__": 136,
+    "__docId__": 135,
     "kind": "method",
     "name": "validateOn",
     "memberof": "src/validation/validation.js~GofValidation",
@@ -3609,18 +3596,18 @@
     "return": null
   },
   {
-    "__docId__": 137,
+    "__docId__": 136,
     "kind": "file",
     "name": "src/validation/validators/basic.validation.js",
-    "content": "/** \n * geo on fire basic validation\n */\nexport class GofBasicValidation {\n\n  constructor() {}\n\n  /**\n   * Checks if a given value is a valid number.\n   *\n   * @param {*} value The value to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateNumber(value, errorInfos) {\n    if (typeof value !== \"number\") {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} must be of type number!`);\n    } else if (isNaN(value)) {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} should not contain the value NaN!`);\n    }\n  }\n\n  /**\n   * Checks if a given value is a valid string.\n   *\n   * @param {*} value The value to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateString(value, errorInfos) {\n    if (typeof value !== \"string\") {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} must be of type string!`);\n    }\n  }\n\n  /**\n   * Checks if a given value is a valid function.\n   *\n   * @param {*} value The value to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateFunction(value, errorInfos) {\n    if (typeof value !== \"function\") {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} must be of type function!`);\n    }\n  }\n\n  /**\n   * Checks if a given value is a valid object.\n   *\n   * @param {*} value The value to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateObject(value, errorInfos) {\n    if (typeof value !== \"object\") {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} must be of type object!`);\n    }\n  }\n\n  /**\n   * Checks if a given string contains special characters.\n   * In this case \"-\", \" \" and \"_\" are allowed.\n   *\n   * @param {string} string The string to check for containing special chars.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static containsSpecialChars(string, errorInfos) {\n    if (string.match(/[^A-Za-z0-9\\-_ ]/)) {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} should not contain special chars!`);\n    }\n  }\n\n  /**\n   * Checks if a given string contains spaces.\n   *\n   * @param {string} string The string to check for containing spaces.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static containsSpaces(string, errorInfos) {\n    if (/\\s/.test(string)) {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} should not contain white spaces!`);\n    }\n  }\n\n  /**\n   * Checks if a given value is a valid firebase reference\n   * It simply checks if the .child() function exists on the provided value.\n   *\n   * @param {*} value The value to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateReference(value, errorInfos) {\n    if (typeof value.child !== \"function\") {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} is not a valid firebase database reference!`);\n    }\n  }\n\n  /**\n   * Checks if a given event type is a valid.\n   * Allowed are \"value\", \"child_added\", \"child_changed\", \"child_removed\".\n   *\n   * @param {string} type The event type to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateEventType(type, errorInfos) {\n    if (type === \"child_moved\") {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} of child_moved is not supported. You have to use one of the follwoing: \"value\", \"child_added\", \"child_changed\", \"child_removed\"`);\n    } else if (type !== \"value\" && type !== \"child_added\" && type !== \"child_changed\" && type !== \"child_removed\") {\n      this.throwError(errorInfos.fName, `\"${type}\" is not a valid ${errorInfos.p1}. You have to use one of the follwoing types: \"value\", \"child_added\", \"child_changed\", \"child_removed\"`);\n    }\n  }\n\n  /**\n   * Checks if the first provided number is lower than the second provided number.\n   *\n   * @param {number} firstNumber The first number to compare.\n   * @param {number} secondNumber The second number to compare.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static isLowerThan(firstNumber, secondNumber, errorInfos) {\n    if (firstNumber < secondNumber) {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} must be higher or same as ${errorInfos.p2}!`);\n    }\n  }\n\n  /**\n   * Checks if the first provided number is higher than the second provided number.\n   *\n   * @param {number} firstNumber The first number to compare.\n   * @param {number} secondNumber The second number to compare.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static isHigherThan(firstNumber, secondNumber, errorInfos) {\n    if (firstNumber > secondNumber) {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} must be lower or same as ${errorInfos.p2}!`);\n    }\n  }\n\n  /**\n   * Checks if a given number contains decimal places.\n   *\n   * @param {number} number The number to check for decimal places.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static hasDecimalPlaces(number, errorInfos) {\n    if (number % 1 != 0) {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} should not contain decimal places!`);\n    }\n  }\n\n  /**\n   * Throws an error based on the executed function and the failed validation.\n   *\n   * @param {string} fName The name of the executed function.\n   * @param {string} error The error message to throw.\n   */\n  static throwError(fName, error) {\n    throw new Error(`${fName} - ${error}`);\n  }\n}",
+    "content": "/** \n * geo on fire basic validation\n */\nexport class GofBasicValidation {\n\n  constructor() {}\n\n  /**\n   * Checks if a given value is a valid number.\n   *\n   * @param {*} value The value to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateNumber(value, errorInfos) {\n    if (typeof value !== \"number\") {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} must be of type number!`);\n    } else if (isNaN(value)) {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} should not contain the value NaN!`);\n    }\n  }\n\n  /**\n   * Checks if a given value is a valid string.\n   *\n   * @param {*} value The value to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateString(value, errorInfos) {\n    if (typeof value !== \"string\") {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} must be of type string!`);\n    }\n  }\n\n  /**\n   * Checks if a given value is a valid function.\n   *\n   * @param {*} value The value to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateFunction(value, errorInfos) {\n    if (typeof value !== \"function\") {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} must be of type function!`);\n    }\n  }\n\n  /**\n   * Checks if a given value is a valid object.\n   *\n   * @param {*} value The value to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateObject(value, errorInfos) {\n    if (typeof value !== \"object\") {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} must be of type object!`);\n    }\n  }\n\n  /**\n   * Checks if a given string contains special characters.\n   * In this case \"-\", \" \" and \"_\" are allowed.\n   *\n   * @param {string} string The string to check for containing special chars.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static containsSpecialChars(string, errorInfos) {\n    if (string.match(/[^A-Za-z0-9\\-_ ]/)) {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} should not contain special chars!`);\n    }\n  }\n\n  /**\n   * Checks if a given string contains spaces.\n   *\n   * @param {string} string The string to check for containing spaces.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static containsSpaces(string, errorInfos) {\n    if (/\\s/.test(string)) {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} should not contain white spaces!`);\n    }\n  }\n\n  /**\n   * Checks if a given value is a valid firebase reference\n   * It simply checks if the .child() function exists on the provided value.\n   *\n   * @param {*} value The value to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateReference(value, errorInfos) {\n    if (typeof value.child !== \"function\") {\n      this.throwError(\n        errorInfos.fName, `${errorInfos.p1} is not a valid firebase database reference!`\n      );\n    }\n  }\n\n  /**\n   * Checks if a given event type is a valid.\n   * Allowed are \"value\", \"child_added\", \"child_changed\", \"child_removed\".\n   *\n   * @param {string} type The event type to validate.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static validateEventType(type, errorInfos) {\n    if (type === \"child_moved\") {\n      this.throwError(\n        errorInfos.fName, `${errorInfos.p1} of \"child_moved\" is not supported.`\n        + ` You have to use one of the follwoing types: `\n        +  `\"value\", \"child_added\", \"child_changed\", \"child_removed\"` // breaks for linting\n      );\n    } else if (type !== \"value\" \n               && type !== \"child_added\" \n               && type !== \"child_changed\" \n               && type !== \"child_removed\") { // eslint rule sry\n      this.throwError(\n        errorInfos.fName, `\"${type}\" is not a valid ${errorInfos.p1}.`\n        + ` You have to use one of the follwoing types: `\n        +  `\"value\", \"child_added\", \"child_changed\", \"child_removed\"` // breaks for linting\n      );\n    }\n  }\n\n  /**\n   * Checks if the first provided number is lower than the second provided number.\n   *\n   * @param {number} firstNumber The first number to compare.\n   * @param {number} secondNumber The second number to compare.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static isLowerThan(firstNumber, secondNumber, errorInfos) {\n    if (firstNumber < secondNumber) {\n      this.throwError(\n        errorInfos.fName, `${errorInfos.p1} must be higher or same as ${errorInfos.p2}!`\n      );\n    }\n  }\n\n  /**\n   * Checks if the first provided number is higher than the second provided number.\n   *\n   * @param {number} firstNumber The first number to compare.\n   * @param {number} secondNumber The second number to compare.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static isHigherThan(firstNumber, secondNumber, errorInfos) {\n    if (firstNumber > secondNumber) {\n      this.throwError(\n        errorInfos.fName, `${errorInfos.p1} must be lower or same as ${errorInfos.p2}!`\n      );\n    }\n  }\n\n  /**\n   * Checks if a given number contains decimal places.\n   *\n   * @param {number} number The number to check for decimal places.\n   * @param {Object} errorInfos A object containing the important error info's e.g. function name.\n   */\n  static hasDecimalPlaces(number, errorInfos) {\n    if (number % 1 !== 0) {\n      this.throwError(errorInfos.fName, `${errorInfos.p1} should not contain decimal places!`);\n    }\n  }\n\n  /**\n   * Throws an error based on the executed function and the failed validation.\n   *\n   * @param {string} fName The name of the executed function.\n   * @param {string} error The error message to throw.\n   */\n  static throwError(fName, error) {\n    throw new Error(`${fName} - ${error}`);\n  }\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/validators/basic.validation.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/validators/basic.validation.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 138,
+    "__docId__": 137,
     "kind": "class",
     "name": "GofBasicValidation",
     "memberof": "src/validation/validators/basic.validation.js",
@@ -3635,7 +3622,7 @@
     "interface": false
   },
   {
-    "__docId__": 139,
+    "__docId__": 138,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
@@ -3649,7 +3636,7 @@
     "undocument": true
   },
   {
-    "__docId__": 140,
+    "__docId__": 139,
     "kind": "method",
     "name": "validateNumber",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
@@ -3685,7 +3672,7 @@
     "return": null
   },
   {
-    "__docId__": 141,
+    "__docId__": 140,
     "kind": "method",
     "name": "validateString",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
@@ -3721,7 +3708,7 @@
     "return": null
   },
   {
-    "__docId__": 142,
+    "__docId__": 141,
     "kind": "method",
     "name": "validateFunction",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
@@ -3757,7 +3744,7 @@
     "return": null
   },
   {
-    "__docId__": 143,
+    "__docId__": 142,
     "kind": "method",
     "name": "validateObject",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
@@ -3793,7 +3780,7 @@
     "return": null
   },
   {
-    "__docId__": 144,
+    "__docId__": 143,
     "kind": "method",
     "name": "containsSpecialChars",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
@@ -3829,7 +3816,7 @@
     "return": null
   },
   {
-    "__docId__": 145,
+    "__docId__": 144,
     "kind": "method",
     "name": "containsSpaces",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
@@ -3865,7 +3852,7 @@
     "return": null
   },
   {
-    "__docId__": 146,
+    "__docId__": 145,
     "kind": "method",
     "name": "validateReference",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
@@ -3901,7 +3888,7 @@
     "return": null
   },
   {
-    "__docId__": 147,
+    "__docId__": 146,
     "kind": "method",
     "name": "validateEventType",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
@@ -3911,7 +3898,7 @@
     "longname": "src/validation/validators/basic.validation.js~GofBasicValidation.validateEventType",
     "access": "public",
     "description": "Checks if a given event type is a valid.\nAllowed are \"value\", \"child_added\", \"child_changed\", \"child_removed\".",
-    "lineNumber": 103,
+    "lineNumber": 105,
     "params": [
       {
         "nullable": null,
@@ -3937,7 +3924,7 @@
     "return": null
   },
   {
-    "__docId__": 148,
+    "__docId__": 147,
     "kind": "method",
     "name": "isLowerThan",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
@@ -3947,7 +3934,53 @@
     "longname": "src/validation/validators/basic.validation.js~GofBasicValidation.isLowerThan",
     "access": "public",
     "description": "Checks if the first provided number is lower than the second provided number.",
-    "lineNumber": 118,
+    "lineNumber": 131,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "firstNumber",
+        "description": "The first number to compare."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "secondNumber",
+        "description": "The second number to compare."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "errorInfos",
+        "description": "A object containing the important error info's e.g. function name."
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 148,
+    "kind": "method",
+    "name": "isHigherThan",
+    "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/validation/validators/basic.validation.js~GofBasicValidation.isHigherThan",
+    "access": "public",
+    "description": "Checks if the first provided number is higher than the second provided number.",
+    "lineNumber": 146,
     "params": [
       {
         "nullable": null,
@@ -3985,52 +4018,6 @@
   {
     "__docId__": 149,
     "kind": "method",
-    "name": "isHigherThan",
-    "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
-    "generator": false,
-    "async": false,
-    "static": true,
-    "longname": "src/validation/validators/basic.validation.js~GofBasicValidation.isHigherThan",
-    "access": "public",
-    "description": "Checks if the first provided number is higher than the second provided number.",
-    "lineNumber": 131,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "number"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "firstNumber",
-        "description": "The first number to compare."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "number"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "secondNumber",
-        "description": "The second number to compare."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Object"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "errorInfos",
-        "description": "A object containing the important error info's e.g. function name."
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 150,
-    "kind": "method",
     "name": "hasDecimalPlaces",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
     "generator": false,
@@ -4039,7 +4026,7 @@
     "longname": "src/validation/validators/basic.validation.js~GofBasicValidation.hasDecimalPlaces",
     "access": "public",
     "description": "Checks if a given number contains decimal places.",
-    "lineNumber": 143,
+    "lineNumber": 160,
     "params": [
       {
         "nullable": null,
@@ -4065,7 +4052,7 @@
     "return": null
   },
   {
-    "__docId__": 151,
+    "__docId__": 150,
     "kind": "method",
     "name": "throwError",
     "memberof": "src/validation/validators/basic.validation.js~GofBasicValidation",
@@ -4075,7 +4062,7 @@
     "longname": "src/validation/validators/basic.validation.js~GofBasicValidation.throwError",
     "access": "public",
     "description": "Throws an error based on the executed function and the failed validation.",
-    "lineNumber": 155,
+    "lineNumber": 172,
     "params": [
       {
         "nullable": null,
@@ -4101,18 +4088,18 @@
     "return": null
   },
   {
-    "__docId__": 152,
+    "__docId__": 151,
     "kind": "file",
     "name": "src/validation/validators/coordinates.validation.js",
     "content": "import { GofBasicValidation } from \"./basic.validation\";\n\n/** \n * geo on fire coordinates validation\n */\nexport class GofCoordinatesValidation {\n\n  constructor() {}\n\n  /**\n   * Validates the coordinates latitude/longitude pair.\n   *\n   * @param {Object} coordinates The coordinates lat/lng pair to validate.\n   * @param {string} fName The name of the executed function.\n   * @param {string} parameter The name of the passed parameter.\n   */\n  static validateCoordinates(coordinates, fName, parameter) {\n    this.validateLat(coordinates.lat, fName, `${parameter}.lat`);\n    this.validateLng(coordinates.lng, fName, `${parameter}.lng`);\n  }\n\n  /**\n   * Validates the geographic latitude of a given coordinate.\n   *\n   * @param {number} lat The latitude to validate.\n   * @param {string} fName The name of the executed function.\n   * @param {string} p1 The name of the passed parameter. (shortterm for first parameter)\n   */\n  static validateLat(lat, fName, p1) {\n    GofBasicValidation.validateNumber(lat, { fName, p1 });\n    GofBasicValidation.isHigherThan(lat, 90, { fName, p1, p2: 90 });\n    GofBasicValidation.isLowerThan(lat, -90, { fName, p1, p2: -90 });\n  }\n\n  /**\n   * Validates the geographic longitude of a given coordinate.\n   *\n   * @param {number} lng The longitude to validate.\n   * @param {string} fName The name of the executed function.\n   * @param {string} p1 The name of the passed parameter. (shortterm for first parameter)\n   */\n  static validateLng(lng, fName, p1) {\n    GofBasicValidation.validateNumber(lng, { fName, p1 });\n    GofBasicValidation.isHigherThan(lng, 180, { fName, p1, p2: 180 });\n    GofBasicValidation.isLowerThan(lng, -180, { fName, p1, p2: -180 });\n  }\n}",
     "static": true,
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/src/validation/validators/coordinates.validation.js",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/src/validation/validators/coordinates.validation.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 153,
+    "__docId__": 152,
     "kind": "class",
     "name": "GofCoordinatesValidation",
     "memberof": "src/validation/validators/coordinates.validation.js",
@@ -4127,7 +4114,7 @@
     "interface": false
   },
   {
-    "__docId__": 154,
+    "__docId__": 153,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/validation/validators/coordinates.validation.js~GofCoordinatesValidation",
@@ -4141,7 +4128,7 @@
     "undocument": true
   },
   {
-    "__docId__": 155,
+    "__docId__": 154,
     "kind": "method",
     "name": "validateCoordinates",
     "memberof": "src/validation/validators/coordinates.validation.js~GofCoordinatesValidation",
@@ -4187,7 +4174,7 @@
     "return": null
   },
   {
-    "__docId__": 156,
+    "__docId__": 155,
     "kind": "method",
     "name": "validateLat",
     "memberof": "src/validation/validators/coordinates.validation.js~GofCoordinatesValidation",
@@ -4233,7 +4220,7 @@
     "return": null
   },
   {
-    "__docId__": 157,
+    "__docId__": 156,
     "kind": "method",
     "name": "validateLng",
     "memberof": "src/validation/validators/coordinates.validation.js~GofCoordinatesValidation",
@@ -4280,16 +4267,16 @@
   },
   {
     "kind": "index",
-    "content": "ES6 library starter\n===========\n\n[![Version](http://img.shields.io/npm/v/es6-library-minimal.svg)](https://www.npmjs.org/package/es6-library-minimal)\n[![Build Status](https://travis-ci.org/liady/es6-library-minimal.svg?branch=master)](https://travis-ci.org/liady/es6-library-minimal)\n[![Code style: airbnb](https://img.shields.io/badge/code%20style-airbnb-blue.svg?style=flat)](https://github.com/airbnb/javascript)\n\n> A boilerplate for a universal (Node, web, UMD) ES6 library.\n\n## Quick usage\n 1. Clone this repo.\n 2. Change all relevant entries in `package.json` and `README.md`, so they match your new shiny library.\n 3. Run `npm install` to install dev dependencies.\n 4. Write your ES6 code in `src` folder.\n 5. Write your ES6 tests in `test` folder.\n 6. Run `npm run build` to build for node. This will compile to ES5, minify, and output the result to `lib` folder.\n 7. Run `npm run build-web` to build and pack the files for the web. This will output the result to `dist` folder.\n 8. Run `npm publish` to pulish to the world.\n \n(Or, if you don't need Webpack bundling, you can use the [even lighter ES6 starter](https://github.com/liady/es6-lib-starter-light)).\n\n## Detailed overview\n\n### Installation\nAfter cloning this repository, make sure to change all the relevant entries in `package.json` so they match your library.\n```sh\nnpm install\n```\n\n### Build for npm\n```sh\nnpm run build\n```\nThis will:\n 1. Run Webpack starting from the entry point file (`src/library.js`, can be configured)\n 2. Convert all files in `src` folder from ES6 to ES5\n 3. According to the `bundle-node` flag in `package.json`, it will either:\n   1. Leave them as separate files, or -\n   2. Minify and bundle them using Webpack, **without their** `node_modules` **dependencies**\n 4. Output the result to the `lib` folder\n\n### Build for web\n```sh\nnpm run build-web\n```\nThis will:\n 1. Run Webpack starting from the entry point file (`src/library.js`, can be configured)\n 2. Convert all files from ES6 to ES5\n 3. Minify them, **including all of their module dependencies**, as a UMD module (so the file will be self-contained)\n 4. Output the file to the `dist` folder\n\n### Test\n```sh\nnpm run test\n```\n\n### Configuration\nIn `package.json`, change all the relevant entries so they match your library.<br/>\nUnder the section `library`, you can configure:\n 1. Library name (defaults to `\"Library\"`)\n 2. Webpack entry point (defaults to `library.js`)\n 3. Dist folder for Node (defaults to `lib`)\n 4. Dist folder for Web (defaults to `dist`)\n 5. Choose whether to bundle for Node (defaults to `true`)\n\n## License\nMIT\n",
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/README.md",
+    "content": "geo on fire (gof) :fire: \n[![CircleCI](https://circleci.com/gh/Orlandster1998/geo-on-fire/tree/master.svg?style=shield&circle-token=c4bc8569819d11ed6f227e38c9507ddc55a4ddcd)](https://circleci.com/gh/Orlandster1998/geo-on-fire/tree/master)\n===========\nGeo on fire is an open source library to query location based data in Firebase. It follows a whole new principle of architecture, which makes it extremly fast and highly scaleable. With the right setup you are able to query millions of locations in just fractions of a second. You can learn more about the principle in the advanced usage guide. (not online so far, stay tuned)\n\nIn addition it offers you the possibility to listen to the queries in real time and recieve changes based on the event types you've specified. But that's not all. There's a feature which gives you the ability to priorize data and make the user expirience even better.\n\nAnd by the way, there is not just one query method. You can choose between a radius based query (see dog match demo) and a boundaries based query. (see event map demo) \n\nAnd the best, you will automatically recieve the fetched entries. So there is no manual fetching needed.\n\n## Quick links\n\n * [Download](#download)\n * [Getting started](#getting-started)\n * [Guides](#guides)\n * [Documentation](#documentation)\n * [Demos](#demos)\n * [Contributions](#contributions)\n * [License](#license)\n\n\n## Download\nCurrently there are two ways to download the library. But before you download the library make sure Firebase is already installed, since it's not a dependency of gof itslef.\n\n```bash\n$ npm install firebase --save\n```\n\n### npm\nDownload it from the npm repository the following way:\n```bash\n$ npm install gof --save\n```\n### bower\nOr download it from bower the following way:\n```bash\n$ bower install gof --save\n```\n\n### CDN\nIn the future you will also be able to load the library directly from a CDN. Subscribe to the existing issue for updates.\n\n## Getting started\nNow let's get started. As you will see, the usage is very simple. As a first step you need to include the library in your HTML. (make sure Firebase is also included)\n\n```html\n<script src=\"{path_to}/gof.min.js\"></script>\n```\n\n> Notice: NodeJS is not supported so far, but it will be added soon. Subscribe [here](https://github.com/Orlandster1998/geo-on-fire/issues/10) to get mentioned when the time is ready.\n\nWell done! Before you're able to use gof you need to initialize your firebase project.\n\n```js\nvar fb = firebase.initializeApp(config); // get 'config' from firebase\n```\n\nNow you are able to create a gof reference by simply doing the following.\n\n```js\n// the name of your database nodes e.g. events, hotels - is totally up to you\nvar name = 'entries'; \n\n// the firebase database ref - must be passed with the .ref()\nvar ref = fb.database().ref();\n\n// creates a new geoOnFire instance\nvar gof = new geoOnFire(name, ref);\n```\n\nThat's it! Now you are able to run gof operations. Go trough the guides to see how it works.\n\n## Guides\n### Basic usage\nBasically all the user operations proivded by gof can be splitted in two cateogries. There are writing and there are reading operations. Make sure you always use the built-in methods the library provides to modify your geolocations data. Otherwise there's a chance that you get corrupt and invalid data.\n\n#### writing data\n * [create entries](https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#create-entries)\n * [update entries](https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#update-entries)\n * [delete entries](https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#delete-entries)\n#### reading data (geolocation queries)\n * [query by radius](https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#query-by-radius)\n * [query by boundaries](https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#query-by-boundaries)\n### Advanced usage\nHere you can find some advanced concept to make the best out from gof.\n * [security rules](https://github.com/Orlandster1998/geo-on-fire/wiki/Security-rules)\n * [performance optimization]() (coming soon)\n\n## Documentation\n * [API Reference](https://orlandster1998.github.io/geo-on-fire/)\n * [Gof core principle]() (coming soon)\n \n## Demo's\nCurrently there are the two demo's available. These are just some basic implementations to give you an idea about how powerful gof is. They are far away from perfect.\n * [dog matching app](https://run.plnkr.co/plunks/AYaN8ABEDcMntgbJyLVW/) (tinder clone - using radius query)\n * [event map app](https://run.plnkr.co/plunks/xJgstAvXYcp0w7MbOOjm/) (airbnb like map - using boundaries query)\n\nIs there any gof using project you want to share with the world? Simply create an issue with the url and I do the rest.\n\n## Contributions\nI would love to see your contributions to the project. Till now I was not able to create some guidelines. If there are already any interests so far, we can communicate trough the issues.\n\n## What's next\nCheck out the [1.0.0 milestone](https://github.com/Orlandster1998/geo-on-fire/milestone/3) to see what's next. Generally I've got tons of ideas, but just a very few time to work on them. So if you are interested in contributing you are more than just welcome!\n\nI'm also looking forward to migrate the library to other db services like mongoDB or pouchDB.\n\n## Motivation\nSo basically the reason why I'm doing this, is because I've seen a lot of people struggling while buildung their json database structure. Espacially when it comes to more complex queries, firebase does not support you well enough. (by the way I'm so happy to see the new cloud firestore) This library should kind of like give you an idea.\n\n## License\nMIT\n",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/README.md",
     "name": "./README.md",
     "static": true,
     "access": "public"
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"firebase-nearby\",\n  \"version\": \"0.0.1\",\n  \"description\": \"A highly scalable Firebase library built for nearby searches.\",\n  \"main\": \"./index.js\",\n  \"scripts\": {\n    \"prepublish\": \"npm run build-all\",\n    \"preversion\": \"npm run build-all && npm run unit && docs\",\n    \"version\": \"git add .\",\n    \"postversion\": \"git push && git push --tags\",\n    \"build\": \"gulp build\",\n    \"build-dev\": \"gulp build-dev\",\n    \"build-web\": \"gulp build-web\",\n    \"build-web-dev\": \"gulp build-web-dev\",\n    \"build-all\": \"gulp\",\n    \"unit\": \"mocha --compilers js:babel-core/register --colors ./test/main.spec.js\",\n    \"unit-watch\": \"mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js\",\n    \"integration\": \"gulp build-test && karma start --single-run --browsers ChromeHeadless karma.conf.js\",\n    \"test\": \"npm run unit-watch\",\n    \"docs\": \"./node_modules/.bin/esdoc\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"\"\n  },\n  \"keywords\": [\n    \"firebase\",\n    \"geofire\",\n    \"firebase nearby\",\n    \"geoquery\"\n  ],\n  \"author\": {\n    \"name\": \"Orlando Wenzinger\",\n    \"url\": \"https://github.com/Orlandster98\"\n  },\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"\"\n  },\n  \"files\": [\n    \"LICENSE\",\n    \"README.md\",\n    \"index.js\",\n    \"lib\",\n    \"dist\"\n  ],\n  \"devDependencies\": {\n    \"babel\": \"^6.3.26\",\n    \"babel-core\": \"^6.4.0\",\n    \"babel-eslint\": \"^5.0.0-beta6\",\n    \"babel-loader\": \"^6.2.1\",\n    \"babel-plugin-add-module-exports\": \"^0.1.2\",\n    \"babel-plugin-transform-async-to-generator\": \"^6.24.1\",\n    \"babel-polyfill\": \"^6.26.0\",\n    \"babel-preset-es2015\": \"^6.3.13\",\n    \"chai\": \"^3.5.0\",\n    \"clean-webpack-plugin\": \"^0.1.8\",\n    \"del\": \"^2.2.0\",\n    \"detect-port\": \"^1.2.1\",\n    \"esdoc\": \"^1.0.2\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^1.10.3\",\n    \"eslint-config-airbnb\": \"^4.0.0\",\n    \"eslint-loader\": \"^1.2.0\",\n    \"eslint-plugin-react\": \"^3.16.1\",\n    \"eslint-plugin-standard\": \"^1.3.1\",\n    \"firebase-server\": \"^0.11.0\",\n    \"gulp\": \"^3.9.0\",\n    \"gulp-babel\": \"^6.1.1\",\n    \"gulp-env\": \"^0.2.0\",\n    \"gulp-eslint\": \"^1.1.1\",\n    \"gulp-load-plugins\": \"^1.2.0\",\n    \"gulp-util\": \"^3.0.6\",\n    \"karma\": \"^1.7.1\",\n    \"karma-chai\": \"^0.1.0\",\n    \"karma-chrome-launcher\": \"^2.2.0\",\n    \"karma-mocha\": \"^1.3.0\",\n    \"mocha\": \"^2.5.3\",\n    \"mocha-phantomjs\": \"^4.1.0\",\n    \"object-assign\": \"^4.0.1\",\n    \"webpack\": \"^1.12.11\",\n    \"webpack-node-externals\": \"^0.4.1\"\n  },\n  \"library\": {\n    \"name\": \"geo-on-fire\",\n    \"entry\": \"gof.js\",\n    \"dist-node\": \"gof.js\",\n    \"dist-web\": \"gof.min.js\",\n    \"bundle-node\": true\n  },\n  \"dependencies\": {\n    \"ngeohash\": \"^0.6.0\"\n  }\n}\n",
-    "longname": "/Users/orlando/Desktop/contributions/firebase-nearby/package.json",
+    "content": "{\n  \"name\": \"firebase-nearby\",\n  \"version\": \"0.0.1\",\n  \"description\": \"A highly scalable Firebase library built for nearby searches.\",\n  \"main\": \"./index.js\",\n  \"scripts\": {\n    \"prepublish\": \"npm run build-web\",\n    \"preversion\": \"npm run build-web && npm run test && docs\",\n    \"version\": \"git add .\",\n    \"postversion\": \"git push && git push --tags\",\n    \"build\": \"gulp build\",\n    \"build-dev\": \"gulp build-dev\",\n    \"build-web\": \"gulp build-web\",\n    \"build-web-dev\": \"gulp build-web-dev\",\n    \"build-all\": \"gulp\",\n    \"test\": \"gulp build-test && karma start --single-run --browsers ChromeHeadless karma.conf.js\",\n    \"docs\": \"./node_modules/.bin/esdoc\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/Orlandster1998/geo-on-fire\"\n  },\n  \"keywords\": [\n    \"firebase\",\n    \"geofire\",\n    \"firebase nearby\",\n    \"geoquery\",\n    \"geo query\",\n    \"firebase, query\"\n  ],\n  \"author\": {\n    \"name\": \"Orlando Wenzinger\",\n    \"url\": \"https://github.com/Orlandster1998\"\n  },\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/Orlandster1998/geo-on-fire/issues?q=is%3Aopen+is%3Aissue+label%3Abug\"\n  },\n  \"files\": [\n    \"LICENSE\",\n    \"README.md\",\n    \"dist/gof.min.js\"\n  ],\n  \"devDependencies\": {\n    \"babel\": \"^6.3.26\",\n    \"babel-core\": \"^6.4.0\",\n    \"babel-eslint\": \"^5.0.0-beta6\",\n    \"babel-loader\": \"^6.2.1\",\n    \"babel-plugin-add-module-exports\": \"^0.1.2\",\n    \"babel-plugin-transform-async-to-generator\": \"^6.24.1\",\n    \"babel-polyfill\": \"^6.26.0\",\n    \"babel-preset-es2015\": \"^6.3.13\",\n    \"chai\": \"^3.5.0\",\n    \"clean-webpack-plugin\": \"^0.1.8\",\n    \"del\": \"^2.2.0\",\n    \"detect-port\": \"^1.2.1\",\n    \"esdoc\": \"^1.0.2\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^1.10.3\",\n    \"eslint-config-airbnb\": \"^4.0.0\",\n    \"eslint-loader\": \"^1.2.0\",\n    \"eslint-plugin-standard\": \"^1.3.1\",\n    \"firebase-server\": \"^0.11.0\",\n    \"gulp\": \"^3.9.0\",\n    \"gulp-babel\": \"^6.1.1\",\n    \"gulp-env\": \"^0.2.0\",\n    \"gulp-eslint\": \"^1.1.1\",\n    \"gulp-load-plugins\": \"^1.2.0\",\n    \"gulp-util\": \"^3.0.6\",\n    \"karma\": \"^1.7.1\",\n    \"karma-chai\": \"^0.1.0\",\n    \"karma-chrome-launcher\": \"^2.2.0\",\n    \"karma-mocha\": \"^1.3.0\",\n    \"mocha\": \"^2.5.3\",\n    \"object-assign\": \"^4.0.1\",\n    \"webpack\": \"^1.12.11\",\n    \"webpack-node-externals\": \"^0.4.1\"\n  },\n  \"library\": {\n    \"name\": \"geo-on-fire\",\n    \"entry\": \"gof.js\",\n    \"dist-node\": \"gof.js\",\n    \"dist-web\": \"gof.min.js\",\n    \"bundle-node\": true\n  },\n  \"dependencies\": {\n    \"ngeohash\": \"^0.6.0\"\n  }\n}\n",
+    "longname": "/Users/orlando/Desktop/contributions/geo-on-fire/package.json",
     "name": "package.json",
     "static": true,
     "access": "public"
