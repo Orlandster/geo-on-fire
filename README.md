@@ -14,9 +14,9 @@ And the best, you will automatically recieve the fetched entries. So there is no
  * [Download](#download)
  * [Getting started](#getting-started)
  * [Guides](#guides)
- * [Documentation](#examples)
+ * [Documentation](#documentation)
  * [Demos](#demos)
- * [Contribution](#contributing)
+ * [Contributions](#contributions)
  * [License](#license)
 
 
@@ -77,29 +77,37 @@ Basically all the user operations proivded by gof can be splitted in two cateogr
 
 #### writing data
  * [create entries](https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#create-entries)
- * [update entreis](https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#update-entries)
+ * [update entries](https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#update-entries)
  * [delete entries](https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#delete-entries)
 #### reading data (geolocation queries)
  * [query by radius](https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#query-by-radius)
  * [query by boundaries](https://github.com/Orlandster1998/geo-on-fire/wiki/Basic-usage#query-by-boundaries)
 ### Advanced usage
 Here you can find some advanced concept to make the best out from gof.
- * [security rules (coming soon)]()
- * [performance optimization (coming soon)]()
+ * [security rules](https://github.com/Orlandster1998/geo-on-fire/wiki/Security-rules)
+ * [performance optimization]() (coming soon)
 
 ## Documentation
  * [API Reference](https://orlandster1998.github.io/geo-on-fire/)
- * [Gof core principle (coming soon)]()
+ * [Gof core principle]() (coming soon)
  
 ## Demo's
 Currently there are the two demo's available. These are just some basic implementations to give you an idea about how powerful gof is. They are far away from perfect.
- * [dog matching app (tinder clone - using radius query)](https://run.plnkr.co/plunks/AYaN8ABEDcMntgbJyLVW/)
- * [event map app (airbnb like map - using boundaries query)](https://run.plnkr.co/plunks/xJgstAvXYcp0w7MbOOjm/)
+ * [dog matching app](https://run.plnkr.co/plunks/AYaN8ABEDcMntgbJyLVW/) (tinder clone - using radius query)
+ * [event map app](https://run.plnkr.co/plunks/xJgstAvXYcp0w7MbOOjm/) (airbnb like map - using boundaries query)
 
 Is there any gof using project you want to share with the world? Simply create an issue with the url and I do the rest.
 
 ## Contributions
 I would love to see your contributions to the project. Till now I was not able to create some guidelines. If there are already any interests so far, we can communicate trough the issues.
+
+## What's next
+Check out the [1.0.0 milestone](https://github.com/Orlandster1998/geo-on-fire/milestone/3) to see what's next. Generally I've got tons of ideas, but just a very few time to work on them. So if you are interested in contributing you are more than just welcome!
+
+I'm also looking forward to migrate the library to other db services like mongoDB or pouchDB.
+
+## Motivation
+So basically the reason why I'm doing this, is because I've seen a lot of people struggling while buildung their json database structure. Espacially when it comes to more complex queries, firebase does not support you well enough. (by the way I'm so happy to see the new cloud firestore) This library should kind of like give you an idea.
 
 ## License
 MIT

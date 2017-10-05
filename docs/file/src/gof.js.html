@@ -24,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/Orlandster1998/geo-on-fire"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -91,11 +91,14 @@ export default class Gof {
    * @param {Object} center Location object which represents the center of the given radius.
    * @param {number} radius The query radius in kilometers.
    * @param {number} [startAt=1] The entry to start at - e.g. start for pagination.
-   * @param {number} [endAt=50] The etnry to end at - e.g. end for pagination.
+   * @param {number} [endAt=undefined] The etnry to end at. Default returns all.
    * @return {function} The function itself to make .on() and .once() chains possible.
    */
-  getLocationsByRadius(center, radius, startAt = 1, endAt = 50) {
-    GofValidation.validateLocationsByRadius(center, radius, startAt, endAt, &quot;getLocationsByRadius()&quot;);
+  getLocationsByRadius(center, radius, startAt = 1, endAt = undefined) {
+    GofValidation.validateLocationsByRadius(
+      center, radius, startAt, endAt, &quot;getLocationsByRadius()&quot;
+    );
+
     this._activeQuery.parameters = { center, radius, startAt, endAt }
 
     const boundaries = this._utils.getBoundariesFromRadius(center, radius);
@@ -117,13 +120,15 @@ export default class Gof {
    * 
    * @param {Object} boundaries Boundaries object which builds the rectangle query borders.
    * @param {number} [startAt=1] The entry to start at - e.g. start for pagination.
-   * @param {number} [endAt=50] The etnry to end at - e.g. end for pagination.
+   * @param {number} [endAt=undefined] The etnry to end at. Default returns all.
    * @return {function} The function itself to make .on() and .once() chains possible.
    */
-  getLocationsByBoundaries(boundaries, startAt = 1, endAt = 50) {
-    GofValidation.validateLocationsByBoundaries(boundaries, startAt, endAt, &quot;getLocationsByBoundaries()&quot;);
-    this._activeQuery.parameters = { boundaries, startAt, endAt }
+  getLocationsByBoundaries(boundaries, startAt = 1, endAt = undefined) {
+    GofValidation.validateLocationsByBoundaries(
+      boundaries, startAt, endAt, &quot;getLocationsByBoundaries()&quot;
+    );
 
+    this._activeQuery.parameters = { boundaries, startAt, endAt }
     const precision = this._utils.caluclatePrecisionFromBoundaries(boundaries);
     this._activeQuery.geohashes = this._utils.getGeohashesInBoundaries(boundaries, precision);
 
@@ -189,21 +194,34 @@ export default class Gof {
     /**
      * Event listeners for getLocationsByBoundaries. Returns the query result based on events.
      *
-     * @param {string} type The event type: &quot;value&quot;, &quot;child_added&quot;, &quot;child_changed&quot;, &quot;child_removed&quot;.
+     * @param {string} type The event type.
      * @return {Promise.&lt;Object&gt;} A promise which is fulfilled each time the event fires. 
      * Be aware the promise was modified and is able to stream data, similair to a callback.
      */
-    this.getLocationsByBoundaries.on = (type) =&gt; this.attachBoundsEvent(type);
+    this.getLocationsByBoundaries.on = (type) =&gt; this.attachQueryEvent(type, &quot;bounds&quot;, () =&gt; {
+      this.getLocationsByBoundaries(
+        this._activeQuery.parameters.boundaries, 
+        this._activeQuery.parameters.startAt, 
+        this._activeQuery.parameters.endAt
+      );
+    });
 
 
     /**
      * Event listeners for getLocationsByRadius. Returns the query result based on events.
      *
-     * @param {string} type The event type: &quot;value&quot;, &quot;child_added&quot;, &quot;child_changed&quot;, &quot;child_removed&quot;.
+     * @param {string} type The event type.
      * @return {Promise.&lt;Object&gt;} A promise which is fulfilled each time the event fires. 
      * Be aware the promise was modified and is able to stream data, similair to a callback.
      */
-    this.getLocationsByRadius.on = (type) =&gt; this.attachRadiusEvent(type);
+    this.getLocationsByRadius.on = (type) =&gt; this.attachQueryEvent(type, &quot;radius&quot;, () =&gt; {
+      this.getLocationsByRadius(
+        this._activeQuery.parameters.center, 
+        this._activeQuery.parameters.radius,
+        this._activeQuery.parameters.startAt, 
+        this._activeQuery.parameters.endAt
+      );
+    });
 
     /**
      * Returns the query result for getLocationsByBoundaries once.
@@ -224,67 +242,33 @@ export default class Gof {
    * Attaches the event listener and returns the streamable promise.
    *
    * @param {string} type The event type: &quot;value&quot;, &quot;child_added&quot;, &quot;child_changed&quot;, &quot;child_removed&quot;.
-   * @return {Promise.&lt;Object&gt;} A promise which is fulfilled each time the event fires. 
+   * @param {string} eventNmae The name of the event to create.
+   * @param {function} queryCb The callback to execute once an event fires.
+   * @return {Promise.&lt;Object&gt;} A promise which is fulfilled each time the event fires.
    * Be aware the promise was modified and is able to stream data, similair to a callback.
    */
-  attachBoundsEvent(type) {
-    GofValidation.validateOn(type, &apos;on()&apos;);
-    const event = new Event(&quot;bounds&quot;);
-    const callbackList = [];
+  attachQueryEvent(type, eventNmae, queryCb) {
+    GofValidation.validateOn(type, &quot;on()&quot;);
+    const event = new Event(eventNmae);
+    let cb;
     const streamingPromise = {
       then: (fn) =&gt; {
-        callbackList.push(fn);
+        cb = fn;
         window.dispatchEvent(event);
       },
     };
     
     // attach the firebase db listeners to the event listener
-    this._activeQuery.dbListeners = GofDbListeners.attachDbListeners(type, this._db._refs, this._activeQuery.geohashes, event);
+    this._activeQuery.dbListeners = GofDbListeners.attachDbListeners(
+      type, 
+      this._db._refs, 
+      this._activeQuery.geohashes, event
+    );
 
     // add the event listener
-    window.addEventListener(&quot;bounds&quot;, () =&gt; {
-      for (const cb of callbackList) {
-        this.getLocationsByBoundaries(this._activeQuery.parameters.boundaries, 
-          this._activeQuery.parameters.startAt, this._activeQuery.parameters.endAt);
-
-        // unwrap the values to make return value similair to .once()
-        this._activeQuery.entries.then(entries =&gt; cb(entries));
-      }
-    });
-
-    return streamingPromise;
-  }
-
-  /**
-   * Attaches the event listener and returns the streamable promise.
-   *
-   * @param {string} type The event type: &quot;value&quot;, &quot;child_added&quot;, &quot;child_changed&quot;, &quot;child_removed&quot;
-   * @return {Promise.&lt;Object&gt;} A promise which is fulfilled each time the event fires. 
-   * Be aware the promise was modified and is able to stream data, similair to a callback.
-   */
-  attachRadiusEvent(type) {
-    GofValidation.validateOn(type, &apos;on()&apos;);
-    const event = new Event(&quot;radius&quot;);
-    const callbackList = [];
-    const streamingPromise = {
-      then: (fn) =&gt; {
-        callbackList.push(fn);
-        window.dispatchEvent(event);
-      },
-    };
-    
-    // attach the firebase db listeners to the event listener
-    this._activeQuery.dbListeners = GofDbListeners.attachDbListeners(type, this._db._refs, this._activeQuery.geohashes, event);
-
-    // add the event listener
-    window.addEventListener(&quot;radius&quot;, () =&gt; {
-      for (const cb of callbackList) {
-        this.getLocationsByRadius(this._activeQuery.parameters.center, this._activeQuery.parameters.radius,
-          this._activeQuery.parameters.startAt, this._activeQuery.parameters.endAt);
-
-        // unwrap the values to make return value similair to .once()
-        this._activeQuery.entries.then(entries =&gt; cb(entries));
-      }
+    window.addEventListener(eventNmae, () =&gt; {
+      queryCb();
+      this._activeQuery.entries.then(entries =&gt; cb(entries));
     });
 
     return streamingPromise;

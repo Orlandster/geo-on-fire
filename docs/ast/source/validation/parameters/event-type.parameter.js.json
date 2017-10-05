@@ -450,7 +450,7 @@
                             },
                             "extra": {
                               "rawValue": "type",
-                              "raw": "'type'"
+                              "raw": "\"type\""
                             },
                             "value": "type"
                           }
@@ -676,7 +676,7 @@
                             },
                             "extra": {
                               "rawValue": "type",
-                              "raw": "'type'"
+                              "raw": "\"type\""
                             },
                             "value": "type"
                           }

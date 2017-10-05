@@ -24,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/Orlandster1998/geo-on-fire"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -53,7 +53,7 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/gof-utils.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import ngeohash from &apos;ngeohash&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import ngeohash from &quot;ngeohash&quot;;
 
 /** 
  * geo on fire utils
@@ -125,7 +125,9 @@ export class GofUtils {
 
     geohashesByAction.add = newGeohashes.filter(x =&gt; currentGeohashes.indexOf(x) &lt; 0);
     geohashesByAction.delete = currentGeohashes.filter(x =&gt; newGeohashes.indexOf(x) &lt; 0);
-    geohashesByAction.update = currentGeohashes.filter(x =&gt; geohashesByAction.add.concat(geohashesByAction.delete).indexOf(x) &lt; 0);
+    geohashesByAction.update = currentGeohashes.filter(
+      x =&gt; geohashesByAction.add.concat(geohashesByAction.delete).indexOf(x) &lt; 0
+    );
 
     return geohashesByAction;
   }
@@ -150,7 +152,7 @@ export class GofUtils {
    * Returns all the keys of locations which are inside the provided boundaries
    * This is the one and onliest query which will be executed for the boundary search.
    *
-   * @param {Array.&lt;Promise&gt;} geohashNode The database nodes based on the geohashes within the boundaries.
+   * @param {Array.&lt;Promise&gt;} geohashNode The db nodes based on the geohashes within the boundaries.
    * @param {Object} boundaries The boundaries object which builds the rectangle query borders.
    * @return {Promise} A promise which gets fullifilled when all the locations are returned.
    */
