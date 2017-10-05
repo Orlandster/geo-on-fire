@@ -1,5 +1,6 @@
 geo on fire (gof) :fire: 
 [![CircleCI](https://circleci.com/gh/Orlandster1998/geo-on-fire/tree/master.svg?style=shield&circle-token=c4bc8569819d11ed6f227e38c9507ddc55a4ddcd)](https://circleci.com/gh/Orlandster1998/geo-on-fire/tree/master)
+[![Inline docs](http://inch-ci.org/github/Orlandster1998/geo-on-fire.svg?branch=master)](http://inch-ci.org/github/Orlandster1998/geo-on-fire)
 ===========
 Geo on fire is an open source library to query location based data in Firebase. It follows a whole new principle of architecture, which makes it extremly fast and highly scaleable. With the right setup you are able to query millions of locations in just fractions of a second. You can learn more about the principle in the advanced usage guide. (not online so far, stay tuned)
 
