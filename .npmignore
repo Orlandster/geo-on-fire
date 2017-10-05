@@ -1,3 +1,7 @@
 src
 test
+test_dist
+docs
 webpack.config.js
+node_modules
+karma.conf.js

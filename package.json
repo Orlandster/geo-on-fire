@@ -1,7 +1,7 @@
 {
-  "name": "firebase-nearby",
-  "version": "0.0.1",
-  "description": "A highly scalable Firebase library built for nearby searches.",
+  "name": "gof",
+  "version": "0.1.0",
+  "description": "An extreme fast and highly scalable Firebase geo-query library.",
   "main": "./index.js",
   "scripts": {
     "prepublish": "npm run build-web",
