@@ -1,0 +1,28 @@
+{
+  "name": "gof",
+  "description": "An extreme fast and highly scalable Firebase geo-query library.",
+  "main": "./index.js",
+  "authors": [
+    "[object Object]"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "firebase",
+    "geofire",
+    "firebase",
+    "nearby",
+    "geoquery",
+    "geo",
+    "query",
+    "firebase",
+    "query"
+  ],
+  "homepage": "https://github.com/Orlandster1998/geo-on-fire",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
