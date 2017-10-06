@@ -1,0 +1,7 @@
+{
+  "files": {
+    "excluded": [
+      "lib/gof.js"
+    ]
+  }
+}
