@@ -1,6 +1,6 @@
 {
   "name": "gof",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An extreme fast and highly scalable Firebase geo-query library.",
   "main": "",
   "scripts": {
