@@ -2,7 +2,7 @@
   "name": "gof",
   "version": "0.1.0",
   "description": "An extreme fast and highly scalable Firebase geo-query library.",
-  "main": "./index.js",
+  "main": "",
   "scripts": {
     "prepublish": "npm run build-web",
     "preversion": "npm run build-web && npm run test && docs",
@@ -36,15 +36,10 @@
   "bugs": {
     "url": "https://github.com/Orlandster1998/geo-on-fire/issues?q=is%3Aopen+is%3Aissue+label%3Abug"
   },
-  "files": [
-    "LICENSE",
-    "README.md",
-    "dist/gof.min.js"
-  ],
   "devDependencies": {
     "babel": "^6.3.26",
     "babel-core": "^6.4.0",
-    "babel-eslint": "^5.0.0-beta6",
+    "babel-eslint": "^5.0.4",
     "babel-loader": "^6.2.1",
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
@@ -84,6 +79,7 @@
     "bundle-node": true
   },
   "dependencies": {
+    "codacy-coverage": "^2.0.3",
     "ngeohash": "^0.6.0"
   }
 }
