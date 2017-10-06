@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/gof.js | firebase-nearby</title>
+  <title data-ice="title">src/gof.js | gof</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<meta name="description" content="An extreme fast and highly scalable Firebase geo-query library."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="gof"><meta property="twitter:description" content="An extreme fast and highly scalable Firebase geo-query library."></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -53,10 +53,10 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/gof.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { GofUtils } from &quot;./gof-utils&quot;;
-import { GofDb } from &quot;./gof-db&quot;;
-import { GofValidation } from &quot;./validation/validation&quot;;
-import { GofDbListeners } from &quot;./gof-db-listeners&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import GofUtils from &quot;./gof-utils&quot;;
+import GofDb from &quot;./gof-db&quot;;
+import GofValidation from &quot;./validation/validation&quot;;
+import GofDbListeners from &quot;./gof-db-listeners&quot;;
 
 /** 
  * geo on fire entry point 
@@ -96,7 +96,11 @@ export default class Gof {
    */
   getLocationsByRadius(center, radius, startAt = 1, endAt = undefined) {
     GofValidation.validateLocationsByRadius(
-      center, radius, startAt, endAt, &quot;getLocationsByRadius()&quot;
+      center, 
+      radius, 
+      startAt, 
+      endAt, 
+      &quot;getLocationsByRadius()&quot;,
     );
 
     this._activeQuery.parameters = { center, radius, startAt, endAt }
@@ -125,7 +129,10 @@ export default class Gof {
    */
   getLocationsByBoundaries(boundaries, startAt = 1, endAt = undefined) {
     GofValidation.validateLocationsByBoundaries(
-      boundaries, startAt, endAt, &quot;getLocationsByBoundaries()&quot;
+      boundaries, 
+      startAt, 
+      endAt, 
+      &quot;getLocationsByBoundaries()&quot;,
     );
 
     this._activeQuery.parameters = { boundaries, startAt, endAt }
@@ -198,11 +205,11 @@ export default class Gof {
      * @return {Promise.&lt;Object&gt;} A promise which is fulfilled each time the event fires. 
      * Be aware the promise was modified and is able to stream data, similair to a callback.
      */
-    this.getLocationsByBoundaries.on = (type) =&gt; this.attachQueryEvent(type, &quot;bounds&quot;, () =&gt; {
+    this.getLocationsByBoundaries.on = type =&gt; this.attachQueryEvent(type, &quot;bounds&quot;, () =&gt; {
       this.getLocationsByBoundaries(
         this._activeQuery.parameters.boundaries, 
         this._activeQuery.parameters.startAt, 
-        this._activeQuery.parameters.endAt
+        this._activeQuery.parameters.endAt,
       );
     });
 
@@ -214,12 +221,12 @@ export default class Gof {
      * @return {Promise.&lt;Object&gt;} A promise which is fulfilled each time the event fires. 
      * Be aware the promise was modified and is able to stream data, similair to a callback.
      */
-    this.getLocationsByRadius.on = (type) =&gt; this.attachQueryEvent(type, &quot;radius&quot;, () =&gt; {
+    this.getLocationsByRadius.on = type =&gt; this.attachQueryEvent(type, &quot;radius&quot;, () =&gt; {
       this.getLocationsByRadius(
         this._activeQuery.parameters.center, 
         this._activeQuery.parameters.radius,
         this._activeQuery.parameters.startAt, 
-        this._activeQuery.parameters.endAt
+        this._activeQuery.parameters.endAt,
       );
     });
 
@@ -262,7 +269,8 @@ export default class Gof {
     this._activeQuery.dbListeners = GofDbListeners.attachDbListeners(
       type, 
       this._db._refs, 
-      this._activeQuery.geohashes, event
+      this._activeQuery.geohashes, 
+      event,
     );
 
     // add the event listener
@@ -279,7 +287,7 @@ export default class Gof {
    */
   destroy() {
     if (this._activeQuery.dbListeners.length) {
-      this._activeQuery.dbListeners.forEach(listener =&gt; {
+      this._activeQuery.dbListeners.forEach((listener) =&gt; {
         listener.off();
       });
       this._activeQuery.dbListeners = [];

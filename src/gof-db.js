@@ -1,9 +1,9 @@
-import { GofUtils } from "./gof-utils";
+import GofUtils from "./gof-utils";
 
 /** 
  * geo on fire database class
  */
-export class GofDb {
+export default class GofDb {
   /**
    * 
    * @param {string} name Name for the Gof query.
@@ -58,15 +58,15 @@ export class GofDb {
       // if endat is bigger than the number of entries limitate it to the last entry,
       const endAtLimitation = endAt > pushKeys.length ? pushKeys.length : endAt;
 
-      for (let i = startAt - 1; i < endAtLimitation; i++) {
+      for (let i = startAt - 1; i < endAtLimitation; i += 1) {
         fetchedDataPromises.push(
-          this._refs.entries.child(`${pushKeys[i]}`).once("value")
+          this._refs.entries.child(`${pushKeys[i]}`).once("value"),
         );
       }
     } else {
-      for (let i = startAt - 1; i < (pushKeys.length - (startAt - 1)); i++) {
+      for (let i = startAt - 1; i < (pushKeys.length - (startAt - 1)); i += 1) {
         fetchedDataPromises.push(
-          this._refs.entries.child(`${pushKeys[i]}`).once("value")
+          this._refs.entries.child(`${pushKeys[i]}`).once("value"),
         );
       }
     }
@@ -83,9 +83,9 @@ export class GofDb {
   getLocationsFromGeohashes(geohashes) {
     const locations = [];
 
-    for (let i = 0; i < geohashes.length; i++) {
+    for (let i = 0; i < geohashes.length; i += 1) {
       locations.push(
-        this._refs.geohashes.child(`${geohashes[i]}`).once("value")
+        this._refs.geohashes.child(`${geohashes[i]}`).once("value"),
       );
     }
 
@@ -109,34 +109,49 @@ export class GofDb {
    */
   updateEntry(pushKey, newValue, priority) {
     const newValueWithPrecisions = this._utils.setPrecisionsForEntry(priority, newValue);
-    const newGeohash = this._utils.getGeohashByLocation(newValue.location, 
-      newValueWithPrecisions.maxPrecision);
-    const newGeohashPrecisions = this._utils.getGeohashPrecisions(newGeohash, 
-      newValueWithPrecisions.minPrecision, newValueWithPrecisions.maxPrecision);
+    const newGeohash = this._utils.getGeohashByLocation(
+      newValue.location, 
+      newValueWithPrecisions.maxPrecision,
+    );
+    const newGeohashPrecisions = this._utils.getGeohashPrecisions(
+      newGeohash, 
+      newValueWithPrecisions.minPrecision, 
+      newValueWithPrecisions.maxPrecision,
+    );
 
     return this._refs.entries.child(`${pushKey}`).once("value")
-      .then(entry => {
+      .then((entry) => {
         const entryValue = entry.val();
-        const currentGeohash = this._utils.getGeohashByLocation(entryValue.location, 
-          entryValue.maxPrecision);
-        const currentGeohashPrecisions = this._utils.getGeohashPrecisions(currentGeohash, 
-          entryValue.minPrecision, entryValue.maxPrecision);
+        const currentGeohash = this._utils.getGeohashByLocation(
+          entryValue.location, 
+          entryValue.maxPrecision,
+        );
+        const currentGeohashPrecisions = this._utils.getGeohashPrecisions(
+          currentGeohash, 
+          entryValue.minPrecision, 
+          entryValue.maxPrecision,
+        );
 
         // if location changed update also the location nodes
         const promiseQueue = [];
         const geohashesByAction = this._utils.getGeohashActions(
-          currentGeohashPrecisions, newGeohashPrecisions
+          currentGeohashPrecisions, 
+          newGeohashPrecisions,
         );
 
         // add nodes to add in queue
         promiseQueue.concat(this.getLocationNodesToAdd(
-          pushKey, newValue.location, geohashesByAction.add)
-        );
+          pushKey, 
+          newValue.location, 
+          geohashesByAction.add,
+        ));
           
         // add nodes to update in queue - gets executed even if location is the same as bevor
         promiseQueue.concat(this.getLocationNodesToUpdate(
-          pushKey, newValue.location, geohashesByAction.update)
-        );
+          pushKey, 
+          newValue.location, 
+          geohashesByAction.update,
+        ));
 
         // add nodes to delete in queue
         promiseQueue.concat(this.getLocationNodesToDelete(pushKey, geohashesByAction.delete));
@@ -161,12 +176,17 @@ export class GofDb {
    */
   deleteEntry(pushKey) {
     return this._refs.entries.child(`${pushKey}`).once("value")
-      .then(entry => {
+      .then((entry) => {
         const entryValue = entry.val();
-        const geohash = this._utils.getGeohashByLocation(entryValue.location, 
-          entryValue.maxPrecision);
-        const geohashPrecisions = this._utils.getGeohashPrecisions(geohash, 
-          entryValue.minPrecision, entryValue.maxPrecision);
+        const geohash = this._utils.getGeohashByLocation(
+          entryValue.location, 
+          entryValue.maxPrecision,
+        );
+        const geohashPrecisions = this._utils.getGeohashPrecisions(
+          geohash, 
+          entryValue.minPrecision, 
+          entryValue.maxPrecision,
+        );
         const deleteQueue = this.getLocationNodesToDelete(entry.key, geohashPrecisions);
             
         // adds the entry itself to the delete queue
@@ -195,7 +215,7 @@ export class GofDb {
     const addQueue = [];
 
     // adding all the existing locations to the add queue
-    for (let i = 0; geohashes.length > i; i++) {
+    for (let i = 0; geohashes.length > i; i += 1) {
       addQueue.push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).set(value));
     }
 
@@ -214,7 +234,7 @@ export class GofDb {
     const updateQueue = [];
 
     // adding all the existing locations to the update queue
-    for (let i = 0; geohashes.length > i; i++) {
+    for (let i = 0; geohashes.length > i; i += 1) {
       updateQueue
         .push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).update(newValue));
     }
@@ -233,7 +253,7 @@ export class GofDb {
     const deleteQueue = [];
 
     // adding all the existing locations to the delete queue
-    for (let i = 0; geohashes.length > i; i++) {
+    for (let i = 0; geohashes.length > i; i += 1) {
       deleteQueue
         .push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).remove());
     }

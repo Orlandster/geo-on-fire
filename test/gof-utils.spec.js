@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { GofUtils } from '../src/gof-utils.js';
+import GofUtils from '../src/gof-utils.js';
 
 describe('Tests for class GofUtils', () => {
   let _utils;

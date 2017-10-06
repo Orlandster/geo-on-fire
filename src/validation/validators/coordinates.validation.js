@@ -1,12 +1,9 @@
-import { GofBasicValidation } from "./basic.validation";
+import GofBasicValidation from "./basic.validation";
 
 /** 
  * geo on fire coordinates validation
  */
-export class GofCoordinatesValidation {
-
-  constructor() {}
-
+export default class GofCoordinatesValidation {
   /**
    * Validates the coordinates latitude/longitude pair.
    *

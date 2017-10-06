@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { GofDb } from "../src/gof-db";
+import GofDb from "../src/gof-db";
 import { dbHelpers } from "./helpers/db.helpers";
 
 describe("Tests for class GofDb", () => {

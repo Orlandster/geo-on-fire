@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { GofDbListeners } from "../src/gof-db-listeners";
+import GofDbListeners from "../src/gof-db-listeners";
 
 describe("Tests for class GofDbListeners", () => {
   const geohashes = ["9qpbq", "9qpby", "9qpbw", "9qpbz"];

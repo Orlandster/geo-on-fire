@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../">
-  <title data-ice="title">src/validation/validation.js | firebase-nearby</title>
+  <title data-ice="title">src/validation/validation.js | gof</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<meta name="description" content="An extreme fast and highly scalable Firebase geo-query library."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="gof"><meta property="twitter:description" content="An extreme fast and highly scalable Firebase geo-query library."></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -53,26 +53,23 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/validation/validation.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { validateDbParameter } from &quot;./parameters/db.parameter&quot;;
-import { validateCenterParameter } from &quot;./parameters/center.parameter&quot;;
-import { validateRadiusParameter } from &quot;./parameters/radius.parameter&quot;;
-import { validateEntryLimitationParameters } from &quot;./parameters/entry-limitation.parameters&quot;;
-import { validateBoundariesParameter } from &quot;./parameters/boundaries.parameter&quot;;
-import { validateEntryParameter } from &quot;./parameters/entry.parameter&quot;;
-import { validatePriorityParameter } from &quot;./parameters/priority.parameter&quot;;
-import { validateMaxPrecisionParameter } from &quot;./parameters/max-precision.parameter&quot;;
-import { validateNameParameter } from &quot;./parameters/name.parameter&quot;;
-import { validatePushKeyParameter } from &quot;./parameters/push-key.parameter&quot;;
-import { validateNewValueParameter } from &quot;./parameters/new-value.parameter&quot;;
-import { validateEventTypeParameter } from &quot;./parameters/event-type.parameter&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import validateDbParameter from &quot;./parameters/db.parameter&quot;;
+import validateCenterParameter from &quot;./parameters/center.parameter&quot;;
+import validateRadiusParameter from &quot;./parameters/radius.parameter&quot;;
+import validateEntryLimitationParameters from &quot;./parameters/entry-limitation.parameters&quot;;
+import validateBoundariesParameter from &quot;./parameters/boundaries.parameter&quot;;
+import validateEntryParameter from &quot;./parameters/entry.parameter&quot;;
+import validatePriorityParameter from &quot;./parameters/priority.parameter&quot;;
+import validateMaxPrecisionParameter from &quot;./parameters/max-precision.parameter&quot;;
+import validateNameParameter from &quot;./parameters/name.parameter&quot;;
+import validatePushKeyParameter from &quot;./parameters/push-key.parameter&quot;;
+import validateNewValueParameter from &quot;./parameters/new-value.parameter&quot;;
+import validateEventTypeParameter from &quot;./parameters/event-type.parameter&quot;;
 
 /** 
  * geo on fire validation
  */
-export class GofValidation {
-
-  constructor() {}
-
+export default class GofValidation {
   /**
    * Validates the parameters of the Gof class constructor.
    *

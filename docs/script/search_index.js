@@ -1,116 +1,116 @@
 window.esdocSearchIndex = [
   [
-    "firebase-nearby/src/gof.js~gof",
+    "gof/src/gof.js~gof",
     "class/src/gof.js~Gof.html",
-    "<span>Gof</span> <span class=\"search-result-import-path\">firebase-nearby/src/gof.js</span>",
+    "<span>Gof</span> <span class=\"search-result-import-path\">gof/src/gof.js</span>",
     "class"
   ],
   [
-    "firebase-nearby/src/validation/validators/basic.validation.js~gofbasicvalidation",
+    "gof/src/validation/validators/basic.validation.js~gofbasicvalidation",
     "class/src/validation/validators/basic.validation.js~GofBasicValidation.html",
-    "<span>GofBasicValidation</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/validators/basic.validation.js</span>",
+    "<span>GofBasicValidation</span> <span class=\"search-result-import-path\">gof/src/validation/validators/basic.validation.js</span>",
     "class"
   ],
   [
-    "firebase-nearby/src/validation/validators/coordinates.validation.js~gofcoordinatesvalidation",
+    "gof/src/validation/validators/coordinates.validation.js~gofcoordinatesvalidation",
     "class/src/validation/validators/coordinates.validation.js~GofCoordinatesValidation.html",
-    "<span>GofCoordinatesValidation</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/validators/coordinates.validation.js</span>",
+    "<span>GofCoordinatesValidation</span> <span class=\"search-result-import-path\">gof/src/validation/validators/coordinates.validation.js</span>",
     "class"
   ],
   [
-    "firebase-nearby/src/gof-db.js~gofdb",
+    "gof/src/gof-db.js~gofdb",
     "class/src/gof-db.js~GofDb.html",
-    "<span>GofDb</span> <span class=\"search-result-import-path\">firebase-nearby/src/gof-db.js</span>",
+    "<span>GofDb</span> <span class=\"search-result-import-path\">gof/src/gof-db.js</span>",
     "class"
   ],
   [
-    "firebase-nearby/src/gof-db-listeners.js~gofdblisteners",
+    "gof/src/gof-db-listeners.js~gofdblisteners",
     "class/src/gof-db-listeners.js~GofDbListeners.html",
-    "<span>GofDbListeners</span> <span class=\"search-result-import-path\">firebase-nearby/src/gof-db-listeners.js</span>",
+    "<span>GofDbListeners</span> <span class=\"search-result-import-path\">gof/src/gof-db-listeners.js</span>",
     "class"
   ],
   [
-    "firebase-nearby/src/gof-utils.js~gofutils",
+    "gof/src/gof-utils.js~gofutils",
     "class/src/gof-utils.js~GofUtils.html",
-    "<span>GofUtils</span> <span class=\"search-result-import-path\">firebase-nearby/src/gof-utils.js</span>",
+    "<span>GofUtils</span> <span class=\"search-result-import-path\">gof/src/gof-utils.js</span>",
     "class"
   ],
   [
-    "firebase-nearby/src/validation/validation.js~gofvalidation",
+    "gof/src/validation/validation.js~gofvalidation",
     "class/src/validation/validation.js~GofValidation.html",
-    "<span>GofValidation</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/validation.js</span>",
+    "<span>GofValidation</span> <span class=\"search-result-import-path\">gof/src/validation/validation.js</span>",
     "class"
   ],
   [
-    "firebase-nearby/src/validation/parameters/boundaries.parameter.js~validateboundariesparameter",
+    "gof/src/validation/parameters/boundaries.parameter.js~validateboundariesparameter",
     "function/index.html#static-function-validateBoundariesParameter",
-    "<span>validateBoundariesParameter</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/boundaries.parameter.js</span>",
+    "<span>validateBoundariesParameter</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/boundaries.parameter.js</span>",
     "function"
   ],
   [
-    "firebase-nearby/src/validation/parameters/center.parameter.js~validatecenterparameter",
+    "gof/src/validation/parameters/center.parameter.js~validatecenterparameter",
     "function/index.html#static-function-validateCenterParameter",
-    "<span>validateCenterParameter</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/center.parameter.js</span>",
+    "<span>validateCenterParameter</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/center.parameter.js</span>",
     "function"
   ],
   [
-    "firebase-nearby/src/validation/parameters/db.parameter.js~validatedbparameter",
+    "gof/src/validation/parameters/db.parameter.js~validatedbparameter",
     "function/index.html#static-function-validateDbParameter",
-    "<span>validateDbParameter</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/db.parameter.js</span>",
+    "<span>validateDbParameter</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/db.parameter.js</span>",
     "function"
   ],
   [
-    "firebase-nearby/src/validation/parameters/entry-limitation.parameters.js~validateentrylimitationparameters",
+    "gof/src/validation/parameters/entry-limitation.parameters.js~validateentrylimitationparameters",
     "function/index.html#static-function-validateEntryLimitationParameters",
-    "<span>validateEntryLimitationParameters</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/entry-limitation.parameters.js</span>",
+    "<span>validateEntryLimitationParameters</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/entry-limitation.parameters.js</span>",
     "function"
   ],
   [
-    "firebase-nearby/src/validation/parameters/entry.parameter.js~validateentryparameter",
+    "gof/src/validation/parameters/entry.parameter.js~validateentryparameter",
     "function/index.html#static-function-validateEntryParameter",
-    "<span>validateEntryParameter</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/entry.parameter.js</span>",
+    "<span>validateEntryParameter</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/entry.parameter.js</span>",
     "function"
   ],
   [
-    "firebase-nearby/src/validation/parameters/event-type.parameter.js~validateeventtypeparameter",
+    "gof/src/validation/parameters/event-type.parameter.js~validateeventtypeparameter",
     "function/index.html#static-function-validateEventTypeParameter",
-    "<span>validateEventTypeParameter</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/event-type.parameter.js</span>",
+    "<span>validateEventTypeParameter</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/event-type.parameter.js</span>",
     "function"
   ],
   [
-    "firebase-nearby/src/validation/parameters/max-precision.parameter.js~validatemaxprecisionparameter",
+    "gof/src/validation/parameters/max-precision.parameter.js~validatemaxprecisionparameter",
     "function/index.html#static-function-validateMaxPrecisionParameter",
-    "<span>validateMaxPrecisionParameter</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/max-precision.parameter.js</span>",
+    "<span>validateMaxPrecisionParameter</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/max-precision.parameter.js</span>",
     "function"
   ],
   [
-    "firebase-nearby/src/validation/parameters/name.parameter.js~validatenameparameter",
+    "gof/src/validation/parameters/name.parameter.js~validatenameparameter",
     "function/index.html#static-function-validateNameParameter",
-    "<span>validateNameParameter</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/name.parameter.js</span>",
+    "<span>validateNameParameter</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/name.parameter.js</span>",
     "function"
   ],
   [
-    "firebase-nearby/src/validation/parameters/new-value.parameter.js~validatenewvalueparameter",
+    "gof/src/validation/parameters/new-value.parameter.js~validatenewvalueparameter",
     "function/index.html#static-function-validateNewValueParameter",
-    "<span>validateNewValueParameter</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/new-value.parameter.js</span>",
+    "<span>validateNewValueParameter</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/new-value.parameter.js</span>",
     "function"
   ],
   [
-    "firebase-nearby/src/validation/parameters/priority.parameter.js~validatepriorityparameter",
+    "gof/src/validation/parameters/priority.parameter.js~validatepriorityparameter",
     "function/index.html#static-function-validatePriorityParameter",
-    "<span>validatePriorityParameter</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/priority.parameter.js</span>",
+    "<span>validatePriorityParameter</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/priority.parameter.js</span>",
     "function"
   ],
   [
-    "firebase-nearby/src/validation/parameters/push-key.parameter.js~validatepushkeyparameter",
+    "gof/src/validation/parameters/push-key.parameter.js~validatepushkeyparameter",
     "function/index.html#static-function-validatePushKeyParameter",
-    "<span>validatePushKeyParameter</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/push-key.parameter.js</span>",
+    "<span>validatePushKeyParameter</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/push-key.parameter.js</span>",
     "function"
   ],
   [
-    "firebase-nearby/src/validation/parameters/radius.parameter.js~validateradiusparameter",
+    "gof/src/validation/parameters/radius.parameter.js~validateradiusparameter",
     "function/index.html#static-function-validateRadiusParameter",
-    "<span>validateRadiusParameter</span> <span class=\"search-result-import-path\">firebase-nearby/src/validation/parameters/radius.parameter.js</span>",
+    "<span>validateRadiusParameter</span> <span class=\"search-result-import-path\">gof/src/validation/parameters/radius.parameter.js</span>",
     "function"
   ],
   [
@@ -402,12 +402,6 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/gof-db-listeners.js~gofdblisteners#constructor",
-    "class/src/gof-db-listeners.js~GofDbListeners.html#instance-constructor-constructor",
-    "src/gof-db-listeners.js~GofDbListeners#constructor",
-    "method"
-  ],
-  [
     "src/gof-db-listeners.js~gofdblisteners.attachdblisteners",
     "class/src/gof-db-listeners.js~GofDbListeners.html#static-method-attachDbListeners",
     "src/gof-db-listeners.js~GofDbListeners.attachDbListeners",
@@ -520,12 +514,6 @@ window.esdocSearchIndex = [
     "file/src/gof-utils.js.html",
     "src/gof-utils.js",
     "file"
-  ],
-  [
-    "src/gof-utils.js~gofutils#constructor",
-    "class/src/gof-utils.js~GofUtils.html#instance-constructor-constructor",
-    "src/gof-utils.js~GofUtils#constructor",
-    "method"
   ],
   [
     "src/gof-utils.js~gofutils.caluclateprecisionfromboundaries",
@@ -762,12 +750,6 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/validation/validation.js~gofvalidation#constructor",
-    "class/src/validation/validation.js~GofValidation.html#instance-constructor-constructor",
-    "src/validation/validation.js~GofValidation#constructor",
-    "method"
-  ],
-  [
     "src/validation/validation.js~gofvalidation.validateconstructor",
     "class/src/validation/validation.js~GofValidation.html#static-method-validateConstructor",
     "src/validation/validation.js~GofValidation.validateConstructor",
@@ -814,12 +796,6 @@ window.esdocSearchIndex = [
     "file/src/validation/validators/basic.validation.js.html",
     "src/validation/validators/basic.validation.js",
     "file"
-  ],
-  [
-    "src/validation/validators/basic.validation.js~gofbasicvalidation#constructor",
-    "class/src/validation/validators/basic.validation.js~GofBasicValidation.html#instance-constructor-constructor",
-    "src/validation/validators/basic.validation.js~GofBasicValidation#constructor",
-    "method"
   ],
   [
     "src/validation/validators/basic.validation.js~gofbasicvalidation.containsspaces",
@@ -898,12 +874,6 @@ window.esdocSearchIndex = [
     "file/src/validation/validators/coordinates.validation.js.html",
     "src/validation/validators/coordinates.validation.js",
     "file"
-  ],
-  [
-    "src/validation/validators/coordinates.validation.js~gofcoordinatesvalidation#constructor",
-    "class/src/validation/validators/coordinates.validation.js~GofCoordinatesValidation.html#instance-constructor-constructor",
-    "src/validation/validators/coordinates.validation.js~GofCoordinatesValidation#constructor",
-    "method"
   ],
   [
     "src/validation/validators/coordinates.validation.js~gofcoordinatesvalidation.validatecoordinates",

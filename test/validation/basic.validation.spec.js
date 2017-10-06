@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { GofBasicValidation } from '../../src/validation/validators/basic.validation';
+import GofBasicValidation from '../../src/validation/validators/basic.validation';
 
 describe('Tests for class GofBasicValidation', () => {
   let basic;

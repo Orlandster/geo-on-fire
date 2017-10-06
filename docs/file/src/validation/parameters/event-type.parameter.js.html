@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../../">
-  <title data-ice="title">src/validation/parameters/event-type.parameter.js | firebase-nearby</title>
+  <title data-ice="title">src/validation/parameters/event-type.parameter.js | gof</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<meta name="description" content="An extreme fast and highly scalable Firebase geo-query library."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="gof"><meta property="twitter:description" content="An extreme fast and highly scalable Firebase geo-query library."></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -53,14 +53,14 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/validation/parameters/event-type.parameter.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { GofBasicValidation } from &quot;../validators/basic.validation&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import GofBasicValidation from &quot;../validators/basic.validation&quot;;
 
 /**
  * 
  * @param {string} type The event type to validate.
  * @param {string} fName The name of the executed function.
  */
-export function validateEventTypeParameter(type, fName) {
+export default function validateEventTypeParameter(type, fName) {
   GofBasicValidation.validateString(type, { fName, p1: &quot;type&quot; });
   GofBasicValidation.validateEventType(type, { fName, p1: &quot;type&quot; });
 }</code></pre>

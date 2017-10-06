@@ -1,10 +1,7 @@
 /** 
  * geo on fire basic validation
  */
-export class GofBasicValidation {
-
-  constructor() {}
-
+export default class GofBasicValidation {
   /**
    * Checks if a given value is a valid number.
    *
@@ -90,7 +87,7 @@ export class GofBasicValidation {
   static validateReference(value, errorInfos) {
     if (typeof value.child !== "function") {
       this.throwError(
-        errorInfos.fName, `${errorInfos.p1} is not a valid firebase database reference!`
+        errorInfos.fName, `${errorInfos.p1} is not a valid firebase database reference!`,
       );
     }
   }
@@ -105,18 +102,18 @@ export class GofBasicValidation {
   static validateEventType(type, errorInfos) {
     if (type === "child_moved") {
       this.throwError(
-        errorInfos.fName, `${errorInfos.p1} of "child_moved" is not supported.`
-        + ` You have to use one of the follwoing types: `
-        +  `"value", "child_added", "child_changed", "child_removed"` // breaks for linting
+        errorInfos.fName, `${errorInfos.p1} of "child_moved" is not supported. `
+        + `You have to use one of the follwoing types: `
+        + `"value", "child_added", "child_changed", "child_removed"`, // breaks for linting
       );
     } else if (type !== "value" 
                && type !== "child_added" 
                && type !== "child_changed" 
                && type !== "child_removed") { // eslint rule sry
       this.throwError(
-        errorInfos.fName, `"${type}" is not a valid ${errorInfos.p1}.`
-        + ` You have to use one of the follwoing types: `
-        +  `"value", "child_added", "child_changed", "child_removed"` // breaks for linting
+        errorInfos.fName, `"${type}" is not a valid ${errorInfos.p1}. `
+        + `You have to use one of the follwoing types: `
+        + `"value", "child_added", "child_changed", "child_removed"`, // breaks for linting
       );
     }
   }
@@ -131,7 +128,7 @@ export class GofBasicValidation {
   static isLowerThan(firstNumber, secondNumber, errorInfos) {
     if (firstNumber < secondNumber) {
       this.throwError(
-        errorInfos.fName, `${errorInfos.p1} must be higher or same as ${errorInfos.p2}!`
+        errorInfos.fName, `${errorInfos.p1} must be higher or same as ${errorInfos.p2}!`,
       );
     }
   }
@@ -146,7 +143,7 @@ export class GofBasicValidation {
   static isHigherThan(firstNumber, secondNumber, errorInfos) {
     if (firstNumber > secondNumber) {
       this.throwError(
-        errorInfos.fName, `${errorInfos.p1} must be lower or same as ${errorInfos.p2}!`
+        errorInfos.fName, `${errorInfos.p1} must be lower or same as ${errorInfos.p2}!`,
       );
     }
   }

@@ -1,14 +1,12 @@
 {
-  "coverage": "88.88%",
-  "expectCount": 90,
+  "coverage": "94.11%",
+  "expectCount": 85,
   "actualCount": 80,
   "files": {
     "src/gof-db-listeners.js": {
-      "expectCount": 7,
+      "expectCount": 6,
       "actualCount": 6,
-      "undocumentLines": [
-        6
-      ]
+      "undocumentLines": []
     },
     "src/gof-db.js": {
       "expectCount": 13,
@@ -19,11 +17,9 @@
       ]
     },
     "src/gof-utils.js": {
-      "expectCount": 15,
+      "expectCount": 14,
       "actualCount": 14,
-      "undocumentLines": [
-        8
-      ]
+      "undocumentLines": []
     },
     "src/gof.js": {
       "expectCount": 13,
@@ -95,25 +91,19 @@
       "undocumentLines": []
     },
     "src/validation/validation.js": {
-      "expectCount": 9,
+      "expectCount": 8,
       "actualCount": 8,
-      "undocumentLines": [
-        19
-      ]
+      "undocumentLines": []
     },
     "src/validation/validators/basic.validation.js": {
-      "expectCount": 14,
+      "expectCount": 13,
       "actualCount": 13,
-      "undocumentLines": [
-        6
-      ]
+      "undocumentLines": []
     },
     "src/validation/validators/coordinates.validation.js": {
-      "expectCount": 5,
+      "expectCount": 4,
       "actualCount": 4,
-      "undocumentLines": [
-        8
-      ]
+      "undocumentLines": []
     }
   }
 }
