@@ -1,1 +1,1 @@
-module.exports = require('./lib/gof');
+module.exports = require('./dist/gof.min');
