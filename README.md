@@ -24,10 +24,27 @@ And the best, you will automatically recieve the fetched entries. So there is no
 
 
 ## Download
-Currently there are two ways to download the library. But before you download the library make sure Firebase is already installed, since it's not a dependency of gof itslef.
+Currently there are three ways to download the library. But before you download the library make sure Firebase is already installed, since it's not a dependency of gof itself.
+
+> Notice: NodeJS is not supported so far, but it will be added soon. Subscribe [here](https://github.com/Orlandster1998/geo-on-fire/issues/10) to get mentioned when the time is ready.
+
+Add it like this to your `HTML`
+```html
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/4.5.0/firebase.js"></script>
+```
+or install it from npm
 
 ```bash
 $ npm install firebase --save
+```
+
+### CDN
+If you are running gof in the browser you can include it directly from the CDN like this:
+
+```html
+<!-- gof -->
+<script src="https://cdn.jsdelivr.net/npm/gof@0.1.0/dist/gof.min.js"></script>
 ```
 
 ### npm
@@ -41,19 +58,10 @@ Or download it from bower the following way:
 $ bower install gof --save
 ```
 
-### CDN
-In the future you will also be able to load the library directly from a CDN. Subscribe to the existing issue for updates.
-
 ## Getting started
-Now let's get started. As you will see, the usage is very simple. As a first step you need to include the library in your HTML. (make sure Firebase is also included)
+Now let's get started. As you will see, the usage is very simple. 
 
-```html
-<script src="{path_to}/gof.min.js"></script>
-```
-
-> Notice: NodeJS is not supported so far, but it will be added soon. Subscribe [here](https://github.com/Orlandster1998/geo-on-fire/issues/10) to get mentioned when the time is ready.
-
-Well done! Before you're able to use gof you need to initialize your firebase project.
+Before you're able to use gof you need to initialize your firebase project.
 
 ```js
 var fb = firebase.initializeApp(config); // get 'config' from firebase
