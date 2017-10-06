@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/gof-db.js | firebase-nearby</title>
+  <title data-ice="title">src/gof-db.js | gof</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<meta name="description" content="An extreme fast and highly scalable Firebase geo-query library."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="gof"><meta property="twitter:description" content="An extreme fast and highly scalable Firebase geo-query library."></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -53,12 +53,12 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/gof-db.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { GofUtils } from &quot;./gof-utils&quot;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import GofUtils from &quot;./gof-utils&quot;;
 
 /** 
  * geo on fire database class
  */
-export class GofDb {
+export default class GofDb {
   /**
    * 
    * @param {string} name Name for the Gof query.
@@ -113,15 +113,15 @@ export class GofDb {
       // if endat is bigger than the number of entries limitate it to the last entry,
       const endAtLimitation = endAt &gt; pushKeys.length ? pushKeys.length : endAt;
 
-      for (let i = startAt - 1; i &lt; endAtLimitation; i++) {
+      for (let i = startAt - 1; i &lt; endAtLimitation; i += 1) {
         fetchedDataPromises.push(
-          this._refs.entries.child(`${pushKeys[i]}`).once(&quot;value&quot;)
+          this._refs.entries.child(`${pushKeys[i]}`).once(&quot;value&quot;),
         );
       }
     } else {
-      for (let i = startAt - 1; i &lt; (pushKeys.length - (startAt - 1)); i++) {
+      for (let i = startAt - 1; i &lt; (pushKeys.length - (startAt - 1)); i += 1) {
         fetchedDataPromises.push(
-          this._refs.entries.child(`${pushKeys[i]}`).once(&quot;value&quot;)
+          this._refs.entries.child(`${pushKeys[i]}`).once(&quot;value&quot;),
         );
       }
     }
@@ -138,9 +138,9 @@ export class GofDb {
   getLocationsFromGeohashes(geohashes) {
     const locations = [];
 
-    for (let i = 0; i &lt; geohashes.length; i++) {
+    for (let i = 0; i &lt; geohashes.length; i += 1) {
       locations.push(
-        this._refs.geohashes.child(`${geohashes[i]}`).once(&quot;value&quot;)
+        this._refs.geohashes.child(`${geohashes[i]}`).once(&quot;value&quot;),
       );
     }
 
@@ -164,34 +164,49 @@ export class GofDb {
    */
   updateEntry(pushKey, newValue, priority) {
     const newValueWithPrecisions = this._utils.setPrecisionsForEntry(priority, newValue);
-    const newGeohash = this._utils.getGeohashByLocation(newValue.location, 
-      newValueWithPrecisions.maxPrecision);
-    const newGeohashPrecisions = this._utils.getGeohashPrecisions(newGeohash, 
-      newValueWithPrecisions.minPrecision, newValueWithPrecisions.maxPrecision);
+    const newGeohash = this._utils.getGeohashByLocation(
+      newValue.location, 
+      newValueWithPrecisions.maxPrecision,
+    );
+    const newGeohashPrecisions = this._utils.getGeohashPrecisions(
+      newGeohash, 
+      newValueWithPrecisions.minPrecision, 
+      newValueWithPrecisions.maxPrecision,
+    );
 
     return this._refs.entries.child(`${pushKey}`).once(&quot;value&quot;)
-      .then(entry =&gt; {
+      .then((entry) =&gt; {
         const entryValue = entry.val();
-        const currentGeohash = this._utils.getGeohashByLocation(entryValue.location, 
-          entryValue.maxPrecision);
-        const currentGeohashPrecisions = this._utils.getGeohashPrecisions(currentGeohash, 
-          entryValue.minPrecision, entryValue.maxPrecision);
+        const currentGeohash = this._utils.getGeohashByLocation(
+          entryValue.location, 
+          entryValue.maxPrecision,
+        );
+        const currentGeohashPrecisions = this._utils.getGeohashPrecisions(
+          currentGeohash, 
+          entryValue.minPrecision, 
+          entryValue.maxPrecision,
+        );
 
         // if location changed update also the location nodes
         const promiseQueue = [];
         const geohashesByAction = this._utils.getGeohashActions(
-          currentGeohashPrecisions, newGeohashPrecisions
+          currentGeohashPrecisions, 
+          newGeohashPrecisions,
         );
 
         // add nodes to add in queue
         promiseQueue.concat(this.getLocationNodesToAdd(
-          pushKey, newValue.location, geohashesByAction.add)
-        );
+          pushKey, 
+          newValue.location, 
+          geohashesByAction.add,
+        ));
           
         // add nodes to update in queue - gets executed even if location is the same as bevor
         promiseQueue.concat(this.getLocationNodesToUpdate(
-          pushKey, newValue.location, geohashesByAction.update)
-        );
+          pushKey, 
+          newValue.location, 
+          geohashesByAction.update,
+        ));
 
         // add nodes to delete in queue
         promiseQueue.concat(this.getLocationNodesToDelete(pushKey, geohashesByAction.delete));
@@ -216,12 +231,17 @@ export class GofDb {
    */
   deleteEntry(pushKey) {
     return this._refs.entries.child(`${pushKey}`).once(&quot;value&quot;)
-      .then(entry =&gt; {
+      .then((entry) =&gt; {
         const entryValue = entry.val();
-        const geohash = this._utils.getGeohashByLocation(entryValue.location, 
-          entryValue.maxPrecision);
-        const geohashPrecisions = this._utils.getGeohashPrecisions(geohash, 
-          entryValue.minPrecision, entryValue.maxPrecision);
+        const geohash = this._utils.getGeohashByLocation(
+          entryValue.location, 
+          entryValue.maxPrecision,
+        );
+        const geohashPrecisions = this._utils.getGeohashPrecisions(
+          geohash, 
+          entryValue.minPrecision, 
+          entryValue.maxPrecision,
+        );
         const deleteQueue = this.getLocationNodesToDelete(entry.key, geohashPrecisions);
             
         // adds the entry itself to the delete queue
@@ -250,7 +270,7 @@ export class GofDb {
     const addQueue = [];
 
     // adding all the existing locations to the add queue
-    for (let i = 0; geohashes.length &gt; i; i++) {
+    for (let i = 0; geohashes.length &gt; i; i += 1) {
       addQueue.push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).set(value));
     }
 
@@ -269,7 +289,7 @@ export class GofDb {
     const updateQueue = [];
 
     // adding all the existing locations to the update queue
-    for (let i = 0; geohashes.length &gt; i; i++) {
+    for (let i = 0; geohashes.length &gt; i; i += 1) {
       updateQueue
         .push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).update(newValue));
     }
@@ -288,7 +308,7 @@ export class GofDb {
     const deleteQueue = [];
 
     // adding all the existing locations to the delete queue
-    for (let i = 0; geohashes.length &gt; i; i++) {
+    for (let i = 0; geohashes.length &gt; i; i += 1) {
       deleteQueue
         .push(this._refs.geohashes.child(`${geohashes[i]}/${pushKey}`).remove());
     }

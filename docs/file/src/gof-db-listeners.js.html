@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/gof-db-listeners.js | firebase-nearby</title>
+  <title data-ice="title">src/gof-db-listeners.js | gof</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="A highly scalable Firebase library built for nearby searches."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="firebase-nearby"><meta property="twitter:description" content="A highly scalable Firebase library built for nearby searches."></head>
+<meta name="description" content="An extreme fast and highly scalable Firebase geo-query library."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="gof"><meta property="twitter:description" content="An extreme fast and highly scalable Firebase geo-query library."></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -56,10 +56,7 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/** 
  * geo on fire database listeners class
  */
-export class GofDbListeners {
-
-  constructor() { }
-
+export default class GofDbListeners {
   /**
    * Attaches the database listeners based on the event type.
    * The firebase event &quot;child_moved&quot; gets not supported.
@@ -98,7 +95,7 @@ export class GofDbListeners {
   static onValue(dbRef, geohashes, event) {
     const listeners = [];
 
-    geohashes.forEach(geohash =&gt; {
+    geohashes.forEach((geohash) =&gt; {
       dbRef.geohashes.child(geohash).on(&quot;value&quot;, (data) =&gt; {
         window.dispatchEvent(event);
       });
@@ -122,7 +119,7 @@ export class GofDbListeners {
   static onChildAdded(dbRef, geohashes, event) {
     const listeners = [];
       
-    geohashes.forEach(geohash =&gt; {
+    geohashes.forEach((geohash) =&gt; {
       dbRef.geohashes.child(geohash).on(&quot;child_added&quot;, (data) =&gt; {
         window.dispatchEvent(event);
       })
@@ -146,7 +143,7 @@ export class GofDbListeners {
   static onChildChanged(dbRef, geohashes, event) {
     const listeners = []; 
 
-    geohashes.forEach(geohash =&gt; {
+    geohashes.forEach((geohash) =&gt; {
       dbRef.geohashes.child(geohash).on(&quot;child_changed&quot;, (data) =&gt; {
         window.dispatchEvent(event);
       });
@@ -170,7 +167,7 @@ export class GofDbListeners {
   static onChildRemoved(dbRef, geohashes, event) {
     const listeners = []; 
       
-    geohashes.forEach(geohash =&gt; {
+    geohashes.forEach((geohash) =&gt; {
       dbRef.geohashes.child(geohash).on(&quot;child_removed&quot;, (data) =&gt; {
         window.dispatchEvent(event);
       });
