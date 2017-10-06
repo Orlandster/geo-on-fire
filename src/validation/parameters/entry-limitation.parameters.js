@@ -1,4 +1,4 @@
-import { GofBasicValidation } from "../validators/basic.validation"
+import GofBasicValidation from "../validators/basic.validation"
 
 /**
  * 
@@ -6,7 +6,7 @@ import { GofBasicValidation } from "../validators/basic.validation"
  * @param {number} endAt The etnry to end at.
  * @param {string} fName The name of the executed function.
  */
-export function validateEntryLimitationParameters(startAt, endAt, fName) {
+export default function validateEntryLimitationParameters(startAt, endAt, fName) {
   // undefined is a possible value
   if (endAt) {
     // validate endAt first to make sure it contains a number

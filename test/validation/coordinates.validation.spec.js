@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { GofCoordinatesValidation } from '../../src/validation/validators/coordinates.validation';
+import GofCoordinatesValidation from '../../src/validation/validators/coordinates.validation';
 
 describe('Tests for class GofCoordinatesValidation', () => {
   let coordinates;

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { GofValidation } from "../../src/validation/validation";
+import GofValidation from "../../src/validation/validation";
 
 describe("Tests for class GofValidation", () => {
   describe("validateConstructor()", () => {

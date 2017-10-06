@@ -1,10 +1,7 @@
 /** 
  * geo on fire database listeners class
  */
-export class GofDbListeners {
-
-  constructor() { }
-
+export default class GofDbListeners {
   /**
    * Attaches the database listeners based on the event type.
    * The firebase event "child_moved" gets not supported.
@@ -43,7 +40,7 @@ export class GofDbListeners {
   static onValue(dbRef, geohashes, event) {
     const listeners = [];
 
-    geohashes.forEach(geohash => {
+    geohashes.forEach((geohash) => {
       dbRef.geohashes.child(geohash).on("value", (data) => {
         window.dispatchEvent(event);
       });
@@ -67,7 +64,7 @@ export class GofDbListeners {
   static onChildAdded(dbRef, geohashes, event) {
     const listeners = [];
       
-    geohashes.forEach(geohash => {
+    geohashes.forEach((geohash) => {
       dbRef.geohashes.child(geohash).on("child_added", (data) => {
         window.dispatchEvent(event);
       })
@@ -91,7 +88,7 @@ export class GofDbListeners {
   static onChildChanged(dbRef, geohashes, event) {
     const listeners = []; 
 
-    geohashes.forEach(geohash => {
+    geohashes.forEach((geohash) => {
       dbRef.geohashes.child(geohash).on("child_changed", (data) => {
         window.dispatchEvent(event);
       });
@@ -115,7 +112,7 @@ export class GofDbListeners {
   static onChildRemoved(dbRef, geohashes, event) {
     const listeners = []; 
       
-    geohashes.forEach(geohash => {
+    geohashes.forEach((geohash) => {
       dbRef.geohashes.child(geohash).on("child_removed", (data) => {
         window.dispatchEvent(event);
       });

@@ -1,7 +1,7 @@
-import { GofUtils } from "./gof-utils";
-import { GofDb } from "./gof-db";
-import { GofValidation } from "./validation/validation";
-import { GofDbListeners } from "./gof-db-listeners";
+import GofUtils from "./gof-utils";
+import GofDb from "./gof-db";
+import GofValidation from "./validation/validation";
+import GofDbListeners from "./gof-db-listeners";
 
 /** 
  * geo on fire entry point 
@@ -41,7 +41,11 @@ export default class Gof {
    */
   getLocationsByRadius(center, radius, startAt = 1, endAt = undefined) {
     GofValidation.validateLocationsByRadius(
-      center, radius, startAt, endAt, "getLocationsByRadius()"
+      center, 
+      radius, 
+      startAt, 
+      endAt, 
+      "getLocationsByRadius()",
     );
 
     this._activeQuery.parameters = { center, radius, startAt, endAt }
@@ -70,7 +74,10 @@ export default class Gof {
    */
   getLocationsByBoundaries(boundaries, startAt = 1, endAt = undefined) {
     GofValidation.validateLocationsByBoundaries(
-      boundaries, startAt, endAt, "getLocationsByBoundaries()"
+      boundaries, 
+      startAt, 
+      endAt, 
+      "getLocationsByBoundaries()",
     );
 
     this._activeQuery.parameters = { boundaries, startAt, endAt }
@@ -143,11 +150,11 @@ export default class Gof {
      * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. 
      * Be aware the promise was modified and is able to stream data, similair to a callback.
      */
-    this.getLocationsByBoundaries.on = (type) => this.attachQueryEvent(type, "bounds", () => {
+    this.getLocationsByBoundaries.on = type => this.attachQueryEvent(type, "bounds", () => {
       this.getLocationsByBoundaries(
         this._activeQuery.parameters.boundaries, 
         this._activeQuery.parameters.startAt, 
-        this._activeQuery.parameters.endAt
+        this._activeQuery.parameters.endAt,
       );
     });
 
@@ -159,12 +166,12 @@ export default class Gof {
      * @return {Promise.<Object>} A promise which is fulfilled each time the event fires. 
      * Be aware the promise was modified and is able to stream data, similair to a callback.
      */
-    this.getLocationsByRadius.on = (type) => this.attachQueryEvent(type, "radius", () => {
+    this.getLocationsByRadius.on = type => this.attachQueryEvent(type, "radius", () => {
       this.getLocationsByRadius(
         this._activeQuery.parameters.center, 
         this._activeQuery.parameters.radius,
         this._activeQuery.parameters.startAt, 
-        this._activeQuery.parameters.endAt
+        this._activeQuery.parameters.endAt,
       );
     });
 
@@ -207,7 +214,8 @@ export default class Gof {
     this._activeQuery.dbListeners = GofDbListeners.attachDbListeners(
       type, 
       this._db._refs, 
-      this._activeQuery.geohashes, event
+      this._activeQuery.geohashes, 
+      event,
     );
 
     // add the event listener
@@ -224,7 +232,7 @@ export default class Gof {
    */
   destroy() {
     if (this._activeQuery.dbListeners.length) {
-      this._activeQuery.dbListeners.forEach(listener => {
+      this._activeQuery.dbListeners.forEach((listener) => {
         listener.off();
       });
       this._activeQuery.dbListeners = [];

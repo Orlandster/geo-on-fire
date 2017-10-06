@@ -1,23 +1,20 @@
-import { validateDbParameter } from "./parameters/db.parameter";
-import { validateCenterParameter } from "./parameters/center.parameter";
-import { validateRadiusParameter } from "./parameters/radius.parameter";
-import { validateEntryLimitationParameters } from "./parameters/entry-limitation.parameters";
-import { validateBoundariesParameter } from "./parameters/boundaries.parameter";
-import { validateEntryParameter } from "./parameters/entry.parameter";
-import { validatePriorityParameter } from "./parameters/priority.parameter";
-import { validateMaxPrecisionParameter } from "./parameters/max-precision.parameter";
-import { validateNameParameter } from "./parameters/name.parameter";
-import { validatePushKeyParameter } from "./parameters/push-key.parameter";
-import { validateNewValueParameter } from "./parameters/new-value.parameter";
-import { validateEventTypeParameter } from "./parameters/event-type.parameter";
+import validateDbParameter from "./parameters/db.parameter";
+import validateCenterParameter from "./parameters/center.parameter";
+import validateRadiusParameter from "./parameters/radius.parameter";
+import validateEntryLimitationParameters from "./parameters/entry-limitation.parameters";
+import validateBoundariesParameter from "./parameters/boundaries.parameter";
+import validateEntryParameter from "./parameters/entry.parameter";
+import validatePriorityParameter from "./parameters/priority.parameter";
+import validateMaxPrecisionParameter from "./parameters/max-precision.parameter";
+import validateNameParameter from "./parameters/name.parameter";
+import validatePushKeyParameter from "./parameters/push-key.parameter";
+import validateNewValueParameter from "./parameters/new-value.parameter";
+import validateEventTypeParameter from "./parameters/event-type.parameter";
 
 /** 
  * geo on fire validation
  */
-export class GofValidation {
-
-  constructor() {}
-
+export default class GofValidation {
   /**
    * Validates the parameters of the Gof class constructor.
    *

@@ -1,4 +1,4 @@
-import { GofCoordinatesValidation } from "../validators/coordinates.validation";
+import GofCoordinatesValidation from "../validators/coordinates.validation";
 
 /**
  * 
@@ -6,6 +6,6 @@ import { GofCoordinatesValidation } from "../validators/coordinates.validation";
  * @param {string} fName The name of the executed function.
  * @param {string} parameter The name of the entry parameter.
  */
-export function validateEntryParameter(entry, fName, parameter) {
+export default function validateEntryParameter(entry, fName, parameter) {
   GofCoordinatesValidation.validateCoordinates(entry.location, fName, parameter);
 }

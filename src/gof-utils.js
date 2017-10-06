@@ -3,10 +3,7 @@ import ngeohash from "ngeohash";
 /** 
  * geo on fire utils
  */
-export class GofUtils {
-
-  constructor() {}
-
+export default class GofUtils {
   /**
    * Returns a geohash based on the provided location and the precision.
    * e.g. "abcdef" would be a precision of 6 (number of characters)
@@ -31,7 +28,7 @@ export class GofUtils {
   static getGeohashPrecisions(geohash, minPrecision, maxPrecision) {
     const geohashes = [];
 
-    for (let i = 0; maxPrecision - minPrecision >= i; i++) {
+    for (let i = 0; maxPrecision - minPrecision >= i; i += 1) {
       geohashes.push(geohash.substring(0, geohash.length - i));
     }
 
@@ -71,7 +68,7 @@ export class GofUtils {
     geohashesByAction.add = newGeohashes.filter(x => currentGeohashes.indexOf(x) < 0);
     geohashesByAction.delete = currentGeohashes.filter(x => newGeohashes.indexOf(x) < 0);
     geohashesByAction.update = currentGeohashes.filter(
-      x => geohashesByAction.add.concat(geohashesByAction.delete).indexOf(x) < 0
+      x => geohashesByAction.add.concat(geohashesByAction.delete).indexOf(x) < 0,
     );
 
     return geohashesByAction;
@@ -89,8 +86,12 @@ export class GofUtils {
    * @return {Array.<string>} An array containing all the geohashes within the prvided boundaries.
    */
   static getGeohashesInBoundaries(boundaries, precision) {
-    return ngeohash.bboxes(boundaries.sw.lat, boundaries.sw.lng, 
-      boundaries.ne.lat, boundaries.ne.lng, precision);
+    return ngeohash.bboxes(
+      boundaries.sw.lat, 
+      boundaries.sw.lng, 
+      boundaries.ne.lat, 
+      boundaries.ne.lng, precision,
+    );
   }
 
   /**
@@ -104,10 +105,10 @@ export class GofUtils {
   static getLocationsInBoundaries(geohashNode, boundaries) {
     const promises = [];
 
-    geohashNode.map(locations => {
+    geohashNode.map((locations) => {
       // check if locations node exists
       if (locations.val()) {
-        locations.forEach(location => {
+        locations.forEach((location) => {
           // check if single location is within boundaries
           if (this.isInBoundaries(location.val(), boundaries)) {
             promises.push(new Promise((resolve, reject) => {
@@ -116,6 +117,8 @@ export class GofUtils {
           }
         });
       }
+
+      return false;
     });
 
     return Promise.all(promises);
@@ -158,12 +161,12 @@ export class GofUtils {
     const LngOneDeg = 111.320;
     const boundaries = { sw: {}, ne: {} };
 
-    boundaries.sw.lat = center.lat - (1 / LatOneDeg) * radius;
+    boundaries.sw.lat = center.lat - ((1 / LatOneDeg) * radius);
     boundaries.sw.lng = 
-      center.lng - (1 / (LngOneDeg * Math.cos(this.degreesToRadians(center.lat)))) * radius;
-    boundaries.ne.lat = center.lat + (1 / LatOneDeg) * radius;
+      center.lng - ((1 / (LngOneDeg * Math.cos(this.degreesToRadians(center.lat)))) * radius);
+    boundaries.ne.lat = center.lat + ((1 / LatOneDeg) * radius)
     boundaries.ne.lng = 
-      center.lng + (1 / (LngOneDeg * Math.cos(this.degreesToRadians(center.lat)))) * radius;
+      center.lng + ((1 / (LngOneDeg * Math.cos(this.degreesToRadians(center.lat)))) * radius);
     
     return boundaries;
   }
@@ -180,10 +183,10 @@ export class GofUtils {
   static getLocationsInRadius(geohashNode, center, radius) {
     const promises = [];
 
-    geohashNode.map(locations => {
+    geohashNode.map((locations) => {
       // check if locations node exists
       if (locations.val()) {
-        locations.forEach(location => {
+        locations.forEach((location) => {
           // check if single location is within radius
           if (this.isInRadius(location.val(), center, radius)) {
             promises.push(new Promise((resolve, reject) => {
@@ -192,6 +195,8 @@ export class GofUtils {
           }
         });
       }
+
+      return false;
     });
 
     return Promise.all(promises);
@@ -225,17 +230,17 @@ export class GofUtils {
    * @return {number} Says if location is in or outside of boundaries
    */
   static distBtwLocations(location, center) {
-    const radlatCenter = Math.PI * center.lat / 180;
-    const radlatLocation = Math.PI * location.lat / 180;
+    const radlatCenter = (Math.PI * center.lat) / 180;
+    const radlatLocation = (Math.PI * location.lat) / 180;
     const theta = center.lng - location.lng;
-    const radtheta = Math.PI * theta / 180;
-    let distance = Math.sin(radlatCenter) * Math.sin(radlatLocation) + 
-      Math.cos(radlatCenter) * Math.cos(radlatLocation) * Math.cos(radtheta);
+    const radtheta = (Math.PI * theta) / 180;
+    let distance = (Math.sin(radlatCenter) * Math.sin(radlatLocation)) + 
+      (Math.cos(radlatCenter) * Math.cos(radlatLocation) * Math.cos(radtheta));
 
     distance = Math.acos(distance);
-    distance = distance * 180 / Math.PI;
+    distance = (distance * 180) / Math.PI;
     distance = distance * 60 * 1.1515;
-    distance = distance * 1.609344;
+    distance *= 1.609344;
 
     return distance;
   }
@@ -257,7 +262,7 @@ export class GofUtils {
       { 
         lat: boundaries.ne.lat, 
         lng: boundaries.ne.lng,
-      }
+      },
     );
     
     if (distBtwBoundaries < 0.02) {
@@ -290,6 +295,6 @@ export class GofUtils {
    * @return {number} The converted radians.
    */
   static degreesToRadians(degrees) {
-    return degrees * Math.PI / 180;
+    return (degrees * Math.PI) / 180;
   }
 }
