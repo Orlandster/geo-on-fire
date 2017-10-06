@@ -24,8 +24,9 @@ And the best, you will automatically recieve the fetched entries. So there is no
 
 
 ## Download
-Currently there are three ways to download the library. But before you download the library make sure Firebase is already installed, since it's not a dependency of gof itslef.
+Currently there are three ways to download the library. But before you download the library make sure Firebase is already installed, since it's not a dependency of gof itself.
 
+Add it like this to your `HTML`
 ```html
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase.js"></script>
@@ -37,7 +38,7 @@ $ npm install firebase --save
 ```
 
 ### CDN
-If you are running gof in the browser you can include gof directly from the CDN like this:
+If you are running gof in the browser you can include it directly from the CDN like this:
 
 ```html
 <!-- gof -->
