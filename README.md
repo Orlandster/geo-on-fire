@@ -44,7 +44,7 @@ If you are running gof in the browser you can include it directly from the CDN l
 
 ```html
 <!-- gof -->
-<script src="https://cdn.jsdelivr.net/npm/gof@0.1.0/dist/gof.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gof@0.1.1/dist/gof.min.js"></script>
 ```
 
 ### npm
