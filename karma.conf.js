@@ -1,4 +1,4 @@
-const fbServerMiddleware = require('./test/middleware/firebase-server.middleware.js');
+var fbServerMiddleware = require('./test/middleware/firebase-server.middleware.js');
 
 module.exports = function (config) {
   config.set({

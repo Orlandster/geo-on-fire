@@ -12,9 +12,9 @@ import del from 'del';
 import pkg from './package.json';
 import webpackConfig from "./webpack.config.js";
 
-const $ = gulpLoadPlugins();
-const libFolder = 'lib';
-const sources = './src/**/*.js';
+var $ = gulpLoadPlugins();
+var libFolder = 'lib';
+var sources = './src/**/*.js';
 
 gulp.task('default', ['build', 'build-web']);
 

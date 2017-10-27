@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  build_node_7:
     working_directory: ~/tmp
     docker: 
       - image: circleci/node:7-browsers
@@ -17,4 +17,47 @@ jobs:
             - ./node_modules
       - run: npm run test
       - run: npm run build-web
-      
+
+  build_node_6:
+    working_directory: ~/tmp
+    docker: 
+      - image: circleci/node:6-browsers
+        environment:
+          CHROME_BIN: "/usr/bin/google-chrome"
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run: npm run test
+      - run: npm run build-web
+
+  build_node_4:
+    working_directory: ~/tmp
+    docker: 
+      - image: circleci/node:4-browsers
+        environment:
+          CHROME_BIN: "/usr/bin/google-chrome"
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run: npm run test
+      - run: npm run build-web
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build_node_7
+      - build_node_6
+      - build_node_4
