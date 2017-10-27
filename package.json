@@ -37,6 +37,7 @@
     "url": "https://github.com/Orlandster1998/geo-on-fire/issues?q=is%3Aopen+is%3Aissue+label%3Abug"
   },
   "devDependencies": {
+    "asyncawait": "^1.0.6",
     "babel": "^6.3.26",
     "babel-core": "^6.4.0",
     "babel-eslint": "^5.0.4",
