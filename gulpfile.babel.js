@@ -29,6 +29,8 @@ gulp.task('build-dev', ['webpack:build-node-dev'], () => {
 // Build for web
 gulp.task('build-web', ['webpack:build-web']);
 
+gulp.task('build-node', ['webpack:build-node']);
+
 gulp.task('build-test', ['webpack:build-test']);
 
 // Build for web + watch

@@ -11,6 +11,7 @@ module.exports = function getConfig(options) {
 
   var isProd = (options.BUILD_ENV || process.env.BUILD_ENV) === 'PROD';
   var isWeb = (options.TARGET_ENV || process.env.TARGET_ENV) === 'WEB';
+  var isNode = (options.TARGET_ENV || process.env.TARGET_ENV) === 'NODE';
   var isTest = (options.TARGET_ENV || process.env.TARGET_ENV) === 'TEST';
 
   // get library details from JSON config
@@ -26,7 +27,8 @@ module.exports = function getConfig(options) {
 
   // for the web
   if(isWeb){
-    config = assign(getBaseConfig(isProd), {
+    var libraryEntryPoint = path.join('src', libraryDesc["entry-web"]);
+    config = assign(getBaseConfig(isProd, libraryEntryPoint), {
       output: {
         path: path.join(__dirname, outputFolder),
         filename: outputName,
@@ -34,6 +36,22 @@ module.exports = function getConfig(options) {
         libraryTarget: 'umd',
         umdNamedDefine: true
       }
+    });
+  } else if (isNode) {
+    var libraryEntryPoint = path.join('src', libraryDesc["entry-node"]);
+    config = assign(getBaseConfig(isProd, libraryEntryPoint), {
+      output: {
+        path: path.join(__dirname, outputFolder),
+        filename: outputName,
+        library: libraryName,
+        libraryTarget: 'commonjs2'
+      },
+      target: 'node',
+      node: {
+        __dirname: true,
+        __filename: true
+      },
+      externals: [nodeExternals()]
     });
   } else if (isTest) {
     // test build - needed to run test bundle in a headless browser
@@ -55,23 +73,6 @@ module.exports = function getConfig(options) {
       },
     };
   }
-  // for the backend
-  else {
-    config = assign(getBaseConfig(isProd), {
-      output: {
-        path: path.join(__dirname, outputFolder),
-        filename: outputName,
-        library: libraryName,
-        libraryTarget: 'commonjs2'
-      },
-      target: 'node',
-      node: {
-        __dirname: true,
-        __filename: true
-      },
-      externals: [nodeExternals()]
-    });
-  }
 
   //config.plugins.push(new CleanWebpackPlugin([outputFolder]));
 
@@ -83,11 +84,10 @@ module.exports = function getConfig(options) {
  * @param  {Boolean} isProd [description]
  * @return {[type]}         [description]
  */
-function getBaseConfig(isProd) {
+function getBaseConfig(isProd, libraryEntryPoint) {
 
   // get library details from JSON config
   var libraryDesc = require('./package.json').library;
-  var libraryEntryPoint = path.join('src', libraryDesc.entry);
 
   // generate webpack base config
   return {
